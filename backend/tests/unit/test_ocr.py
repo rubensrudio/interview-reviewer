@@ -13,6 +13,7 @@ from pathlib import Path
 import pytest
 from fakes.fake_llm import FakeLLM
 from pdf2image.exceptions import PDFInfoNotInstalledError, PDFPopplerTimeoutError
+from PIL.Image import DecompressionBombError
 from pytesseract import TesseractNotFoundError  # type: ignore[import-untyped]
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
@@ -27,6 +28,7 @@ from app.resumes.extraction import EXTRACTION_TASK
 from app.resumes.ocr import (
     OCR_CONVERT_TIMEOUT_SECONDS,
     OCR_LANGUAGE,
+    OCR_MAX_PAGE_SIDE_PX,
     OCR_MAX_PAGES,
     OCR_PAGE_TIMEOUT_SECONDS,
     OcrNoText,
@@ -205,8 +207,12 @@ def test_ocr_limits_rendered_pages_and_sets_timeouts(monkeypatch: pytest.MonkeyP
             "first_page": 1,
             "last_page": OCR_MAX_PAGES,
             "timeout": OCR_CONVERT_TIMEOUT_SECONDS,
+            "size": OCR_MAX_PAGE_SIDE_PX,
+            "grayscale": True,
         }
     ]
+    # A4 at 300 DPI; bounds the pixels of any page whatever its declared size.
+    assert OCR_MAX_PAGE_SIDE_PX == 3508
     assert engine.ocr_kwargs == [{"timeout": OCR_PAGE_TIMEOUT_SECONDS}]
     assert 0 < OCR_PAGE_TIMEOUT_SECONDS <= OCR_CONVERT_TIMEOUT_SECONDS
 
@@ -216,6 +222,17 @@ def test_ocr_02_rasterization_timeout_raises_ocr_no_text(monkeypatch: pytest.Mon
         raise PDFPopplerTimeoutError("Run poppler timeout.")
 
     monkeypatch.setattr(ocr, "convert_from_bytes", _slow)
+
+    with pytest.raises(OcrNoText):
+        ocr_pdf_text(_scanned_pdf())
+
+
+def _bomb(data: bytes, **_: object) -> list[object]:
+    raise DecompressionBombError("Image size (277788889 pixels) exceeds limit")
+
+
+def test_ocr_02_decompression_bomb_raises_ocr_no_text(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(ocr, "convert_from_bytes", _bomb)
 
     with pytest.raises(OcrNoText):
         ocr_pdf_text(_scanned_pdf())
@@ -323,3 +340,21 @@ def test_cv_06_processing_with_ocr_disabled_fails_with_no_text_and_skips_ocr(
     assert result.failure_code == "NO_TEXT"
     assert result.extraction is None
     assert engine.converted == []
+
+
+def test_ocr_02_processing_with_decompression_bomb_fails_with_ocr_no_text(
+    db: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("IR_OCR_ENABLED", "true")
+    get_settings.cache_clear()
+    monkeypatch.setattr(ocr, "convert_from_bytes", _bomb)
+    llm = FakeLLM({})
+    monkeypatch.setattr(processing, "get_llm_client", lambda: llm)
+    resume = _resume(db, _scanned_pdf())
+
+    result = _run(db, resume)
+
+    assert result.status is ResumeStatus.FAILED
+    assert result.failure_code == "OCR_NO_TEXT"
+    assert result.extraction is None
+    assert llm.calls == []

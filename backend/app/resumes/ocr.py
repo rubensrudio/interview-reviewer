@@ -10,7 +10,9 @@ text could not be read. Logs carry only the error class, never resume content.
 
 To keep a hostile PDF from exhausting the worker, only the first ``OCR_MAX_PAGES`` pages are
 rendered, rasterization is bounded by ``OCR_CONVERT_TIMEOUT_SECONDS`` and each page read by
-``OCR_PAGE_TIMEOUT_SECONDS``; a timeout ends as ``OcrNoText``.
+``OCR_PAGE_TIMEOUT_SECONDS``; a timeout ends as ``OcrNoText``. Every page is scaled so its
+longest side is ``OCR_MAX_PAGE_SIDE_PX`` pixels in grayscale, so a page with a huge declared
+size cannot blow up memory; Pillow's decompression bomb guard still maps to ``OcrNoText``.
 """
 
 import pytesseract  # type: ignore[import-untyped]
@@ -21,6 +23,7 @@ from pdf2image.exceptions import (
     PDFPopplerTimeoutError,
     PDFSyntaxError,
 )
+from PIL.Image import DecompressionBombError
 
 from app.config import get_settings
 from app.observability import log_event
@@ -30,6 +33,7 @@ __all__ = [
     "OCR_CONVERT_TIMEOUT_SECONDS",
     "OCR_DPI",
     "OCR_LANGUAGE",
+    "OCR_MAX_PAGE_SIDE_PX",
     "OCR_MAX_PAGES",
     "OCR_PAGE_TIMEOUT_SECONDS",
     "OcrNoText",
@@ -40,6 +44,8 @@ OCR_LANGUAGE = "eng"
 OCR_DPI = 300
 # A resume fits in a few pages; later pages are ignored.
 OCR_MAX_PAGES = 10
+# Longest side of a rendered page: A4 at 300 DPI. Caps pixels whatever the page size.
+OCR_MAX_PAGE_SIDE_PX = 3508
 OCR_CONVERT_TIMEOUT_SECONDS = 60
 OCR_PAGE_TIMEOUT_SECONDS = 30
 
@@ -48,6 +54,7 @@ _ENGINE_ERRORS: tuple[type[Exception], ...] = (
     PDFPageCountError,
     PDFPopplerTimeoutError,
     PDFSyntaxError,
+    DecompressionBombError,
     pytesseract.TesseractNotFoundError,
     pytesseract.TesseractError,
     RuntimeError,  # pytesseract timeout
@@ -69,6 +76,8 @@ def ocr_pdf_text(data: bytes) -> str:
             first_page=1,
             last_page=OCR_MAX_PAGES,
             timeout=OCR_CONVERT_TIMEOUT_SECONDS,
+            size=OCR_MAX_PAGE_SIDE_PX,
+            grayscale=True,
         )
         pages = [
             str(

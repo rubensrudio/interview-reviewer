@@ -175,7 +175,9 @@ off by default; without it such PDFs fail with `NO_TEXT`.
 
 Pages are rendered at 300 DPI and read in English (`eng`). To protect the worker, only the
 first 10 pages are read, rendering is limited to 60 seconds and each page read to 30 seconds;
-a timeout ends as `OCR_NO_TEXT`. When OCR yields fewer than
+a timeout ends as `OCR_NO_TEXT`. Each page is rendered in grayscale with its longest side
+scaled to 3508 pixels (A4 at 300 DPI), so a page with an oversized declared size cannot
+exhaust the worker's memory. When OCR yields fewer than
 `IR_MIN_RESUME_TEXT_CHARS` non-whitespace characters, or the binaries are missing, the
 version fails with `OCR_NO_TEXT` (a `resume.ocr_failed` event with the error class is
 logged for engine errors).
