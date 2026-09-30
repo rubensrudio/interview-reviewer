@@ -81,6 +81,32 @@ Frontend (run inside `frontend/`):
 | End-to-end tests | `npx playwright test` |
 | Build | `npx ng build` |
 
+## Backend
+
+The backend is the Python package `interview-reviewer-backend` (Python 3.12, built with
+hatchling, dependencies locked in `backend/uv.lock`). The FastAPI application is created by the
+factory `app.main:create_app`.
+
+Run the API alone (inside `backend/`):
+
+```bash
+uv sync --frozen
+uv run uvicorn app.main:create_app --factory --port 8000
+```
+
+Check that it is up:
+
+```bash
+curl http://localhost:8000/api/health
+# {"status":"ok"}
+```
+
+Tooling configured in `backend/pyproject.toml`:
+
+- `ruff` for lint (line length 100, target Python 3.12).
+- `mypy` in strict mode for the `app` package.
+- `pytest` writes a JUnit report to `backend/reports/junit.xml` on every run.
+
 ## Configuration
 
 The backend reads its settings from environment variables prefixed with `IR_`. Defaults target
