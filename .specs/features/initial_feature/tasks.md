@@ -247,6 +247,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-009 — Add worker loop and job handler registry
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-93`, `KNOW-92`
 - **Tipo**: infra
@@ -766,6 +767,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-026 — Create resume table and migration 0003
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-01`, `CV-05`, `CV-10`
 - **Tipo**: migration
