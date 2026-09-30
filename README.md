@@ -160,6 +160,24 @@ The LLM client only connects to hosts listed in `IR_LLM_ALLOWED_HOSTS`. When a c
 deletes their account, all of their data is removed immediately; copies in backups expire
 within 30 days.
 
+## OCR (optional)
+
+Scanned resumes (PDFs without a text layer) can be read by OCR on the server itself. OCR is
+off by default; without it such PDFs fail with `NO_TEXT`.
+
+1. Install the OCR binaries on the host that runs the worker:
+
+   ```bash
+   sudo apt-get install tesseract-ocr tesseract-ocr-eng poppler-utils
+   ```
+
+2. Set `IR_OCR_ENABLED=true` and restart the worker.
+
+Pages are rendered at 300 DPI and read in English (`eng`). When OCR yields fewer than
+`IR_MIN_RESUME_TEXT_CHARS` non-whitespace characters, or the binaries are missing, the
+version fails with `OCR_NO_TEXT` (a `resume.ocr_failed` event with the error class is
+logged for engine errors).
+
 ## LLM server
 
 All inference runs on a self-hosted, OpenAI-compatible server (vLLM in production, Ollama in
