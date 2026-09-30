@@ -200,6 +200,8 @@ skipped). Non-HTML, non-200, empty or larger than 2 MiB responses are skipped as
 
 For each page it stores the URL, title, collection date, the first 2,000 characters of visible
 text and the source `skill_terms`. Running it again updates the existing rows (one row per URL).
+NUL and other control characters are removed from the stored text, and a URL that fails to be
+stored is skipped without aborting the run.
 Collected text is untrusted: it is stored as plain text, links in it are never followed and
 instructions in it are never executed. Search engines are never queried.
 

@@ -10,6 +10,7 @@ from itertools import count
 import httpx
 import pytest
 from sqlalchemy import func, select
+from sqlalchemy.exc import DataError
 from sqlalchemy.orm import Session
 
 from app.knowledge import collector
@@ -314,3 +315,102 @@ def test_extract_page_falls_back_when_title_is_missing() -> None:
 
 def test_know_04_main_rejects_arguments() -> None:
     assert collector.main(["someone@example.com"]) == 2
+
+
+# --- Regression: QA finding TASK-037-1 (NUL / control characters in page content) ---
+
+QA_FIRST = ApprovedSource(
+    id="qa-nul",
+    domain="docs.qa.test",
+    urls=["https://docs.qa.test/a/hostile", "https://docs.qa.test/a/nul"],
+    skill_terms=["qa"],
+)
+QA_AFTER = ApprovedSource(
+    id="qa-after",
+    domain="other.qa2.test",
+    urls=["https://other.qa2.test/b/three"],
+    skill_terms=["qa"],
+)
+
+
+def _nul_handler(nul_response: httpx.Response) -> Handler:
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/a/nul":
+            return nul_response
+        return _default_handler(request)
+
+    return handler
+
+
+def _assert_clean_run(db: Session, result: CollectionResult, recorder: Recorder) -> None:
+    requested = [str(request.url) for request in recorder.requests]
+    assert requested == [*QA_FIRST.urls, *QA_AFTER.urls]
+    assert result.stored + result.skipped == 3
+    items = _items(db)
+    assert {"https://docs.qa.test/a/hostile", "https://other.qa2.test/b/three"} <= {
+        item.url for item in items
+    }
+    for item in items:
+        assert "\x00" not in item.title
+        assert "\x00" not in item.excerpt
+
+
+def test_know_07_page_with_literal_nul_does_not_abort_the_run(
+    db: Session, caplog: pytest.LogCaptureFixture
+) -> None:
+    nul_page = httpx.Response(
+        200,
+        content=(
+            b"<html><head><title>Nul\x00title</title></head>"
+            b"<body>before\x00after\x07bell</body></html>"
+        ),
+        headers={"content-type": "text/html; charset=utf-8"},
+    )
+    client, recorder = _client(_nul_handler(nul_page))
+    with caplog.at_level("DEBUG"), client:
+        result = collect(db, [QA_FIRST, QA_AFTER], client)
+
+    _assert_clean_run(db, result, recorder)
+    stored = {item.url: item for item in _items(db)}
+    nul_item = stored["https://docs.qa.test/a/nul"]
+    assert nul_item.title == "Nultitle"
+    assert nul_item.excerpt == "beforeafter bell"
+    assert "before" not in caplog.text
+
+
+def test_know_07_utf16_page_declared_as_utf8_does_not_abort_the_run(db: Session) -> None:
+    html = _html("Sixteen", "<p>wide text</p>")
+    utf16_page = httpx.Response(
+        200,
+        content=html.encode("utf-16-le"),
+        headers={"content-type": "text/html; charset=utf-8"},
+    )
+    client, recorder = _client(_nul_handler(utf16_page))
+    with client:
+        result = collect(db, [QA_FIRST, QA_AFTER], client)
+
+    _assert_clean_run(db, result, recorder)
+
+
+def test_know_03_storage_error_on_one_url_keeps_the_others(
+    db: Session, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    original = collector._upsert
+
+    def failing_upsert(session: Session, source: ApprovedSource, url: str, *args: object) -> None:
+        if url.endswith("/a/nul"):
+            raise DataError("INSERT ...", {"excerpt": "secret page text"}, Exception("bad"))
+        original(session, source, url, *args)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(collector, "_upsert", failing_upsert)
+    client, recorder = _client(_default_handler)
+    with caplog.at_level("DEBUG"), client:
+        result = collect(db, [QA_FIRST, QA_AFTER], client)
+
+    assert result == CollectionResult(stored=2, skipped=1)
+    assert len(recorder.requests) == 3
+    assert {item.url for item in _items(db)} == {
+        "https://docs.qa.test/a/hostile",
+        "https://other.qa2.test/b/three",
+    }
+    assert "secret page text" not in caplog.text

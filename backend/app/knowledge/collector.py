@@ -10,6 +10,7 @@ Collected content is untrusted public text: it is stored as plain text only. Not
 interpreted, and links it contains are never followed.
 """
 
+import logging
 import re
 import sys
 import uuid
@@ -21,6 +22,7 @@ from http.cookiejar import CookieJar, DefaultCookiePolicy
 import httpx
 from bs4 import BeautifulSoup
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.db import session_scope
@@ -35,6 +37,10 @@ TITLE_MAX_LENGTH = 300
 _HTML_CONTENT_TYPES = frozenset({"text/html", "application/xhtml+xml"})
 _NON_TEXT_TAGS = ("script", "style", "noscript", "template", "iframe", "svg", "object", "embed")
 _WHITESPACE_RE = re.compile(r"\s+")
+# NUL is dropped (PostgreSQL text cannot hold it; UTF-16 read as UTF-8 is full of it); other
+# C0/C1 control characters become spaces. Tab, newline and carriage return are whitespace.
+_NUL_RE = re.compile("\x00")
+_CONTROL_RE = re.compile("[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]")
 
 Clock = Callable[[], datetime]
 
@@ -73,7 +79,7 @@ def build_client(transport: httpx.BaseTransport | None = None) -> httpx.Client:
 def extract_page(html: str, fallback_title: str) -> tuple[str, str]:
     """Return ``(title, visible_text)`` of an HTML document, whitespace-normalized."""
     # The stdlib parser does not resolve external entities or fetch anything.
-    soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(_NUL_RE.sub("", html), "html.parser")
     title_tag = soup.find("title")
     title = _normalize(title_tag.get_text(" ")) if title_tag is not None else ""
     for tag in soup(["title", *_NON_TEXT_TAGS]):
@@ -91,6 +97,7 @@ def collect(
     """Fetch every registry URL and upsert it into ``knowledge_items``. Does not commit."""
     stored = skipped = 0
     for source in sources:
+        source_stored = 0
         for url in source.urls:
             try:
                 title, text = _fetch(client, source, url)
@@ -103,9 +110,23 @@ def collect(
                     reason=skip.reason,
                 )
                 continue
-            _upsert(db, source, url, title, text[:EXCERPT_MAX_LENGTH], clock())
-            stored += 1
-            log_event("knowledge.collect_stored", source_id=source.id, host=_host(url))
+            try:
+                # A savepoint per URL: a storage error discards only this item, not the run.
+                with db.begin_nested():
+                    _upsert(db, source, url, title, text[:EXCERPT_MAX_LENGTH], clock())
+            except SQLAlchemyError:
+                skipped += 1
+                # The exception carries page content in its parameters: never log it.
+                log_event(
+                    "knowledge.collect_skipped",
+                    source_id=source.id,
+                    host=_host(url),
+                    reason="store_error",
+                )
+                continue
+            source_stored += 1
+        stored += source_stored
+        log_event("knowledge.collected", source_id=source.id, items=source_stored)
     db.flush()
     return CollectionResult(stored=stored, skipped=skipped)
 
@@ -187,6 +208,7 @@ def _upsert(
 
 
 def _normalize(text: str) -> str:
+    text = _CONTROL_RE.sub(" ", _NUL_RE.sub("", text))
     return _WHITESPACE_RE.sub(" ", text).strip()
 
 
@@ -204,6 +226,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         print("usage: python -m app.knowledge.collector (takes no arguments)", file=sys.stderr)
         return 2
     configure_logging()
+    # httpx logs every request URL at INFO; collection events are logged by this module only.
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
     sources = load_configured_sources()
     with build_client() as client, session_scope() as db:
         result = collect(db, sources, client)
