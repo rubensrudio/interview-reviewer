@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-09-30T17:24:34 · integradora `feature/initial_feature-integration` · baseline `develop@4fb1ebc` (2026-09-30)
+Atualizado em 2026-09-30T17:33:29 · integradora `feature/initial_feature-integration` · baseline `develop@4fb1ebc` (2026-09-30)
 
 ## Baseline
 
@@ -30,7 +30,7 @@ Atualizado em 2026-09-30T17:24:34 · integradora `feature/initial_feature-integr
 | 8 | TASK-023 | ✅ | G1 | RIGOROSO: APROVADO |
 | 9 | TASK-007, TASK-025, TASK-050, TASK-064 | ✅ | — | NAO_INVOCADO |
 | 10 | TASK-008, TASK-010, TASK-065, TASK-066 | ✅ | G5 | PADRAO: APROVADO |
-| 11 | TASK-012 | — | — | — |
+| 11 | TASK-012 | ✅ | G1, G5 | EXAUSTIVO: APROVADO |
 | 12 | TASK-013 | — | — | — |
 | 13 | TASK-015 | — | — | — |
 | 14 | TASK-016 | — | — | — |
@@ -80,6 +80,7 @@ Atualizado em 2026-09-30T17:24:34 · integradora `feature/initial_feature-integr
 | 3 | 6 | TASK-004, TASK-006, TASK-027, TASK-036 | `feature/initial_feature-phase-3` → `feature/initial_feature-phase-2` | https://github.com/rubensrudio/interview-reviewer/pull/3 |
 | 4 | 7 | TASK-014 | `feature/initial_feature-phase-4` → `feature/initial_feature-phase-3` | https://github.com/rubensrudio/interview-reviewer/pull/4 |
 | 5 | 8 | TASK-023 | `feature/initial_feature-phase-5` → `feature/initial_feature-phase-4` | https://github.com/rubensrudio/interview-reviewer/pull/5 |
+| 6 | 9, 10 | TASK-007, TASK-025, TASK-050, TASK-064, TASK-008, TASK-010, TASK-065, TASK-066 | `feature/initial_feature-phase-6` → `feature/initial_feature-phase-5` | https://github.com/rubensrudio/interview-reviewer/pull/6 |
 
 ## Tasks
 
@@ -96,7 +97,7 @@ Atualizado em 2026-09-30T17:24:34 · integradora `feature/initial_feature-integr
 | TASK-009 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-010 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-011 | ✅ APROVADA | crítico | 0/0/0 |  |
-| TASK-012 |  PENDENTE | crítico | 0/0/0 |  |
+| TASK-012 | ✅ APROVADA | crítico | 0/0/1 |  |
 | TASK-013 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-014 | ✅ APROVADA | alto | 0/0/0 |  |
 | TASK-015 |  PENDENTE | crítico | 0/0/0 |  |
@@ -183,8 +184,8 @@ Atualizado em 2026-09-30T17:24:34 · integradora `feature/initial_feature-integr
 
 ## Métricas
 
-- Aprovadas: 22/95 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 21/22
-- Ondas fechadas: 10 · QA semântico invocado em 6
+- Aprovadas: 23/95 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 21/23
+- Ondas fechadas: 11 · QA semântico invocado em 7
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 0
