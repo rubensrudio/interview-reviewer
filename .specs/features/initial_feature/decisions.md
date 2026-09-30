@@ -303,3 +303,10 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-engineer)**: consistente 0.51 (dúvida); muda contrato 0.12.
 - **Decisão (humano)**: A.
 - **Impacto**: fluxo de aceite igual ao primeiro login. **Requer atualização de spec/plan**: CT-18 (semântica de `needs_terms`).
+
+### LAC-36 — Token `google_link` sobrevive a senha errada em `complete_link` (TASK-021, implementação)
+- **Etapa**: /implement, onda 18, review da TASK-021
+- **Opções**: A) manter o token reutilizável após senha errada, limitado pelo throttle por conta (compartilhado com login local) e pelo TTL; B) consumir o token em qualquer tentativa.
+- **Jev (hm-reviewer)**: token reutilizável é vulnerabilidade explorável? 0.36 (dúvida).
+- **Decisão (humano)**: A.
+- **Impacto**: sem mudança de código. **Requer atualização de spec**: AUTH-12 / LAC-15 devem explicitar que o link de vínculo sobrevive a senha errada até o TTL.
