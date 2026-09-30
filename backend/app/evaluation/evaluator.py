@@ -11,7 +11,8 @@ instructions inside the answer are data to be graded, not orders (EVAL-16). The 
 then validated without the model: the score must be an integer from 0 to 4 and the
 justification must not be empty (EVAL-02), otherwise the call is retried up to
 ``llm_max_attempts`` times before ``EvaluationUnavailable`` is raised. Evidence quotes that do
-not appear literally in the answer are removed.
+not appear literally in the answer are removed; kept quotes are returned as the exact span of
+the (sanitized) answer they match.
 
 Answers, prompts and model output are never logged; only scores and failure codes are.
 """
@@ -154,12 +155,42 @@ def _build_user_prompt(inp: EvaluationInput, answer: str) -> str:
     return "\n\n".join(parts)
 
 
-def _literal_quotes(quotes: list[str], normalized_answer: str) -> list[str]:
+def _whitespace_index(text: str) -> tuple[str, list[int]]:
+    """Collapse whitespace runs of ``text`` and map each kept char to its offset in ``text``."""
+    chars: list[str] = []
+    offsets: list[int] = []
+    for offset, char in enumerate(text):
+        if char.isspace():
+            if chars and chars[-1] != " ":
+                chars.append(" ")
+                offsets.append(offset)
+            continue
+        chars.append(char)
+        offsets.append(offset)
+    if chars and chars[-1] == " ":
+        chars.pop()
+        offsets.pop()
+    return "".join(chars), offsets
+
+
+def _literal_quotes(quotes: list[str], answer: str) -> list[str]:
+    """Return, for each quote found in ``answer``, the original span of the answer.
+
+    Matching tolerates whitespace differences, but the returned text is always an exact
+    substring of ``answer`` (line breaks and repeated spaces preserved).
+    """
+    indexed, offsets = _whitespace_index(answer)
     kept: list[str] = []
     for quote in quotes:
         normalized = _normalize(quote)
-        if normalized and normalized in normalized_answer and normalized not in kept:
-            kept.append(normalized)
+        if not normalized:
+            continue
+        start = indexed.find(normalized)
+        if start < 0:
+            continue
+        span = answer[offsets[start] : offsets[start + len(normalized) - 1] + 1]
+        if span not in kept:
+            kept.append(span)
     return kept
 
 
@@ -205,7 +236,7 @@ def evaluate_answer(llm: LLMClient, inp: EvaluationInput) -> EvaluationResult:
         return EvaluationResult(
             score=output.score,
             justification=justification,
-            evidence_quotes=_literal_quotes(output.evidence_quotes, normalized_answer),
+            evidence_quotes=_literal_quotes(output.evidence_quotes, answer),
             gap_explanation=gap,
         )
 

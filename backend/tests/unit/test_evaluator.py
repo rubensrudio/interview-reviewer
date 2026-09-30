@@ -125,6 +125,26 @@ def test_eval_01_quotes_not_found_literally_in_the_answer_are_removed() -> None:
     result = evaluate_answer(llm, _input())
 
     assert result.evidence_quotes == ["typically as a B-tree"]
+    assert all(quote in ANSWER for quote in result.evidence_quotes)
+
+
+def test_eval_01_quotes_keep_the_original_span_of_an_answer_with_newline_and_double_space() -> None:
+    answer = "An index is  typically as a\nB-tree.\n\nWrites  get slower  because it is updated."
+    llm = _llm(
+        _verdict(
+            quotes=[
+                "typically as a B-tree",
+                "Writes get slower",
+                "typically as a B-tree",
+                "invented quote",
+            ]
+        )
+    )
+
+    result = evaluate_answer(llm, _input(answer=answer))
+
+    assert result.evidence_quotes == ["typically as a\nB-tree", "Writes  get slower"]
+    assert all(quote in answer for quote in result.evidence_quotes)
 
 
 def test_eval_01_blank_gap_explanation_becomes_none() -> None:
@@ -295,6 +315,7 @@ def test_eval_01_control_characters_are_removed_before_the_llm_and_from_output()
     assert "\x00" not in result.justification and "\x07" not in result.justification
     assert result.gap_explanation is not None and "\x00" not in result.gap_explanation
     assert result.evidence_quotes == ["B-tree"]
+    assert all(quote in "It uses a B-tree  index." for quote in result.evidence_quotes)
 
 
 def test_eval_01_answer_and_prompt_are_never_logged(caplog: pytest.LogCaptureFixture) -> None:
