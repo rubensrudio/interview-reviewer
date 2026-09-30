@@ -88,3 +88,14 @@ def register(kind: str, handler: JobHandler) -> None:
 def register_periodic(name: str, every_seconds: int, fn: PeriodicFn) -> None:
     """Register ``fn`` to run every ``every_seconds`` in the default registry."""
     default_registry.register_periodic(name, every_seconds, fn)
+
+
+def _register_domain_handlers() -> None:
+    """Register the domain job handlers in the default registry used by the worker."""
+    # Imported here: the domain modules import the job queue, which this module also uses.
+    from app.resumes.processing import RESUME_PROCESS_JOB, process_resume
+
+    register(RESUME_PROCESS_JOB, process_resume)
+
+
+_register_domain_handlers()
