@@ -22,9 +22,10 @@ from app.models.knowledge import KnowledgeItem, SourceRef
 SEARCH_CONFIG = "english"
 SKILL_MAX_LENGTH = 200
 MAX_LIMIT = 50
-# NUL is dropped (PostgreSQL text cannot hold it); other C0/C1 control characters become spaces.
+# NUL is dropped (PostgreSQL text cannot hold it); other C0/C1 control characters and lone
+# surrogates (category Cs, which cannot be encoded as UTF-8) become spaces.
 _NUL_RE = re.compile("\x00")
-_CONTROL_RE = re.compile("[\x01-\x1f\x7f-\x9f]")
+_CONTROL_RE = re.compile("[\x01-\x1f\x7f-\x9f\ud800-\udfff]")
 
 
 def search_for_skill(db: Session, skill: str, limit: int = 3) -> list[SourceRef]:

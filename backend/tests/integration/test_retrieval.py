@@ -163,3 +163,18 @@ def test_oversized_skill_is_truncated(db: Session) -> None:
     assert len(search_for_skill(db, "x or Python")) == 1
     # The OR clause lies past the length limit, so it is cut off before querying.
     assert search_for_skill(db, "x" * SKILL_MAX_LENGTH + " or Python") == []
+
+
+@pytest.mark.parametrize("skill", ["\ud800", "\udfff\ud800"])
+def test_know_06_lone_surrogate_only_skill_returns_empty_list(db: Session, skill: str) -> None:
+    _add(db)
+
+    assert search_for_skill(db, skill) == []
+
+
+def test_know_06_lone_surrogate_inside_valid_skill_is_sanitized(db: Session) -> None:
+    _add(db)
+
+    assert [ref.url for ref in search_for_skill(db, "Python\ud800")] == [
+        "https://docs.python.org/3/library/asyncio.html"
+    ]
