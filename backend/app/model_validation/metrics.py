@@ -26,11 +26,15 @@ def _normalize_skills(skills: Sequence[str]) -> set[str]:
 
 
 def extraction_f1(expected: list[str], got: list[str]) -> float:
-    """F1 between expected and extracted skill names (case/space-insensitive sets)."""
+    """F1 between expected and extracted skill names (case/space-insensitive sets).
+
+    An empty ``got`` with a non-empty ``expected`` is a measured result (0.0).
+    """
     expected_set = _normalize_skills(expected)
     got_set = _normalize_skills(got)
-    if not expected_set and not got_set:
-        raise ValueError("expected and got must not both be empty")
+    if not expected_set:
+        # A case without ground truth is a malformed dataset entry (LAC-29).
+        raise ValueError("expected must not be empty")
     true_positives = len(expected_set & got_set)
     if true_positives == 0:
         return 0.0

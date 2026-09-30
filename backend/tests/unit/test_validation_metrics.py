@@ -34,6 +34,16 @@ def test_model_02_extraction_f1_nothing_extracted_is_zero() -> None:
     assert extraction_f1(["python"], []) == 0.0
 
 
+def test_model_02_extraction_f1_empty_expected_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        extraction_f1([], ["python"])
+
+
+def test_model_02_extraction_f1_blank_expected_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        extraction_f1(["  "], ["python"])
+
+
 def test_model_02_score_agreement() -> None:
     assert score_agreement([(3, 3), (2, 4)]) == ScoreAgreement(
         exact=0.5, within_one=0.5, mae=1.0
