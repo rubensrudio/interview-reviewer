@@ -26,7 +26,7 @@ from app.auth.login import login_local
 from app.auth.password_reset import request_password_reset, reset_password
 from app.auth.registration import register_local, resend_verification, verify_email
 from app.auth.sessions import create_auth_session, revoke_auth_session
-from app.errors import VALIDATION_ERROR, AppError
+from app.errors import CSRF_FAILED, VALIDATION_ERROR, AppError
 from app.legal.consent import has_current_consent
 from app.models.account import User
 
@@ -188,13 +188,27 @@ def resend(body: EmailRequest, db: DbSession) -> MessageResponse:
     return MessageResponse(message=RESEND_MESSAGE)
 
 
+def _revoke_received_session(db: DbSession, request: Request) -> None:
+    """Revoke the session of the received cookie (if any) before a new one is issued.
+
+    This is hygiene, not the fixation defence: create_auth_session always generates a fresh
+    secret. When the CSRF check fails, ownership of the old session is not proven, so it is
+    left to expire by TTL instead of blocking a login with valid credentials (AUTH-05). The
+    check raises before any write, so nothing is left pending. The cookie-clearing headers go
+    to a throwaway response; the new cookies replace the old ones.
+    """
+    try:
+        revoke_auth_session(db, request, Response())
+    except AppError as error:
+        if error.code != CSRF_FAILED:
+            raise
+
+
 @router.post("/login")
 def login(body: LoginRequest, request: Request, response: Response, db: DbSession) -> LoginResponse:
     # Nothing may be pending before login_local: it commits on the failure path (CT-15).
     user = login_local(db, body.email, body.password, _client_key(request))
-    # Rotate: the session of the received cookie (if any) is revoked before a new one is
-    # issued. Its cookie-clearing headers are discarded; the new cookies replace them.
-    revoke_auth_session(db, request, Response())
+    _revoke_received_session(db, request)
     create_auth_session(db, user, response)
     db.commit()
     return LoginResponse(user=_me(user))

@@ -372,6 +372,31 @@ def test_auth_90_login_passes_raw_client_ip_as_client_key(
     assert seen == ["testclient"]
 
 
+@pytest.mark.parametrize("xsrf", ["none", "wrong"])
+def test_auth_05_login_with_stale_cookie_and_no_valid_xsrf_still_signs_in(
+    client: TestClient, db: Session, xsrf: str
+) -> None:
+    user = _make_user(db)
+    assert _login(client, user.email_normalized).status_code == 200
+    stale = client.cookies[SESSION_COOKIE]
+    del client.cookies[XSRF_COOKIE]
+    headers = {XSRF_HEADER: "0" * 64} if xsrf == "wrong" else {}
+
+    response = _post(
+        client,
+        "/api/auth/login",
+        {"email": user.email_normalized, "password": GOOD_PASSWORD},
+        headers,
+    )
+
+    assert response.status_code == 200
+    assert response.cookies[SESSION_COOKIE] != stale
+    assert response.cookies[XSRF_COOKIE]
+    # Ownership of the stale session was not proven, so it is left to expire by TTL.
+    assert _session_row(db, stale).revoked_at is None
+    assert client.get("/api/auth/me").status_code == 200
+
+
 def test_auth_06_login_rotates_the_session_of_the_received_cookie(
     client: TestClient, db: Session
 ) -> None:
