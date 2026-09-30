@@ -1,0 +1,4311 @@
+{
+ "versao": 2,
+ "feature": "initial_feature",
+ "gerado_em": "2026-09-30T14:19:55",
+ "hashes": {
+  "plan": "d2490da6dbc9e167",
+  "tasks": "1aa3d0caf1bf27b5"
+ },
+ "comandos": [
+  {
+   "alvo": "setup",
+   "dir": "backend",
+   "cmd": "uv sync --frozen",
+   "relatorio": null
+  },
+  {
+   "alvo": "lint",
+   "dir": "backend",
+   "cmd": "uv run ruff check . --output-format=concise",
+   "relatorio": null
+  },
+  {
+   "alvo": "typecheck",
+   "dir": "backend",
+   "cmd": "uv run mypy app",
+   "relatorio": null
+  },
+  {
+   "alvo": "test",
+   "dir": "backend",
+   "cmd": "uv run pytest -q",
+   "relatorio": "reports/junit.xml"
+  },
+  {
+   "alvo": "test_related",
+   "dir": "backend",
+   "cmd": "uv run pytest -q {files}",
+   "relatorio": "reports/junit.xml"
+  },
+  {
+   "alvo": "build",
+   "dir": "backend",
+   "cmd": "uv build",
+   "relatorio": null
+  },
+  {
+   "alvo": "setup",
+   "dir": "frontend",
+   "cmd": "npm ci",
+   "relatorio": null
+  },
+  {
+   "alvo": "lint",
+   "dir": "frontend",
+   "cmd": "npx ng lint",
+   "relatorio": null
+  },
+  {
+   "alvo": "typecheck",
+   "dir": "frontend",
+   "cmd": "npx tsc --noEmit -p tsconfig.app.json",
+   "relatorio": null
+  },
+  {
+   "alvo": "test",
+   "dir": "frontend",
+   "cmd": "npx ng test --watch=false",
+   "relatorio": "reports/junit.xml"
+  },
+  {
+   "alvo": "test_related",
+   "dir": "frontend",
+   "cmd": "npx ng test --watch=false {include}",
+   "relatorio": "reports/junit.xml"
+  },
+  {
+   "alvo": "e2e",
+   "dir": "frontend",
+   "cmd": "npx playwright test {files}",
+   "relatorio": "reports/e2e-junit.xml"
+  },
+  {
+   "alvo": "e2e_arquivo",
+   "dir": ".",
+   "cmd": "frontend/e2e/regressao/{nome}.spec.ts",
+   "relatorio": null
+  },
+  {
+   "alvo": "build",
+   "dir": "frontend",
+   "cmd": "npx ng build",
+   "relatorio": null
+  }
+ ],
+ "historias_p1": {
+  "P1: Conta e acesso": [
+   "AUTH-01",
+   "AUTH-02",
+   "AUTH-03",
+   "AUTH-04",
+   "AUTH-05",
+   "AUTH-06",
+   "AUTH-07",
+   "AUTH-08",
+   "AUTH-09",
+   "AUTH-10",
+   "AUTH-11",
+   "AUTH-12",
+   "AUTH-13",
+   "AUTH-14",
+   "AUTH-15",
+   "AUTH-16",
+   "AUTH-17",
+   "AUTH-90",
+   "AUTH-91",
+   "AUTH-92",
+   "AUTH-93",
+   "AUTH-94",
+   "AUTH-95"
+  ],
+  "P1: Envio e interpretação de currículo": [
+   "CV-01",
+   "CV-02",
+   "CV-03",
+   "CV-04",
+   "CV-05",
+   "CV-06",
+   "CV-07",
+   "CV-08",
+   "CV-09",
+   "CV-10",
+   "CV-11",
+   "CV-12",
+   "CV-13",
+   "CV-14",
+   "CV-90",
+   "CV-91",
+   "CV-92",
+   "CV-93",
+   "CV-94",
+   "CV-95",
+   "CV-96"
+  ],
+  "P1: Requisitos da vaga e plano da entrevista": [
+   "PLAN-01",
+   "PLAN-02",
+   "PLAN-03",
+   "PLAN-04",
+   "PLAN-05",
+   "PLAN-06",
+   "PLAN-07",
+   "PLAN-08",
+   "PLAN-09",
+   "PLAN-10",
+   "PLAN-11",
+   "PLAN-12",
+   "PLAN-13",
+   "PLAN-14",
+   "PLAN-15",
+   "PLAN-90",
+   "PLAN-91",
+   "PLAN-92",
+   "PLAN-93",
+   "PLAN-94"
+  ],
+  "P1: Entrevista sequencial com contador": [
+   "INTV-01",
+   "INTV-02",
+   "INTV-03",
+   "INTV-04",
+   "INTV-05",
+   "INTV-06",
+   "INTV-07",
+   "INTV-08",
+   "INTV-09",
+   "INTV-10",
+   "INTV-11",
+   "INTV-12",
+   "INTV-13",
+   "INTV-14",
+   "INTV-90",
+   "INTV-91",
+   "INTV-92",
+   "INTV-93"
+  ],
+  "P1: Avaliação e relatório": [
+   "EVAL-01",
+   "EVAL-02",
+   "EVAL-03",
+   "EVAL-04",
+   "EVAL-05",
+   "EVAL-06",
+   "EVAL-07",
+   "EVAL-08",
+   "EVAL-09",
+   "EVAL-10",
+   "EVAL-11",
+   "EVAL-12",
+   "EVAL-13",
+   "EVAL-14",
+   "EVAL-15",
+   "EVAL-16",
+   "EVAL-90",
+   "EVAL-91",
+   "EVAL-92",
+   "EVAL-93"
+  ],
+  "P1: Histórico e controle dos dados": [
+   "DATA-01",
+   "DATA-02",
+   "DATA-03",
+   "DATA-04",
+   "DATA-05",
+   "DATA-06",
+   "DATA-07",
+   "DATA-08",
+   "DATA-09",
+   "DATA-90",
+   "DATA-91",
+   "DATA-92",
+   "DATA-93"
+  ],
+  "P1: LLM local e fontes técnicas rastreáveis": [
+   "KNOW-01",
+   "KNOW-02",
+   "KNOW-03",
+   "KNOW-04",
+   "KNOW-05",
+   "KNOW-06",
+   "KNOW-07",
+   "KNOW-08",
+   "KNOW-90",
+   "KNOW-91",
+   "KNOW-92"
+  ],
+  "P1: Validação do modelo": [
+   "MODEL-01",
+   "MODEL-02",
+   "MODEL-03",
+   "MODEL-04",
+   "MODEL-05",
+   "MODEL-90"
+  ]
+ },
+ "tasks": {
+  "TASK-001": {
+   "titulo": "Create README and local docker-compose",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "infra",
+   "agente": "hm-engineer",
+   "testes": "none",
+   "depende_de": [],
+   "producao": [
+    "README.md",
+    "docker-compose.yml"
+   ],
+   "teste": [],
+   "wiring": [],
+   "contratos": [],
+   "ancora": [],
+   "requisitos": [
+    "KNOW-02",
+    "DATA-06"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-002": {
+   "titulo": "Scaffold FastAPI backend package",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-001"
+   ],
+   "producao": [
+    "backend/app/main.py",
+    "backend/pyproject.toml"
+   ],
+   "teste": [
+    "backend/tests/unit/test_health.py"
+   ],
+   "wiring": [
+    "backend/uv.lock",
+    "backend/app/__init__.py",
+    ".gitignore",
+    "README.md"
+   ],
+   "contratos": [
+    "CT-65"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "KNOW-01"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-003": {
+   "titulo": "Add typed application settings",
+   "tipo": "config",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-002"
+   ],
+   "producao": [
+    "backend/app/config.py",
+    "backend/.env.example"
+   ],
+   "teste": [
+    "backend/tests/unit/test_config.py"
+   ],
+   "wiring": [
+    "README.md"
+   ],
+   "contratos": [
+    "CT-1"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-01",
+    "CV-04",
+    "INTV-05",
+    "INTV-13",
+    "KNOW-01"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-004": {
+   "titulo": "Set up database session and Alembic",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-003"
+   ],
+   "producao": [
+    "backend/app/db.py",
+    "backend/alembic/env.py"
+   ],
+   "teste": [
+    "backend/tests/conftest.py",
+    "backend/tests/integration/test_db.py"
+   ],
+   "wiring": [
+    "backend/alembic.ini",
+    "backend/alembic/script.py.mako",
+    "backend/app/models/__init__.py",
+    "README.md"
+   ],
+   "contratos": [
+    "CT-1",
+    "CT-2"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "DATA-05",
+    "DATA-06"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-005": {
+   "titulo": "Add error catalog and JSON error envelope",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-002"
+   ],
+   "producao": [
+    "backend/app/errors.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_errors.py"
+   ],
+   "wiring": [
+    "backend/app/main.py"
+   ],
+   "contratos": [
+    "CT-3"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-05",
+    "AUTH-16"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-006": {
+   "titulo": "Add redacting structured logging and metrics events",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-003"
+   ],
+   "producao": [
+    "backend/app/logging_setup.py",
+    "backend/app/observability.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_logging_setup.py",
+    "backend/tests/unit/test_observability.py"
+   ],
+   "wiring": [
+    "backend/app/main.py"
+   ],
+   "contratos": [
+    "CT-1",
+    "CT-4"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-95"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-007": {
+   "titulo": "Create job table and migration 0001",
+   "tipo": "migration",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-004"
+   ],
+   "producao": [
+    "backend/app/models/job.py",
+    "backend/alembic/versions/0001_jobs.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_job_model.py"
+   ],
+   "wiring": [
+    "backend/app/models/__init__.py"
+   ],
+   "contratos": [
+    "CT-2",
+    "CT-5"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EVAL-93",
+    "KNOW-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-008": {
+   "titulo": "Implement Postgres job queue",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-006",
+    "TASK-007"
+   ],
+   "producao": [
+    "backend/app/jobs/queue.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_job_queue.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-4",
+    "CT-5",
+    "CT-6"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EVAL-93",
+    "KNOW-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-009": {
+   "titulo": "Add worker loop and job handler registry",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-008"
+   ],
+   "producao": [
+    "backend/app/jobs/worker.py",
+    "backend/app/jobs/registry.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_worker.py"
+   ],
+   "wiring": [
+    "README.md"
+   ],
+   "contratos": [
+    "CT-6",
+    "CT-7"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EVAL-93",
+    "KNOW-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-010": {
+   "titulo": "Create account tables and migration 0002",
+   "tipo": "migration",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-007"
+   ],
+   "producao": [
+    "backend/app/models/account.py",
+    "backend/alembic/versions/0002_accounts.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_account_model.py"
+   ],
+   "wiring": [
+    "backend/app/models/__init__.py"
+   ],
+   "contratos": [
+    "CT-2",
+    "CT-8"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-91",
+    "AUTH-15",
+    "DATA-07"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-011": {
+   "titulo": "Implement password hashing and password policy",
+   "tipo": "lógica-negócio",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-002"
+   ],
+   "producao": [
+    "backend/app/auth/passwords.py",
+    "backend/app/auth/common_passwords.txt"
+   ],
+   "teste": [
+    "backend/tests/unit/test_passwords.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-9"
+   ],
+   "ancora": [
+    "AS-7"
+   ],
+   "requisitos": [
+    "AUTH-14"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-012": {
+   "titulo": "Implement secret tokens and one-time links",
+   "tipo": "lógica-negócio",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-005",
+    "TASK-010"
+   ],
+   "producao": [
+    "backend/app/auth/tokens.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_tokens.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-10",
+    "CT-3",
+    "CT-8"
+   ],
+   "ancora": [
+    "AS-7"
+   ],
+   "requisitos": [
+    "AUTH-03",
+    "AUTH-08",
+    "AUTH-94"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-013": {
+   "titulo": "Implement authenticated sessions and current-user dependency",
+   "tipo": "lógica-negócio",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-003",
+    "TASK-012"
+   ],
+   "producao": [
+    "backend/app/auth/sessions.py",
+    "backend/app/api/deps.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_auth_sessions.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-1",
+    "CT-10",
+    "CT-11",
+    "CT-3",
+    "CT-8"
+   ],
+   "ancora": [
+    "AS-1"
+   ],
+   "requisitos": [
+    "AUTH-06",
+    "AUTH-17",
+    "AUTH-16"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-014": {
+   "titulo": "Implement SMTP email sender and templates",
+   "tipo": "integração-externa",
+   "risco": "alto",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-003",
+    "TASK-006"
+   ],
+   "producao": [
+    "backend/app/email/sender.py",
+    "backend/app/email/templates.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_email.py"
+   ],
+   "wiring": [
+    "README.md"
+   ],
+   "contratos": [
+    "CT-1",
+    "CT-12",
+    "CT-4"
+   ],
+   "ancora": [
+    "AS-8"
+   ],
+   "requisitos": [
+    "AUTH-92",
+    "AUTH-09"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-015": {
+   "titulo": "Record terms and privacy consent",
+   "tipo": "lógica-negócio",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-003",
+    "TASK-010"
+   ],
+   "producao": [
+    "backend/app/legal/consent.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_consent.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-1",
+    "CT-13",
+    "CT-8"
+   ],
+   "ancora": [
+    "AS-5"
+   ],
+   "requisitos": [
+    "AUTH-15"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-016": {
+   "titulo": "Implement local registration and e-mail verification",
+   "tipo": "lógica-negócio",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-006",
+    "TASK-011",
+    "TASK-012",
+    "TASK-014",
+    "TASK-015"
+   ],
+   "producao": [
+    "backend/app/auth/registration.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_registration.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-10",
+    "CT-12",
+    "CT-13",
+    "CT-14",
+    "CT-4",
+    "CT-9"
+   ],
+   "ancora": [
+    "AS-1"
+   ],
+   "requisitos": [
+    "AUTH-01",
+    "AUTH-02",
+    "AUTH-03",
+    "AUTH-91",
+    "AUTH-92",
+    "AUTH-94",
+    "DATA-07"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-017": {
+   "titulo": "Implement local login, logout and login throttling",
+   "tipo": "lógica-negócio",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-013",
+    "TASK-016"
+   ],
+   "producao": [
+    "backend/app/auth/login.py",
+    "backend/app/auth/throttle.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_login.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-11",
+    "CT-14",
+    "CT-15",
+    "CT-9"
+   ],
+   "ancora": [
+    "AS-1"
+   ],
+   "requisitos": [
+    "AUTH-04",
+    "AUTH-05",
+    "AUTH-06",
+    "AUTH-90"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-018": {
+   "titulo": "Implement password reset flow",
+   "tipo": "lógica-negócio",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-013",
+    "TASK-016"
+   ],
+   "producao": [
+    "backend/app/auth/password_reset.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_password_reset.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-10",
+    "CT-11",
+    "CT-12",
+    "CT-14",
+    "CT-16",
+    "CT-9"
+   ],
+   "ancora": [
+    "AS-1"
+   ],
+   "requisitos": [
+    "AUTH-07",
+    "AUTH-08",
+    "AUTH-09",
+    "AUTH-94"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-019": {
+   "titulo": "Expose local authentication API routes",
+   "tipo": "crud-padrão",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-005",
+    "TASK-017",
+    "TASK-018"
+   ],
+   "producao": [
+    "backend/app/api/auth_local.py"
+   ],
+   "teste": [
+    "backend/tests/integration/api/test_auth_local_api.py"
+   ],
+   "wiring": [
+    "backend/app/main.py"
+   ],
+   "contratos": [
+    "CT-11",
+    "CT-14",
+    "CT-15",
+    "CT-16"
+   ],
+   "ancora": [
+    "AS-1",
+    "AS-6"
+   ],
+   "requisitos": [
+    "AUTH-01",
+    "AUTH-02",
+    "AUTH-03",
+    "AUTH-04",
+    "AUTH-05",
+    "AUTH-06",
+    "AUTH-07",
+    "AUTH-08",
+    "AUTH-14",
+    "AUTH-17",
+    "AUTH-90",
+    "AUTH-92",
+    "AUTH-94",
+    "AUTH-95"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-020": {
+   "titulo": "Implement Google OIDC client",
+   "tipo": "integração-externa",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-003",
+    "TASK-005"
+   ],
+   "producao": [
+    "backend/app/auth/google_oidc.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_google_oidc.py"
+   ],
+   "wiring": [
+    "README.md"
+   ],
+   "contratos": [
+    "CT-1",
+    "CT-17",
+    "CT-3"
+   ],
+   "ancora": [
+    "AS-1",
+    "AS-8"
+   ],
+   "requisitos": [
+    "AUTH-93",
+    "AUTH-10"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-021": {
+   "titulo": "Resolve Google sign-in and account linking",
+   "tipo": "lógica-negócio",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-013",
+    "TASK-015",
+    "TASK-016",
+    "TASK-020"
+   ],
+   "producao": [
+    "backend/app/auth/google_accounts.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_google_accounts.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-10",
+    "CT-13",
+    "CT-14",
+    "CT-17",
+    "CT-18",
+    "CT-9"
+   ],
+   "ancora": [
+    "AS-1"
+   ],
+   "requisitos": [
+    "AUTH-10",
+    "AUTH-11",
+    "AUTH-12",
+    "AUTH-13"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-022": {
+   "titulo": "Expose Google sign-in and terms acceptance routes",
+   "tipo": "crud-padrão",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-005",
+    "TASK-021"
+   ],
+   "producao": [
+    "backend/app/api/auth_google.py",
+    "backend/app/api/account.py"
+   ],
+   "teste": [
+    "backend/tests/integration/api/test_auth_google_api.py"
+   ],
+   "wiring": [
+    "backend/app/main.py"
+   ],
+   "contratos": [
+    "CT-11",
+    "CT-13",
+    "CT-17",
+    "CT-18"
+   ],
+   "ancora": [
+    "AS-1",
+    "AS-6"
+   ],
+   "requisitos": [
+    "AUTH-10",
+    "AUTH-11",
+    "AUTH-12",
+    "AUTH-13",
+    "AUTH-15",
+    "AUTH-93"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-023": {
+   "titulo": "Implement private LLM client with host allowlist",
+   "tipo": "integração-externa",
+   "risco": "alto",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-003",
+    "TASK-006"
+   ],
+   "producao": [
+    "backend/app/llm/client.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_llm_client.py",
+    "backend/tests/fakes/fake_llm.py"
+   ],
+   "wiring": [
+    "README.md"
+   ],
+   "contratos": [
+    "CT-1",
+    "CT-19",
+    "CT-4"
+   ],
+   "ancora": [
+    "AS-8"
+   ],
+   "requisitos": [
+    "KNOW-01",
+    "KNOW-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-024": {
+   "titulo": "Add untrusted-content prompt framing",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-002"
+   ],
+   "producao": [
+    "backend/app/llm/untrusted.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_untrusted.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-20"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-94",
+    "PLAN-93",
+    "EVAL-16",
+    "KNOW-07"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-025": {
+   "titulo": "Add model version identification and release gate",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-003"
+   ],
+   "producao": [
+    "backend/app/llm/model_version.py",
+    "backend/config/model_targets.yaml"
+   ],
+   "teste": [
+    "backend/tests/unit/test_model_version.py"
+   ],
+   "wiring": [
+    "backend/app/main.py",
+    "README.md"
+   ],
+   "contratos": [
+    "CT-1",
+    "CT-21",
+    "CT-56"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "MODEL-03",
+    "MODEL-04"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-026": {
+   "titulo": "Create resume table and migration 0003",
+   "tipo": "migration",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-010"
+   ],
+   "producao": [
+    "backend/app/models/resume.py",
+    "backend/alembic/versions/0003_resumes.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_resume_model.py"
+   ],
+   "wiring": [
+    "backend/app/models/__init__.py"
+   ],
+   "contratos": [
+    "CT-2",
+    "CT-22",
+    "CT-8"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-01",
+    "CV-05",
+    "CV-10"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-027": {
+   "titulo": "Implement private resume file storage",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-003"
+   ],
+   "producao": [
+    "backend/app/resumes/storage.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_storage.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-1",
+    "CT-23"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-01",
+    "DATA-04"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-028": {
+   "titulo": "Implement PDF text extraction and language check",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-002"
+   ],
+   "producao": [
+    "backend/app/resumes/pdf.py",
+    "backend/app/resumes/language.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_pdf.py",
+    "backend/tests/unit/test_language.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-24"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-02",
+    "CV-06",
+    "CV-14",
+    "CV-90",
+    "CV-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-029": {
+   "titulo": "Implement resume upload and listing service",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-005",
+    "TASK-008",
+    "TASK-026",
+    "TASK-027",
+    "TASK-028"
+   ],
+   "producao": [
+    "backend/app/resumes/service.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_resume_service.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-22",
+    "CT-23",
+    "CT-24",
+    "CT-25",
+    "CT-6"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-01",
+    "CV-02",
+    "CV-03",
+    "CV-04",
+    "CV-11",
+    "CV-13",
+    "CV-90",
+    "CV-91",
+    "CV-95"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-030": {
+   "titulo": "Implement LLM resume extraction with evidence filter",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-023",
+    "TASK-024",
+    "TASK-026"
+   ],
+   "producao": [
+    "backend/app/resumes/extraction.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_extraction.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-19",
+    "CT-20",
+    "CT-22",
+    "CT-26"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-07",
+    "CV-08",
+    "CV-09",
+    "CV-94"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-031": {
+   "titulo": "Implement asynchronous resume processing job",
+   "tipo": "lógica-negócio",
+   "risco": "alto",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-009",
+    "TASK-029",
+    "TASK-030"
+   ],
+   "producao": [
+    "backend/app/resumes/processing.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_resume_processing.py"
+   ],
+   "wiring": [
+    "backend/app/jobs/registry.py"
+   ],
+   "contratos": [
+    "CT-22",
+    "CT-23",
+    "CT-24",
+    "CT-26",
+    "CT-27",
+    "CT-4",
+    "CT-7"
+   ],
+   "ancora": [
+    "AS-3"
+   ],
+   "requisitos": [
+    "CV-05",
+    "CV-06",
+    "CV-07",
+    "CV-09",
+    "CV-14",
+    "CV-92",
+    "CV-93",
+    "CV-96",
+    "KNOW-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-032": {
+   "titulo": "Implement resume extraction editing",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-029"
+   ],
+   "producao": [
+    "backend/app/resumes/editing.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_resume_editing.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-22",
+    "CT-25",
+    "CT-28"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-10"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-033": {
+   "titulo": "Expose resume API routes",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-013",
+    "TASK-029",
+    "TASK-032"
+   ],
+   "producao": [
+    "backend/app/api/resumes.py"
+   ],
+   "teste": [
+    "backend/tests/integration/api/test_resumes_api.py"
+   ],
+   "wiring": [
+    "backend/app/main.py"
+   ],
+   "contratos": [
+    "CT-11",
+    "CT-25",
+    "CT-28"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-01",
+    "CV-02",
+    "CV-03",
+    "CV-04",
+    "CV-05",
+    "CV-07",
+    "CV-10",
+    "CV-11",
+    "CV-13",
+    "CV-90",
+    "CV-91",
+    "AUTH-16"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-034": {
+   "titulo": "Add optional OCR fallback for scanned resumes",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-031"
+   ],
+   "producao": [
+    "backend/app/resumes/ocr.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_ocr.py"
+   ],
+   "wiring": [
+    "backend/app/resumes/processing.py",
+    "README.md"
+   ],
+   "contratos": [
+    "CT-29"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "OCR-01",
+    "OCR-02"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-035": {
+   "titulo": "Create knowledge base table and migration 0004",
+   "tipo": "migration",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-026"
+   ],
+   "producao": [
+    "backend/app/models/knowledge.py",
+    "backend/alembic/versions/0004_knowledge.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_knowledge_model.py"
+   ],
+   "wiring": [
+    "backend/app/models/__init__.py"
+   ],
+   "contratos": [
+    "CT-2",
+    "CT-30"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "KNOW-03",
+    "KNOW-08"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-036": {
+   "titulo": "Load approved knowledge sources registry",
+   "tipo": "config",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-003"
+   ],
+   "producao": [
+    "backend/app/knowledge/sources.py",
+    "backend/config/approved_sources.yaml"
+   ],
+   "teste": [
+    "backend/tests/unit/test_sources.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-1",
+    "CT-31"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "KNOW-03",
+    "KNOW-04"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-037": {
+   "titulo": "Implement knowledge base collector CLI",
+   "tipo": "infra",
+   "risco": "alto",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-006",
+    "TASK-035",
+    "TASK-036"
+   ],
+   "producao": [
+    "backend/app/knowledge/collector.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_collector.py"
+   ],
+   "wiring": [
+    "README.md"
+   ],
+   "contratos": [
+    "CT-30",
+    "CT-31",
+    "CT-4"
+   ],
+   "ancora": [
+    "AS-8"
+   ],
+   "requisitos": [
+    "KNOW-03",
+    "KNOW-04",
+    "KNOW-07"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-038": {
+   "titulo": "Implement knowledge retrieval by skill",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-035"
+   ],
+   "producao": [
+    "backend/app/knowledge/retrieval.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_retrieval.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-30",
+    "CT-32"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "KNOW-05",
+    "KNOW-06",
+    "KNOW-90"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-039": {
+   "titulo": "Create interview session tables and migration 0005",
+   "tipo": "migration",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-035"
+   ],
+   "producao": [
+    "backend/app/models/interview.py",
+    "backend/alembic/versions/0005_interviews.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_interview_model.py"
+   ],
+   "wiring": [
+    "backend/app/models/__init__.py"
+   ],
+   "contratos": [
+    "CT-2",
+    "CT-22",
+    "CT-33"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "PLAN-01",
+    "PLAN-02",
+    "PLAN-10",
+    "CV-12"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-040": {
+   "titulo": "Create answers, evaluations and reports tables and migration 0006",
+   "tipo": "migration",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-039"
+   ],
+   "producao": [
+    "backend/app/models/assessment.py",
+    "backend/alembic/versions/0006_assessments.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_assessment_model.py"
+   ],
+   "wiring": [
+    "backend/app/models/__init__.py"
+   ],
+   "contratos": [
+    "CT-33",
+    "CT-34"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "INTV-06",
+    "INTV-09",
+    "EVAL-12"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-041": {
+   "titulo": "Implement interview session state machine",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-005",
+    "TASK-039"
+   ],
+   "producao": [
+    "backend/app/interviews/state_machine.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_state_machine.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-3",
+    "CT-33",
+    "CT-35"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "INTV-11",
+    "INTV-12",
+    "INTV-13",
+    "INTV-93",
+    "EVAL-12"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-042": {
+   "titulo": "Implement interview session lifecycle service",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-029",
+    "TASK-041"
+   ],
+   "producao": [
+    "backend/app/interviews/sessions.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_session_lifecycle.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-25",
+    "CT-33",
+    "CT-35",
+    "CT-36"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "PLAN-01",
+    "PLAN-02",
+    "CV-11",
+    "CV-12",
+    "INTV-12",
+    "LANG-01",
+    "LANG-02",
+    "DATA-01"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-043": {
+   "titulo": "Implement job requirements structuring",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-023",
+    "TASK-024",
+    "TASK-028",
+    "TASK-042"
+   ],
+   "producao": [
+    "backend/app/interviews/requirements.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_requirements.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-19",
+    "CT-20",
+    "CT-24",
+    "CT-33",
+    "CT-35",
+    "CT-36",
+    "CT-37"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "PLAN-03",
+    "PLAN-04",
+    "PLAN-06",
+    "PLAN-11",
+    "PLAN-15",
+    "PLAN-90",
+    "PLAN-93",
+    "PLAN-94"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-044": {
+   "titulo": "Implement requirement list editing and plan confirmation",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-008",
+    "TASK-042"
+   ],
+   "producao": [
+    "backend/app/interviews/requirement_list.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_requirement_list.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-33",
+    "CT-35",
+    "CT-36",
+    "CT-38",
+    "CT-6"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "PLAN-04",
+    "PLAN-05",
+    "PLAN-07",
+    "PLAN-08",
+    "PLAN-09",
+    "PLAN-10",
+    "PLAN-11",
+    "PLAN-91",
+    "LANG-02"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-045": {
+   "titulo": "Implement interview question generation job",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-009",
+    "TASK-023",
+    "TASK-024",
+    "TASK-038",
+    "TASK-044"
+   ],
+   "producao": [
+    "backend/app/interviews/question_generation.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_question_generation.py"
+   ],
+   "wiring": [
+    "backend/app/jobs/registry.py"
+   ],
+   "contratos": [
+    "CT-19",
+    "CT-20",
+    "CT-32",
+    "CT-33",
+    "CT-35",
+    "CT-39",
+    "CT-6",
+    "CT-7"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "PLAN-12",
+    "PLAN-13",
+    "PLAN-14",
+    "PLAN-92",
+    "KNOW-05",
+    "KNOW-06",
+    "KNOW-90",
+    "KNOW-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-046": {
+   "titulo": "Build safe interview session view",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-040",
+    "TASK-041"
+   ],
+   "producao": [
+    "backend/app/interviews/views.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_session_view.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-33",
+    "CT-34",
+    "CT-40"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "INTV-01",
+    "INTV-10",
+    "INTV-14"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-047": {
+   "titulo": "Implement idempotent answer submission",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-008",
+    "TASK-040",
+    "TASK-042"
+   ],
+   "producao": [
+    "backend/app/interviews/answers.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_answers.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-33",
+    "CT-34",
+    "CT-35",
+    "CT-36",
+    "CT-41",
+    "CT-6"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "INTV-03",
+    "INTV-04",
+    "INTV-05",
+    "INTV-06",
+    "INTV-07",
+    "INTV-09",
+    "INTV-11",
+    "INTV-90",
+    "INTV-91",
+    "INTV-93"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-048": {
+   "titulo": "Implement clarification requests",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-023",
+    "TASK-024",
+    "TASK-042"
+   ],
+   "producao": [
+    "backend/app/interviews/clarification.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_clarification.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-19",
+    "CT-20",
+    "CT-33",
+    "CT-35",
+    "CT-36",
+    "CT-42"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "INTV-08",
+    "INTV-92",
+    "INTV-93"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-049": {
+   "titulo": "Expire inactive interview sessions",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-009",
+    "TASK-041"
+   ],
+   "producao": [
+    "backend/app/interviews/expiration.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_expiration.py"
+   ],
+   "wiring": [
+    "backend/app/jobs/registry.py"
+   ],
+   "contratos": [
+    "CT-33",
+    "CT-35",
+    "CT-43",
+    "CT-7"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "INTV-13"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-050": {
+   "titulo": "Implement deterministic adherence scoring",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-002"
+   ],
+   "producao": [
+    "backend/app/evaluation/scoring.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_scoring.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-44"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EVAL-03",
+    "EVAL-04",
+    "EVAL-05",
+    "EVAL-90",
+    "EVAL-91",
+    "EVAL-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-051": {
+   "titulo": "Implement LLM answer evaluator",
+   "tipo": "lógica-negócio",
+   "risco": "alto",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-023",
+    "TASK-024",
+    "TASK-035"
+   ],
+   "producao": [
+    "backend/app/evaluation/evaluator.py",
+    "backend/app/evaluation/dont_know.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_evaluator.py",
+    "backend/tests/unit/test_dont_know.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-19",
+    "CT-20",
+    "CT-30",
+    "CT-45"
+   ],
+   "ancora": [
+    "AS-3"
+   ],
+   "requisitos": [
+    "EVAL-01",
+    "EVAL-02",
+    "EVAL-09",
+    "EVAL-10",
+    "EVAL-16",
+    "INTV-07"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-052": {
+   "titulo": "Generate reference answers for unsatisfactory items",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-051"
+   ],
+   "producao": [
+    "backend/app/evaluation/reference_answers.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_reference_answers.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-19",
+    "CT-22",
+    "CT-45",
+    "CT-46"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EVAL-06",
+    "EVAL-07",
+    "EVAL-15"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-053": {
+   "titulo": "Build immutable report content",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-025",
+    "TASK-040",
+    "TASK-050",
+    "TASK-052"
+   ],
+   "producao": [
+    "backend/app/reports/builder.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_report_builder.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-21",
+    "CT-34",
+    "CT-44",
+    "CT-46",
+    "CT-47"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EVAL-05",
+    "EVAL-08",
+    "EVAL-11",
+    "EVAL-15",
+    "EVAL-91",
+    "KNOW-08",
+    "KNOW-91",
+    "PLAN-06"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-054": {
+   "titulo": "Implement evaluation pipeline job",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-009",
+    "TASK-047",
+    "TASK-053"
+   ],
+   "producao": [
+    "backend/app/evaluation/pipeline.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_evaluation_pipeline.py"
+   ],
+   "wiring": [
+    "backend/app/jobs/registry.py"
+   ],
+   "contratos": [
+    "CT-21",
+    "CT-35",
+    "CT-44",
+    "CT-45",
+    "CT-46",
+    "CT-47",
+    "CT-48",
+    "CT-6",
+    "CT-7"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EVAL-01",
+    "EVAL-11",
+    "EVAL-12",
+    "EVAL-13",
+    "EVAL-14",
+    "EVAL-90",
+    "EVAL-93",
+    "DATA-91",
+    "KNOW-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-055": {
+   "titulo": "Expose interview session API routes",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-013",
+    "TASK-042",
+    "TASK-046"
+   ],
+   "producao": [
+    "backend/app/api/sessions.py"
+   ],
+   "teste": [
+    "backend/tests/integration/api/test_sessions_api.py"
+   ],
+   "wiring": [
+    "backend/app/main.py"
+   ],
+   "contratos": [
+    "CT-11",
+    "CT-36",
+    "CT-40"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "PLAN-01",
+    "PLAN-02",
+    "INTV-10",
+    "INTV-12",
+    "DATA-01",
+    "DATA-92",
+    "LANG-01",
+    "AUTH-16"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-056": {
+   "titulo": "Expose requirements and plan API routes",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-043",
+    "TASK-044",
+    "TASK-045",
+    "TASK-055"
+   ],
+   "producao": [
+    "backend/app/api/session_requirements.py"
+   ],
+   "teste": [
+    "backend/tests/integration/api/test_session_requirements_api.py"
+   ],
+   "wiring": [
+    "backend/app/main.py"
+   ],
+   "contratos": [
+    "CT-36",
+    "CT-37",
+    "CT-38",
+    "CT-39",
+    "CT-40"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "PLAN-03",
+    "PLAN-04",
+    "PLAN-05",
+    "PLAN-07",
+    "PLAN-08",
+    "PLAN-09",
+    "PLAN-10",
+    "PLAN-15",
+    "PLAN-90",
+    "PLAN-92",
+    "AUTH-16"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-057": {
+   "titulo": "Expose answer, clarification and evaluation retry routes",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-047",
+    "TASK-048",
+    "TASK-054",
+    "TASK-055"
+   ],
+   "producao": [
+    "backend/app/api/interview.py"
+   ],
+   "teste": [
+    "backend/tests/integration/api/test_interview_api.py"
+   ],
+   "wiring": [
+    "backend/app/main.py"
+   ],
+   "contratos": [
+    "CT-36",
+    "CT-40",
+    "CT-41",
+    "CT-42",
+    "CT-48"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "INTV-03",
+    "INTV-04",
+    "INTV-05",
+    "INTV-06",
+    "INTV-08",
+    "INTV-90",
+    "INTV-91",
+    "INTV-92",
+    "INTV-93",
+    "EVAL-14",
+    "AUTH-16"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-058": {
+   "titulo": "Expose report API route",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-054",
+    "TASK-055"
+   ],
+   "producao": [
+    "backend/app/api/reports.py"
+   ],
+   "teste": [
+    "backend/tests/integration/api/test_reports_api.py"
+   ],
+   "wiring": [
+    "backend/app/main.py"
+   ],
+   "contratos": [
+    "CT-34",
+    "CT-36"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "DATA-02",
+    "EVAL-08",
+    "EVAL-12",
+    "INTV-14",
+    "AUTH-16"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-059": {
+   "titulo": "Export completed report as PDF",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-058"
+   ],
+   "producao": [
+    "backend/app/reports/pdf_export.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_pdf_export.py",
+    "backend/tests/integration/api/test_report_export_api.py"
+   ],
+   "wiring": [
+    "backend/app/api/reports.py"
+   ],
+   "contratos": [
+    "CT-47",
+    "CT-49"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EXPT-01",
+    "EXPT-02"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-060": {
+   "titulo": "Compare two completed sessions",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-058"
+   ],
+   "producao": [
+    "backend/app/reports/compare.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_compare.py",
+    "backend/tests/integration/api/test_compare_api.py"
+   ],
+   "wiring": [
+    "backend/app/api/reports.py"
+   ],
+   "contratos": [
+    "CT-34",
+    "CT-36",
+    "CT-50"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CMP-01",
+    "CMP-02"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-061": {
+   "titulo": "Delete resume versions with minimal snapshot",
+   "tipo": "crud-padrão",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-031",
+    "TASK-033",
+    "TASK-042"
+   ],
+   "producao": [
+    "backend/app/privacy/resume_deletion.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_resume_deletion.py"
+   ],
+   "wiring": [
+    "backend/app/api/resumes.py"
+   ],
+   "contratos": [
+    "CT-23",
+    "CT-25",
+    "CT-33",
+    "CT-51"
+   ],
+   "ancora": [
+    "AS-5"
+   ],
+   "requisitos": [
+    "DATA-03",
+    "DATA-04",
+    "DATA-90",
+    "CV-96"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-062": {
+   "titulo": "Delete interview sessions",
+   "tipo": "crud-padrão",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-054",
+    "TASK-055"
+   ],
+   "producao": [
+    "backend/app/privacy/session_deletion.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_session_deletion.py"
+   ],
+   "wiring": [
+    "backend/app/api/sessions.py"
+   ],
+   "contratos": [
+    "CT-33",
+    "CT-34",
+    "CT-36",
+    "CT-52"
+   ],
+   "ancora": [
+    "AS-5"
+   ],
+   "requisitos": [
+    "DATA-05",
+    "DATA-91"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-063": {
+   "titulo": "Delete account and all user data",
+   "tipo": "crud-padrão",
+   "risco": "crítico",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-022",
+    "TASK-061",
+    "TASK-062"
+   ],
+   "producao": [
+    "backend/app/privacy/account_deletion.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_account_deletion.py"
+   ],
+   "wiring": [
+    "backend/app/api/account.py",
+    "backend/app/jobs/registry.py"
+   ],
+   "contratos": [
+    "CT-11",
+    "CT-23",
+    "CT-53",
+    "CT-6",
+    "CT-7"
+   ],
+   "ancora": [
+    "AS-5"
+   ],
+   "requisitos": [
+    "DATA-06",
+    "DATA-07",
+    "DATA-93"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-064": {
+   "titulo": "Implement validation dataset checker",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-002"
+   ],
+   "producao": [
+    "backend/app/model_validation/dataset.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_validation_dataset.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-54"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "MODEL-01",
+    "DATA-09"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-065": {
+   "titulo": "Author versioned validation dataset v1",
+   "tipo": "config",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-064"
+   ],
+   "producao": [
+    "backend/validation/v1/manifest.yaml",
+    "backend/validation/v1/cases.jsonl"
+   ],
+   "teste": [
+    "backend/tests/unit/test_validation_dataset_v1.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-54"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "MODEL-01",
+    "DATA-09",
+    "MODEL-90"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-066": {
+   "titulo": "Implement model validation metrics",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-002"
+   ],
+   "producao": [
+    "backend/app/model_validation/metrics.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_validation_metrics.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-55"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "MODEL-02",
+    "MODEL-05",
+    "MODEL-90"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-067": {
+   "titulo": "Implement model validation runner and report",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-025",
+    "TASK-030",
+    "TASK-043",
+    "TASK-051",
+    "TASK-065",
+    "TASK-066"
+   ],
+   "producao": [
+    "backend/app/model_validation/runner.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_validation_runner.py"
+   ],
+   "wiring": [
+    "README.md"
+   ],
+   "contratos": [
+    "CT-21",
+    "CT-26",
+    "CT-45",
+    "CT-54",
+    "CT-55",
+    "CT-56"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "MODEL-02",
+    "MODEL-03",
+    "MODEL-04",
+    "MODEL-05",
+    "MODEL-90"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-068": {
+   "titulo": "Add egress-restricted production deployment",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "infra",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-031",
+    "TASK-033",
+    "TASK-056",
+    "TASK-057",
+    "TASK-058"
+   ],
+   "producao": [
+    "deploy/docker-compose.prod.yml",
+    "deploy/egress-proxy/squid.conf"
+   ],
+   "teste": [
+    "backend/tests/system/test_offline_flow.py"
+   ],
+   "wiring": [
+    "README.md"
+   ],
+   "contratos": [],
+   "ancora": [],
+   "requisitos": [
+    "KNOW-01",
+    "KNOW-02"
+   ],
+   "gate": null,
+   "paralelo_seguro": false
+  },
+  "TASK-069": {
+   "titulo": "Add database and file backup routine",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "infra",
+   "agente": "hm-engineer",
+   "testes": "none",
+   "depende_de": [
+    "TASK-068"
+   ],
+   "producao": [
+    "deploy/backup/backup.sh",
+    "deploy/backup/restore.sh"
+   ],
+   "teste": [],
+   "wiring": [
+    "README.md"
+   ],
+   "contratos": [],
+   "ancora": [],
+   "requisitos": [
+    "DATA-06"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-070": {
+   "titulo": "Scaffold Angular frontend workspace",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-001"
+   ],
+   "producao": [
+    "frontend/package.json",
+    "frontend/angular.json"
+   ],
+   "teste": [
+    "frontend/src/app/app.spec.ts"
+   ],
+   "wiring": [
+    "frontend/package-lock.json",
+    "frontend/tsconfig.json",
+    "frontend/tsconfig.app.json",
+    "frontend/tsconfig.spec.json",
+    "frontend/vitest-base.config.ts",
+    "frontend/eslint.config.js",
+    "frontend/playwright.config.ts",
+    "frontend/proxy.conf.json",
+    "frontend/src/main.ts",
+    "frontend/src/index.html",
+    "frontend/src/styles.scss",
+    "frontend/src/app/app.ts",
+    "frontend/src/app/app.html",
+    "frontend/src/app/app.config.ts",
+    "frontend/src/app/app.routes.ts",
+    ".gitignore",
+    "README.md"
+   ],
+   "contratos": [],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-17"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-071": {
+   "titulo": "Add API error model and auth redirect interceptor",
+   "tipo": "lógica-negócio",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-070"
+   ],
+   "producao": [
+    "frontend/src/app/core/http/api-error.ts",
+    "frontend/src/app/core/http/auth-interceptor.ts"
+   ],
+   "teste": [
+    "frontend/src/app/core/http/api-error.spec.ts",
+    "frontend/src/app/core/http/auth-interceptor.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.config.ts"
+   ],
+   "contratos": [
+    "CT-57"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-17"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-072": {
+   "titulo": "Add auth API client and route guards",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-071"
+   ],
+   "producao": [
+    "frontend/src/app/core/auth/auth-api.ts",
+    "frontend/src/app/core/auth/auth-guards.ts"
+   ],
+   "teste": [
+    "frontend/src/app/core/auth/auth-api.spec.ts",
+    "frontend/src/app/core/auth/auth-guards.spec.ts"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-57",
+    "CT-58"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-17",
+    "AUTH-06",
+    "AUTH-10"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-073": {
+   "titulo": "Add authenticated app shell and navigation",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-072"
+   ],
+   "producao": [
+    "frontend/src/app/layout/shell.ts",
+    "frontend/src/app/layout/shell.html"
+   ],
+   "teste": [
+    "frontend/src/app/layout/shell.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-58"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-06",
+    "AUTH-17"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-074": {
+   "titulo": "Add shared confirmation dialog",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-070"
+   ],
+   "producao": [
+    "frontend/src/app/shared/confirm-dialog.ts",
+    "frontend/src/app/shared/confirm-dialog.html"
+   ],
+   "teste": [
+    "frontend/src/app/shared/confirm-dialog.spec.ts"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-59"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "DATA-03",
+    "INTV-12",
+    "DATA-06"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-075": {
+   "titulo": "Build registration page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-072"
+   ],
+   "producao": [
+    "frontend/src/app/features/auth/register-page.ts",
+    "frontend/src/app/features/auth/register-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/auth/register-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-57",
+    "CT-58"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-01",
+    "AUTH-02",
+    "AUTH-14",
+    "AUTH-15",
+    "AUTH-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-076": {
+   "titulo": "Build login page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-072"
+   ],
+   "producao": [
+    "frontend/src/app/features/auth/login-page.ts",
+    "frontend/src/app/features/auth/login-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/auth/login-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-57",
+    "CT-58"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-04",
+    "AUTH-05",
+    "AUTH-90",
+    "AUTH-93",
+    "AUTH-10"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-077": {
+   "titulo": "Build e-mail verification page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-072"
+   ],
+   "producao": [
+    "frontend/src/app/features/auth/verify-email-page.ts",
+    "frontend/src/app/features/auth/verify-email-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/auth/verify-email-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-57",
+    "CT-58"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-03",
+    "AUTH-94",
+    "AUTH-04"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-078": {
+   "titulo": "Build forgot password page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-072"
+   ],
+   "producao": [
+    "frontend/src/app/features/auth/forgot-password-page.ts",
+    "frontend/src/app/features/auth/forgot-password-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/auth/forgot-password-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-57",
+    "CT-58"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-07",
+    "AUTH-09"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-079": {
+   "titulo": "Build reset password page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-072"
+   ],
+   "producao": [
+    "frontend/src/app/features/auth/reset-password-page.ts",
+    "frontend/src/app/features/auth/reset-password-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/auth/reset-password-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-57",
+    "CT-58"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-08",
+    "AUTH-14",
+    "AUTH-94"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-080": {
+   "titulo": "Build Google account link page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-072"
+   ],
+   "producao": [
+    "frontend/src/app/features/auth/link-google-page.ts",
+    "frontend/src/app/features/auth/link-google-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/auth/link-google-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-57",
+    "CT-58"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-11",
+    "AUTH-12"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-081": {
+   "titulo": "Build terms acceptance page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-072"
+   ],
+   "producao": [
+    "frontend/src/app/features/auth/accept-terms-page.ts",
+    "frontend/src/app/features/auth/accept-terms-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/auth/accept-terms-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-57",
+    "CT-58"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "AUTH-10",
+    "AUTH-15"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-082": {
+   "titulo": "Build privacy policy and terms pages",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-070"
+   ],
+   "producao": [
+    "frontend/src/app/features/legal/privacy-page.ts",
+    "frontend/src/app/features/legal/terms-page.ts"
+   ],
+   "teste": [
+    "frontend/src/app/features/legal/privacy-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [],
+   "ancora": [],
+   "requisitos": [
+    "DATA-08"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-083": {
+   "titulo": "Add resume API client",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-071"
+   ],
+   "producao": [
+    "frontend/src/app/features/resumes/resume-api.ts"
+   ],
+   "teste": [
+    "frontend/src/app/features/resumes/resume-api.spec.ts"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-57",
+    "CT-60"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-13",
+    "CV-01"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-084": {
+   "titulo": "Build resume list page with upload and deletion",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-073",
+    "TASK-074",
+    "TASK-083"
+   ],
+   "producao": [
+    "frontend/src/app/features/resumes/resume-list-page.ts",
+    "frontend/src/app/features/resumes/resume-list-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/resumes/resume-list-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-59",
+    "CT-60"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-01",
+    "CV-02",
+    "CV-03",
+    "CV-04",
+    "CV-05",
+    "CV-06",
+    "CV-13",
+    "CV-14",
+    "CV-90",
+    "CV-91",
+    "CV-93",
+    "DATA-03"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-085": {
+   "titulo": "Build resume extraction review page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-073",
+    "TASK-083"
+   ],
+   "producao": [
+    "frontend/src/app/features/resumes/resume-detail-page.ts",
+    "frontend/src/app/features/resumes/resume-detail-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/resumes/resume-detail-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-60"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-07",
+    "CV-10"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-086": {
+   "titulo": "Add interview session API client",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-071"
+   ],
+   "producao": [
+    "frontend/src/app/features/sessions/session-api.ts"
+   ],
+   "teste": [
+    "frontend/src/app/features/sessions/session-api.spec.ts"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-57",
+    "CT-61"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "INTV-01",
+    "PLAN-01"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-087": {
+   "titulo": "Build new interview page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-073",
+    "TASK-083",
+    "TASK-086"
+   ],
+   "producao": [
+    "frontend/src/app/features/sessions/new-session-page.ts",
+    "frontend/src/app/features/sessions/new-session-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/sessions/new-session-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-60",
+    "CT-61"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CV-11",
+    "PLAN-01",
+    "PLAN-02",
+    "LANG-01",
+    "LANG-02"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-088": {
+   "titulo": "Build requirement list editor component",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-086"
+   ],
+   "producao": [
+    "frontend/src/app/features/sessions/requirement-list-editor.ts",
+    "frontend/src/app/features/sessions/requirement-list-editor.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/sessions/requirement-list-editor.spec.ts"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-61",
+    "CT-62"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "PLAN-03",
+    "PLAN-04",
+    "PLAN-05",
+    "PLAN-06",
+    "PLAN-07",
+    "PLAN-08",
+    "PLAN-09",
+    "PLAN-11"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-089": {
+   "titulo": "Build interview question panel component",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-086"
+   ],
+   "producao": [
+    "frontend/src/app/features/sessions/interview-panel.ts",
+    "frontend/src/app/features/sessions/interview-panel.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/sessions/interview-panel.spec.ts"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-61",
+    "CT-63"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "INTV-01",
+    "INTV-02",
+    "INTV-03",
+    "INTV-04",
+    "INTV-05",
+    "INTV-06",
+    "INTV-07",
+    "INTV-09",
+    "INTV-10",
+    "INTV-90",
+    "INTV-91",
+    "INTV-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-090": {
+   "titulo": "Build interview session page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-073",
+    "TASK-074",
+    "TASK-088",
+    "TASK-089"
+   ],
+   "producao": [
+    "frontend/src/app/features/sessions/session-page.ts",
+    "frontend/src/app/features/sessions/session-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/sessions/session-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-59",
+    "CT-61",
+    "CT-62",
+    "CT-63"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "PLAN-01",
+    "PLAN-10",
+    "PLAN-12",
+    "PLAN-15",
+    "PLAN-90",
+    "PLAN-92",
+    "PLAN-94",
+    "INTV-08",
+    "INTV-11",
+    "INTV-12",
+    "INTV-13",
+    "EVAL-13",
+    "EVAL-14",
+    "EVAL-93"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-091": {
+   "titulo": "Add report API client",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-071"
+   ],
+   "producao": [
+    "frontend/src/app/features/reports/report-api.ts"
+   ],
+   "teste": [
+    "frontend/src/app/features/reports/report-api.spec.ts"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-57",
+    "CT-64"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EXPT-01",
+    "DATA-02",
+    "CMP-01"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-092": {
+   "titulo": "Build report page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-073",
+    "TASK-091"
+   ],
+   "producao": [
+    "frontend/src/app/features/reports/report-page.ts",
+    "frontend/src/app/features/reports/report-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/reports/report-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-64"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EVAL-06",
+    "EVAL-07",
+    "EVAL-08",
+    "EVAL-15",
+    "EVAL-90",
+    "EVAL-91",
+    "DATA-02",
+    "EXPT-01",
+    "EXPT-02"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-093": {
+   "titulo": "Build interview history page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-073",
+    "TASK-074",
+    "TASK-086"
+   ],
+   "producao": [
+    "frontend/src/app/features/history/history-page.ts",
+    "frontend/src/app/features/history/history-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/history/history-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-59",
+    "CT-61"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "DATA-01",
+    "DATA-05",
+    "DATA-92",
+    "CMP-01"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-094": {
+   "titulo": "Build session comparison page",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-073",
+    "TASK-091"
+   ],
+   "producao": [
+    "frontend/src/app/features/reports/compare-page.ts",
+    "frontend/src/app/features/reports/compare-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/reports/compare-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-64"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "CMP-01",
+    "CMP-02"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-095": {
+   "titulo": "Build account page with account deletion",
+   "tipo": "ui-puro",
+   "risco": "médio",
+   "perfil": "frontend",
+   "agente": "hm-designer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-072",
+    "TASK-073",
+    "TASK-074"
+   ],
+   "producao": [
+    "frontend/src/app/features/account/account-page.ts",
+    "frontend/src/app/features/account/account-page.html"
+   ],
+   "teste": [
+    "frontend/src/app/features/account/account-page.spec.ts"
+   ],
+   "wiring": [
+    "frontend/src/app/app.routes.ts"
+   ],
+   "contratos": [
+    "CT-58",
+    "CT-59"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "DATA-06"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  }
+ },
+ "ondas": [
+  {
+   "n": 1,
+   "tasks": [
+    "TASK-001"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 2,
+   "tasks": [
+    "TASK-002"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 3,
+   "tasks": [
+    "TASK-011"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-011"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 4,
+   "tasks": [
+    "TASK-003",
+    "TASK-005",
+    "TASK-024",
+    "TASK-028"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 5,
+   "tasks": [
+    "TASK-020"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-020"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 6,
+   "tasks": [
+    "TASK-004",
+    "TASK-006",
+    "TASK-027",
+    "TASK-036"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G2": {
+     "CT-1": [
+      "TASK-004",
+      "TASK-006",
+      "TASK-027",
+      "TASK-036"
+     ]
+    }
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 7,
+   "tasks": [
+    "TASK-014"
+   ],
+   "risco_max": "alto",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-014"
+    ]
+   },
+   "perfil_qa_previsto": "RIGOROSO"
+  },
+  {
+   "n": 8,
+   "tasks": [
+    "TASK-023"
+   ],
+   "risco_max": "alto",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-023"
+    ]
+   },
+   "perfil_qa_previsto": "RIGOROSO"
+  },
+  {
+   "n": 9,
+   "tasks": [
+    "TASK-007",
+    "TASK-025",
+    "TASK-050",
+    "TASK-064"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 10,
+   "tasks": [
+    "TASK-008",
+    "TASK-010",
+    "TASK-065",
+    "TASK-066"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 11,
+   "tasks": [
+    "TASK-012"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-012"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 12,
+   "tasks": [
+    "TASK-013"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-013"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 13,
+   "tasks": [
+    "TASK-015"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-015"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 14,
+   "tasks": [
+    "TASK-016"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-016"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 15,
+   "tasks": [
+    "TASK-017"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-017"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 16,
+   "tasks": [
+    "TASK-018"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-018"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 17,
+   "tasks": [
+    "TASK-019"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-019"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 18,
+   "tasks": [
+    "TASK-021"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-021"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 19,
+   "tasks": [
+    "TASK-022"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-022"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 20,
+   "tasks": [
+    "TASK-009",
+    "TASK-026"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 21,
+   "tasks": [
+    "TASK-029",
+    "TASK-030",
+    "TASK-035",
+    "TASK-070"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G2": {
+     "CT-22": [
+      "TASK-029",
+      "TASK-030"
+     ]
+    }
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 22,
+   "tasks": [
+    "TASK-031"
+   ],
+   "risco_max": "alto",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-031"
+    ]
+   },
+   "perfil_qa_previsto": "RIGOROSO"
+  },
+  {
+   "n": 23,
+   "tasks": [
+    "TASK-037"
+   ],
+   "risco_max": "alto",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-037"
+    ]
+   },
+   "perfil_qa_previsto": "RIGOROSO"
+  },
+  {
+   "n": 24,
+   "tasks": [
+    "TASK-051"
+   ],
+   "risco_max": "alto",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-051"
+    ]
+   },
+   "perfil_qa_previsto": "RIGOROSO"
+  },
+  {
+   "n": 25,
+   "tasks": [
+    "TASK-032",
+    "TASK-034",
+    "TASK-038",
+    "TASK-039"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G2": {
+     "CT-22": [
+      "TASK-032",
+      "TASK-039"
+     ]
+    }
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 26,
+   "tasks": [
+    "TASK-033",
+    "TASK-040",
+    "TASK-041",
+    "TASK-052"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G2": {
+     "CT-33": [
+      "TASK-040",
+      "TASK-041"
+     ]
+    }
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 27,
+   "tasks": [
+    "TASK-042",
+    "TASK-046",
+    "TASK-049",
+    "TASK-053"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G2": {
+     "CT-33": [
+      "TASK-042",
+      "TASK-046",
+      "TASK-049"
+     ],
+     "CT-35": [
+      "TASK-042",
+      "TASK-049"
+     ],
+     "CT-34": [
+      "TASK-046",
+      "TASK-053"
+     ]
+    }
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 28,
+   "tasks": [
+    "TASK-061"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-061"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 29,
+   "tasks": [
+    "TASK-043",
+    "TASK-044",
+    "TASK-047",
+    "TASK-048"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G2": {
+     "CT-36": [
+      "TASK-043",
+      "TASK-044",
+      "TASK-047",
+      "TASK-048"
+     ],
+     "CT-33": [
+      "TASK-043",
+      "TASK-044",
+      "TASK-047",
+      "TASK-048"
+     ],
+     "CT-19": [
+      "TASK-043",
+      "TASK-048"
+     ],
+     "CT-20": [
+      "TASK-043",
+      "TASK-048"
+     ],
+     "CT-35": [
+      "TASK-043",
+      "TASK-044",
+      "TASK-047",
+      "TASK-048"
+     ],
+     "CT-6": [
+      "TASK-044",
+      "TASK-047"
+     ]
+    }
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 30,
+   "tasks": [
+    "TASK-045",
+    "TASK-055",
+    "TASK-067",
+    "TASK-071"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G3": [
+     "P1: Validação do modelo"
+    ]
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 31,
+   "tasks": [
+    "TASK-054",
+    "TASK-056",
+    "TASK-072",
+    "TASK-074"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 32,
+   "tasks": [
+    "TASK-062"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-062"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 33,
+   "tasks": [
+    "TASK-063"
+   ],
+   "risco_max": "crítico",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-063"
+    ]
+   },
+   "perfil_qa_previsto": "EXAUSTIVO"
+  },
+  {
+   "n": 34,
+   "tasks": [
+    "TASK-057",
+    "TASK-073",
+    "TASK-083",
+    "TASK-086"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G2": {
+     "CT-57": [
+      "TASK-083",
+      "TASK-086"
+     ]
+    }
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 35,
+   "tasks": [
+    "TASK-058",
+    "TASK-075",
+    "TASK-088",
+    "TASK-089"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G2": {
+     "CT-61": [
+      "TASK-088",
+      "TASK-089"
+     ]
+    }
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 36,
+   "tasks": [
+    "TASK-059",
+    "TASK-068",
+    "TASK-076",
+    "TASK-091"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G2": {
+     "CT-57": [
+      "TASK-076",
+      "TASK-091"
+     ]
+    },
+    "G3": [
+     "P1: LLM local e fontes técnicas rastreáveis"
+    ]
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 37,
+   "tasks": [
+    "TASK-060",
+    "TASK-069",
+    "TASK-077"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 38,
+   "tasks": [
+    "TASK-078"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 39,
+   "tasks": [
+    "TASK-079"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 40,
+   "tasks": [
+    "TASK-080"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 41,
+   "tasks": [
+    "TASK-081"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G3": [
+     "P1: Conta e acesso"
+    ]
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 42,
+   "tasks": [
+    "TASK-082"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 43,
+   "tasks": [
+    "TASK-084"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 44,
+   "tasks": [
+    "TASK-085"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 45,
+   "tasks": [
+    "TASK-087"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G3": [
+     "P1: Envio e interpretação de currículo"
+    ]
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 46,
+   "tasks": [
+    "TASK-090"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G3": [
+     "P1: Requisitos da vaga e plano da entrevista",
+     "P1: Entrevista sequencial com contador"
+    ]
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 47,
+   "tasks": [
+    "TASK-092"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G3": [
+     "P1: Avaliação e relatório"
+    ]
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 48,
+   "tasks": [
+    "TASK-093"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 49,
+   "tasks": [
+    "TASK-094"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
+  },
+  {
+   "n": 50,
+   "tasks": [
+    "TASK-095"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G3": [
+     "P1: Histórico e controle dos dados"
+    ]
+   },
+   "perfil_qa_previsto": "PADRAO"
+  }
+ ]
+}
