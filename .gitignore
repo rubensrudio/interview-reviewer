@@ -1,0 +1,8 @@
+reports/
+.venv/
+node_modules/
+storage/
+dist/
+__pycache__/
+frontend/reports/
+frontend/test-results/
