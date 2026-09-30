@@ -140,6 +140,29 @@ The LLM client only connects to hosts listed in `IR_LLM_ALLOWED_HOSTS`. When a c
 deletes their account, all of their data is removed immediately; copies in backups expire
 within 30 days.
 
+## Database migrations
+
+The schema is managed with Alembic (`backend/alembic/`, configured by `backend/alembic.ini`).
+Migrations run against `IR_DATABASE_URL`; the required secrets (`IR_THROTTLE_SECRET`,
+`IR_OIDC_STATE_SECRET`) must also be set because the settings are loaded as a whole.
+
+Run inside `backend/`:
+
+| Target | Command |
+|---|---|
+| Apply all migrations | `uv run alembic upgrade head` |
+| Revert the last migration | `uv run alembic downgrade -1` |
+| Show the current revision | `uv run alembic current` |
+| Create a migration | `uv run alembic revision --rev-id 0001 -m "jobs"` (file `0001_jobs.py`) |
+
+Every ORM model module must be imported in `backend/app/models/__init__.py` so that
+`Base.metadata` (used by `alembic/env.py`) knows its tables.
+
+Integration tests (`backend/tests/integration`) never use the development database: each
+pytest session creates its own database `ir_test_<uuid>` on the configured server, runs
+`alembic upgrade head`, gives each test a `db` session whose transaction is rolled back, and
+drops the database at the end. Parallel test runs therefore do not interfere with each other.
+
 ## Google sign-in
 
 Google sign-in uses the OpenID Connect authorization code flow with PKCE (`S256`), `state`
