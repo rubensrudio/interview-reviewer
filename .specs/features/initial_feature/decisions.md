@@ -235,3 +235,9 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Premissa**: CV ou texto de vaga em idioma diferente de inglês é rejeitado com mensagem explicativa (Jev: rejeitar p=0.99).
 - **Reversibilidade**: média (RF29/LANG amplia depois)
 - **Onde impacta**: spec.md CV-14, PLAN-15
+
+### IMPL-01 — Cobertura do typecheck em pacotes sem `__init__.py` (implementação, onda 4 → 5)
+- **Etapa**: /implement, após fechar a onda 4 (achado do hm-reviewer em TASK-024/TASK-028)
+- **Problema**: `backend/app/auth`, `backend/app/llm` e `backend/app/resumes` foram criados sem `__init__.py` (fora do escopo das tasks TASK-011, TASK-024, TASK-028). `uv run mypy app` não os checava, deixando o gate de typecheck cego para esses módulos.
+- **Decisão (humano)**: criar os três `__init__.py` vazios em `develop`, fora do pipeline, e sincronizar a integradora.
+- **Impacto**: nenhum contrato muda. Tasks futuras que criarem novos subpacotes em `backend/app/` devem incluir `__init__.py` — **requer atualização de spec/plan** (listar `__init__.py` no wiring permitido das tasks que criam subpacotes).
