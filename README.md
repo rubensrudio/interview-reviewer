@@ -140,6 +140,25 @@ The LLM client only connects to hosts listed in `IR_LLM_ALLOWED_HOSTS`. When a c
 deletes their account, all of their data is removed immediately; copies in backups expire
 within 30 days.
 
+## Email (SMTP)
+
+The backend sends verification, password reset and "Google-only account" e-mails
+synchronously with `smtplib` (`backend/app/email/sender.py`); there is no mail queue, so
+one-time links are never stored in clear text. Locally, the Mailpit service from
+`docker-compose.yml` receives the messages on port `1025`.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `IR_SMTP_HOST` / `IR_SMTP_PORT` | `localhost` / `1025` | SMTP server |
+| `IR_SMTP_USER` / `IR_SMTP_PASSWORD` | empty | Login credentials; login is skipped when the user is empty |
+| `IR_SMTP_FROM` | `no-reply@interview-reviewer.local` | Sender address |
+| `IR_SMTP_STARTTLS` | `false` | Upgrade the connection with STARTTLS before login |
+
+Each attempt has a 10-second timeout. When the server is unreachable or rejects the
+message, sending returns a failure instead of raising: the account or request is kept and
+the user can ask for a resend. The failure is logged as `email.send_failed` with the
+template name only, never the recipient or the link.
+
 ## Database migrations
 
 The schema is managed with Alembic (`backend/alembic/`, configured by `backend/alembic.ini`).
