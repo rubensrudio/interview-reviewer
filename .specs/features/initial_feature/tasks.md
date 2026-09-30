@@ -4,6 +4,7 @@ Fonte: `plan.md` desta feature. Resumo, ondas, caminho crítico e validações s
 Toda task de backend roda comandos em `backend`; toda task de frontend em `frontend` (seção 3 do plan).
 
 ### TASK-001 — Create README and local docker-compose
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-02`, `DATA-06`
 - **Tipo**: infra
