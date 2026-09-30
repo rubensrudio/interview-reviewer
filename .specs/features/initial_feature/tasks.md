@@ -31,6 +31,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-002 — Scaffold FastAPI backend package
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-01`
 - **Tipo**: infra
