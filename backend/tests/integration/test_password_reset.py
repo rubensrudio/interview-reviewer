@@ -3,11 +3,13 @@
 Covers AUTH-07, AUTH-08, AUTH-09 and AUTH-94.
 """
 
+import threading
 import uuid
+from collections.abc import Callable, Iterator
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.auth import password_reset
@@ -15,6 +17,7 @@ from app.auth.password_reset import request_password_reset, reset_password
 from app.auth.passwords import hash_password, verify_password
 from app.auth.tokens import hash_secret, issue_one_time_token
 from app.config import get_settings
+from app.db import get_sessionmaker
 from app.email.templates import EmailContent
 from app.errors import LINK_INVALID, PASSWORD_POLICY, VALIDATION_ERROR, AppError
 from app.models.account import AuthSession, OneTimeToken, TokenPurpose, User
@@ -333,3 +336,89 @@ def test_auth_08_unencodable_or_non_string_password_is_rejected_and_keeps_token(
 
     assert excinfo.value.code == VALIDATION_ERROR
     assert _token_row(db, raw).used_at is None
+
+
+# --- QA regressions -------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "email", ["x@x.com\x00", "\x00", "a\x00b@example.com", "a\x07@example.com", "a\nb@x.com"]
+)
+def test_auth_07_email_with_nul_or_control_chars_is_neutral(
+    db: Session, mailer: FakeMailer, email: str
+) -> None:
+    # QA finding TASK-018-1 #2: NUL reached PostgreSQL and raised DataError (HTTP 500).
+    assert request_password_reset(db, email) is None  # type: ignore[func-returns-value]
+    assert mailer.sent == []
+
+
+def test_auth_08_password_with_nul_does_not_crash(db: Session, mailer: FakeMailer) -> None:
+    user = _local_user(db)
+    raw = _issue_reset_token(db, user)
+    password = "nul\x00inside horse battery 42"  # noqa: S105 - test fixture value
+
+    reset_password(db, raw, password)
+
+    db.refresh(user)
+    assert user.password_hash is not None
+    assert verify_password(user.password_hash, password)
+
+
+@pytest.fixture
+def committed_users(migrated_database: str) -> Iterator[Callable[[User], None]]:
+    ids: list[uuid.UUID] = []
+    yield lambda user: ids.append(user.id)
+    with get_sessionmaker()() as session:
+        session.execute(delete(User).where(User.id.in_(ids)))
+        session.commit()
+
+
+@pytest.mark.parametrize("attempt", range(4))
+def test_auth_08_concurrent_resets_with_two_tokens_of_same_user_do_not_deadlock(
+    mailer: FakeMailer, committed_users: Callable[[User], None], attempt: int
+) -> None:
+    # QA finding TASK-018-1 #1: the loser got OperationalError(DeadlockDetected), not
+    # LINK_INVALID.
+    with get_sessionmaker()() as session:
+        user = _local_user(session)
+        committed_users(user)
+        tokens = [_issue_reset_token(session, user), _issue_reset_token(session, user)]
+        session.commit()
+        user_id = user.id
+
+    barrier = threading.Barrier(len(tokens))
+    successes: list[str] = []
+    errors: list[BaseException] = []
+    lock = threading.Lock()
+
+    def worker(raw: str, password: str) -> None:
+        try:
+            with get_sessionmaker()() as session:
+                barrier.wait(timeout=10)
+                reset_password(session, raw, password)
+                session.commit()
+            with lock:
+                successes.append(password)
+        except BaseException as error:  # noqa: BLE001 - surfaced by the assertions below
+            with lock:
+                errors.append(error)
+
+    passwords = [f"first horse battery {attempt}x", f"second horse battery {attempt}x"]
+    threads = [
+        threading.Thread(target=worker, args=(raw, pwd))
+        for raw, pwd in zip(tokens, passwords, strict=True)
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(timeout=30)
+
+    assert len(successes) == 1
+    assert len(errors) == 1
+    assert isinstance(errors[0], AppError), repr(errors[0])
+    assert errors[0].code == LINK_INVALID
+    with get_sessionmaker()() as session:
+        stored = session.get(User, user_id)
+        assert stored is not None
+        assert stored.password_hash is not None
+        assert verify_password(stored.password_hash, successes[0])

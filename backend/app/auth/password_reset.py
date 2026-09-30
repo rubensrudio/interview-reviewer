@@ -15,6 +15,7 @@ password, the raw token and the link are never logged.
 """
 
 from datetime import UTC, datetime, timedelta
+from uuid import UUID
 
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
@@ -22,7 +23,7 @@ from sqlalchemy.orm import Session
 from app.auth.passwords import hash_password, password_policy_violations
 from app.auth.registration import normalize_email
 from app.auth.sessions import revoke_all_sessions
-from app.auth.tokens import consume_one_time_token, issue_one_time_token
+from app.auth.tokens import consume_one_time_token, hash_secret, issue_one_time_token
 from app.config import get_settings
 from app.email.sender import google_only_account_email, password_reset_email, send_email
 from app.errors import LINK_INVALID, PASSWORD_POLICY, VALIDATION_ERROR, AppError
@@ -48,6 +49,10 @@ def _lookup_email(email: object) -> str | None:
         return None
     normalized = normalize_email(email)
     if not normalized or len(normalized) > _MAX_EMAIL_LENGTH or not _is_encodable(normalized):
+        return None
+    # NUL is rejected by PostgreSQL text columns and control characters are never part of a
+    # stored address: both would only turn a neutral answer into a server error.
+    if any(not ch.isprintable() for ch in normalized):
         return None
     return normalized
 
@@ -124,6 +129,26 @@ def _invalidate_other_reset_links(db: Session, user: User) -> None:
     )
 
 
+def _lock_user(db: Session, user_id: UUID) -> User | None:
+    return db.execute(
+        select(User)
+        .where(User.id == user_id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    ).scalar_one_or_none()
+
+
+def _lock_token_owner(db: Session, raw_token: str) -> None:
+    """Lock the account that owns ``raw_token`` (if any) before the token itself is locked."""
+    if not _is_encodable(raw_token):
+        return  # consume_one_time_token rejects it as malformed
+    owner_id = db.execute(
+        select(OneTimeToken.user_id).where(OneTimeToken.token_hash == hash_secret(raw_token))
+    ).scalar_one_or_none()
+    if owner_id is not None:
+        _lock_user(db, owner_id)
+
+
 def reset_password(db: Session, raw_token: str, new_password: str) -> None:
     """Replace the password of the account that owns a valid reset link.
 
@@ -136,8 +161,11 @@ def reset_password(db: Session, raw_token: str, new_password: str) -> None:
     if not isinstance(raw_token, str):
         raise AppError.from_catalog(LINK_INVALID)
 
+    # Lock order is always user, then tokens: concurrent resets of the same account (with
+    # different links) serialize on the user row instead of deadlocking on each other's token.
+    _lock_token_owner(db, raw_token)
     token = consume_one_time_token(db, raw_token, TokenPurpose.RESET_PASSWORD)
-    user = db.get(User, token.user_id, with_for_update=True)
+    user = _lock_user(db, token.user_id)
     if user is None or user.password_hash is None or user.deletion_requested_at is not None:
         # AUTH-09: a Google-only account never gets a local password through this flow.
         log_event("auth.password_reset_rejected", reason="account_not_eligible")
