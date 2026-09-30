@@ -11,7 +11,6 @@ from app.models.account import User
 from app.models.resume import ExtractionItem, Resume, ResumeStatus
 from app.resumes.editing import (
     FIELD_VALUE_MAX_LENGTH,
-    MAX_ITEMS_PER_RESUME,
     ItemInput,
     add_item,
     remove_item,
@@ -216,16 +215,6 @@ def test_cv_10_user_provided_item_never_keeps_evidence(db: Session) -> None:
         for entry in _stored(db, resume)
         if entry["origin"] == "user_provided"
     )
-
-
-def test_cv_10_adding_beyond_the_item_limit_is_validation_error(db: Session) -> None:
-    resume = _resume(db, extraction=[_skill_item(f"s{i}") for i in range(MAX_ITEMS_PER_RESUME)])
-
-    with pytest.raises(AppError) as error:
-        add_item(db, resume, ItemInput(kind="skill", fields={"name": "Go"}))
-
-    _assert_validation_error(error)
-    assert len(_stored(db, resume)) == MAX_ITEMS_PER_RESUME
 
 
 # --- remove_item ---------------------------------------------------------------------------

@@ -13,7 +13,7 @@ Session snapshots (CV-12) are copies taken when a session starts and are never t
 
 import unicodedata
 import uuid
-from typing import Any
+from typing import Any, cast
 
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import select
@@ -29,7 +29,6 @@ ALLOWED_FIELD_KEYS: frozenset[str] = frozenset(
 )
 FIELD_VALUE_MAX_LENGTH = 2000
 ITEM_ID_MAX_LENGTH = 64
-MAX_ITEMS_PER_RESUME = 200
 
 # Whitespace control characters kept in values (multi-line descriptions).
 _ALLOWED_CONTROL_CHARS = frozenset({"\n", "\r", "\t"})
@@ -88,8 +87,7 @@ def _clean_fields(fields: object) -> dict[str, str]:
 def _parse_kind(kind: object) -> ExtractionKind:
     if not isinstance(kind, str) or kind not in ALLOWED_KINDS:
         raise _invalid("kind", "enum")
-    parsed: ExtractionKind = kind  # type: ignore[assignment]  # narrowed by ALLOWED_KINDS
-    return parsed
+    return cast(ExtractionKind, kind)
 
 
 def _require_input(data: object) -> ItemInput:
@@ -147,7 +145,7 @@ def _save(db: Session, resume: Resume, items: list[dict[str, Any]]) -> None:
 def add_item(db: Session, resume: Resume, data: ItemInput) -> ExtractionItem:
     """Append a ``user_provided`` item (no evidence) to a ``ready`` version.
 
-    Raises ``AppError`` ``VALIDATION_ERROR`` (invalid kind/fields or item limit reached),
+    Raises ``AppError`` ``VALIDATION_ERROR`` (invalid kind or fields),
     ``RESUME_NOT_READY`` or ``RESOURCE_NOT_FOUND``. The caller commits.
     """
     payload = _require_input(data)
@@ -156,8 +154,6 @@ def add_item(db: Session, resume: Resume, data: ItemInput) -> ExtractionItem:
     locked = _lock_ready(db, resume)
 
     items = _items(locked)
-    if len(items) >= MAX_ITEMS_PER_RESUME:
-        raise _invalid("items", "too_many_items")
     item = ExtractionItem(
         id=uuid.uuid4().hex, kind=kind, fields=fields, origin="user_provided", evidence=[]
     )
