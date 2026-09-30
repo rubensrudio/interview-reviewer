@@ -107,6 +107,26 @@ Tooling configured in `backend/pyproject.toml`:
 - `mypy` in strict mode for the `app` package.
 - `pytest` writes a JUnit report to `backend/reports/junit.xml` on every run.
 
+## Running the worker
+
+Background jobs (resume processing, question preparation, evaluation, account purge) and
+periodic functions run in a separate worker process that uses the same database as the API.
+Run it inside `backend/`:
+
+```bash
+uv run python -m app.jobs.worker
+```
+
+- The worker polls the `jobs` table (`SELECT ... FOR UPDATE SKIP LOCKED`); several workers can
+  run side by side, and each job runs in its own transaction.
+- A handler that raises `RetryableJobError` is retried with exponential backoff (`2^attempts`
+  seconds) up to `max_attempts`; any other exception marks the job `failed` with the exception
+  class name as the error code.
+- At startup and every 60 seconds the worker requeues jobs left `running` for more than
+  30 minutes (for example, after a worker crash), or marks them `failed` when they already used
+  all attempts.
+- Stop it with `Ctrl+C` or `SIGTERM`; the current job finishes before the process exits.
+
 ## Configuration
 
 The backend reads its settings from environment variables prefixed with `IR_`. Defaults target
