@@ -571,6 +571,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-020 — Implement Google OIDC client
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-93`, `AUTH-10`
 - **Tipo**: integração-externa
