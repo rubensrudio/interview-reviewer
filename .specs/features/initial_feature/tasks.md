@@ -663,6 +663,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-023 — Implement private LLM client with host allowlist
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-01`, `KNOW-92`
 - **Tipo**: integração-externa
