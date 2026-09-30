@@ -249,3 +249,11 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-engineer)**: A comportamento preservado 0.62, contrato mantido 0.83; B muda contrato 0.76; C pede humano 0.72.
 - **Decisão (humano)**: A.
 - **Impacto**: CT-17 inalterado; `main.py` não muda. A validação do id_token passa a ser código do projeto. **Requer atualização de spec/plan**: DA-6/seção 11 devem citar joserfc (dependência transitiva do Authlib) e o fluxo sem Starlette client.
+
+### LAC-29 — `extraction_f1` com lista vazia (TASK-066, implementação)
+- **Etapa**: /implement, onda 10, review da TASK-066
+- **Problema**: Done when diz "listas vazias levantam ValueError"; a implementação só levantava com as duas vazias. CT-55 é consumido pela TASK-067 (runner).
+- **Opções**: A) manter (erro só com as duas vazias); B) ValueError se `expected` vazio, `got` vazio → 0.0; C) ValueError com qualquer lista vazia.
+- **Jev (hm-reviewer)**: "0.0 com uma lista vazia cumpre o Done when" p=0.22.
+- **Decisão (humano)**: B.
+- **Impacto**: gabarito vazio no dataset é erro; extração vazia do modelo é medida como F1 0 (MODEL-02). **Requer atualização de spec/plan**: Done when da TASK-066 / CT-55 devem dizer "expected vazio levanta ValueError".
