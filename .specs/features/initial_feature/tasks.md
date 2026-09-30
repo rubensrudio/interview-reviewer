@@ -645,6 +645,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-022 — Expose Google sign-in and terms acceptance routes
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-10`, `AUTH-11`, `AUTH-12`, `AUTH-13`, `AUTH-15`, `AUTH-93`
 - **Tipo**: crud-padrão
