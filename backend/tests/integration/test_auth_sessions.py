@@ -4,6 +4,8 @@ Covers CT-11 and AUTH-06 (logout invalidates the session), AUTH-17 (anonymous ac
 denied), AUTH-16 (only the session owner is resolved) and the CSRF double-submit check (DA-5).
 """
 
+import hashlib
+import hmac
 import uuid
 from collections.abc import Iterator
 from datetime import UTC, datetime, timedelta
@@ -367,11 +369,47 @@ def test_auth_06_logout_without_xsrf_header_gets_403_and_keeps_session(
     assert client.get("/test/me").status_code == 200
 
 
-def test_auth_06_logout_with_invalid_session_cookie_only_clears_cookies(
+def _derived_xsrf(raw_session: str) -> str:
+    return hmac.new(raw_session.encode("ascii"), b"ir-xsrf-v1", hashlib.sha256).hexdigest()
+
+
+@pytest.mark.parametrize("revoked_first", [False, True])
+def test_auth_06_logout_with_inactive_session_and_valid_xsrf_clears_cookies(
+    client: TestClient, db: Session, revoked_first: bool
+) -> None:
+    if revoked_first:
+        raw, xsrf = _login(client, _user(db))
+        assert client.post("/test/logout", headers={XSRF_HEADER: xsrf}).status_code == 200
+    else:
+        raw = "does-not-exist"
+        xsrf = _derived_xsrf(raw)
+    client.cookies.clear()
+    client.cookies.set(SESSION_COOKIE, raw)
+    client.cookies.set(XSRF_COOKIE, xsrf)
+
+    response = client.post("/test/logout", headers={XSRF_HEADER: xsrf})
+    assert response.status_code == 200
+    cleared = response.headers.get_list("set-cookie")
+    assert any(h.startswith(f"{SESSION_COOKIE}=") and "Max-Age=0" in h for h in cleared)
+
+
+def test_auth_06_logout_with_inactive_session_without_xsrf_header_gets_403(
     client: TestClient,
 ) -> None:
-    client.cookies.set(SESSION_COOKIE, "does-not-exist")
+    raw = "does-not-exist"
+    client.cookies.set(SESSION_COOKIE, raw)
+    client.cookies.set(XSRF_COOKIE, _derived_xsrf(raw))
+
     response = client.post("/test/logout")
+    assert response.status_code == 403
+    assert _error_code(response) == "CSRF_FAILED"
+
+
+def test_auth_06_logout_with_malformed_session_cookie_only_clears_cookies(
+    client: TestClient,
+) -> None:
+    raw_header = f"{SESSION_COOKIE}=not a token!".encode("latin-1")
+    response = client.post("/test/logout", headers={"Cookie": raw_header})
     assert response.status_code == 200
     cleared = response.headers.get_list("set-cookie")
     assert any(h.startswith(f"{SESSION_COOKIE}=") and "Max-Age=0" in h for h in cleared)

@@ -113,19 +113,20 @@ def create_auth_session(db: Session, user: User, response: Response) -> None:
 def revoke_auth_session(db: Session, request: Request, response: Response) -> None:
     """Revoke the session identified by the request cookie (if any) and clear the cookies.
 
-    When the cookie points to an active session, the CSRF check applies (403 CSRF_FAILED
-    leaves the session untouched). A missing, malformed or already invalid cookie only
-    clears the cookies.
+    With a well-formed session cookie the CSRF check always applies, whether or not the
+    session is still active (403 CSRF_FAILED leaves everything untouched). A legitimate client
+    holding a stale cookie still passes, since its XSRF value derives from the same secret.
+    A missing or malformed cookie only clears the cookies.
     """
     raw = _valid_session_token(request.cookies.get(SESSION_COOKIE))
     if raw is not None:
+        _check_csrf(request, raw)
         auth_session = db.execute(
             select(AuthSession)
             .where(AuthSession.token_hash == hash_secret(raw), AuthSession.revoked_at.is_(None))
             .with_for_update()
         ).scalar_one_or_none()
         if auth_session is not None:
-            _check_csrf(request, raw)
             auth_session.revoked_at = datetime.now(UTC)
             db.flush()
             log_event("auth.session_revoked")
