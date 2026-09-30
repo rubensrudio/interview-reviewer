@@ -326,3 +326,10 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-qa)**: lacuna do plano 0.91.
 - **Decisão (humano)**: A.
 - **Impacto**: escopo da TASK-009 ampliado. **Requer atualização de plan**: TASK-009 / CT-6 devem citar o reaper e o limite de `locked_at`.
+
+### LAC-39 — `failure_code` para erro inesperado de infraestrutura no processamento do currículo (TASK-031)
+- **Etapa**: /implement, onda 22, retomada da TASK-031 após achado de QA (versão presa em `processing`)
+- **Opções**: A) `LLM_UNAVAILABLE` (orienta reenviar mais tarde); B) `CORRUPTED`; C) código novo (ex.: `PROCESSING_ERROR`).
+- **Jev (hm-engineer)**: LLM_UNAVAILABLE 0.51 / CORRUPTED 0.37 / novo 0.12 (incerto).
+- **Decisão (humano)**: A.
+- **Impacto**: sem mudança de código; o texto "LLM indisponível" fica impreciso para falhas de storage/DB. Caso residual: se a sessão de `_fail_after_error` também falhar, a versão pode ficar em `processing` (sem reaper de resumes) — dívida registrada.
