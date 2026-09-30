@@ -173,7 +173,9 @@ off by default; without it such PDFs fail with `NO_TEXT`.
 
 2. Set `IR_OCR_ENABLED=true` and restart the worker.
 
-Pages are rendered at 300 DPI and read in English (`eng`). When OCR yields fewer than
+Pages are rendered at 300 DPI and read in English (`eng`). To protect the worker, only the
+first 10 pages are read, rendering is limited to 60 seconds and each page read to 30 seconds;
+a timeout ends as `OCR_NO_TEXT`. When OCR yields fewer than
 `IR_MIN_RESUME_TEXT_CHARS` non-whitespace characters, or the binaries are missing, the
 version fails with `OCR_NO_TEXT` (a `resume.ocr_failed` event with the error class is
 logged for engine errors).

@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 from fakes.fake_llm import FakeLLM
-from pdf2image.exceptions import PDFInfoNotInstalledError
+from pdf2image.exceptions import PDFInfoNotInstalledError, PDFPopplerTimeoutError
 from pytesseract import TesseractNotFoundError  # type: ignore[import-untyped]
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
@@ -24,7 +24,14 @@ from app.models.account import User
 from app.models.resume import Resume, ResumeStatus
 from app.resumes import ocr, processing, storage
 from app.resumes.extraction import EXTRACTION_TASK
-from app.resumes.ocr import OCR_LANGUAGE, OcrNoText, ocr_pdf_text
+from app.resumes.ocr import (
+    OCR_CONVERT_TIMEOUT_SECONDS,
+    OCR_LANGUAGE,
+    OCR_MAX_PAGES,
+    OCR_PAGE_TIMEOUT_SECONDS,
+    OcrNoText,
+    ocr_pdf_text,
+)
 from app.resumes.processing import process_resume
 
 REQUIRED_ENV = {
@@ -80,14 +87,18 @@ class _FakeEngine:
         self.pages = pages
         self.languages: list[str] = []
         self.converted: list[bytes] = []
+        self.convert_kwargs: list[dict[str, object]] = []
+        self.ocr_kwargs: list[dict[str, object]] = []
 
-    def convert(self, data: bytes, **_: object) -> list[object]:
+    def convert(self, data: bytes, **kwargs: object) -> list[object]:
         self.converted.append(data)
+        self.convert_kwargs.append(kwargs)
         return [object() for _ in self.pages]
 
-    def image_to_string(self, image: object, lang: str = "", **_: object) -> str:
+    def image_to_string(self, image: object, lang: str = "", **kwargs: object) -> str:
         index = len(self.languages)
         self.languages.append(lang)
+        self.ocr_kwargs.append(kwargs)
         return self.pages[index]
 
 
@@ -177,6 +188,46 @@ def test_ocr_02_missing_tesseract_raises_ocr_no_text(monkeypatch: pytest.MonkeyP
         raise TesseractNotFoundError()
 
     monkeypatch.setattr(ocr.pytesseract, "image_to_string", _missing)
+
+    with pytest.raises(OcrNoText):
+        ocr_pdf_text(_scanned_pdf())
+
+
+def test_ocr_limits_rendered_pages_and_sets_timeouts(monkeypatch: pytest.MonkeyPatch) -> None:
+    engine = _use_engine(monkeypatch, [OCR_TEXT])
+
+    ocr_pdf_text(_scanned_pdf())
+
+    assert OCR_MAX_PAGES == 10
+    assert engine.convert_kwargs == [
+        {
+            "dpi": 300,
+            "first_page": 1,
+            "last_page": OCR_MAX_PAGES,
+            "timeout": OCR_CONVERT_TIMEOUT_SECONDS,
+        }
+    ]
+    assert engine.ocr_kwargs == [{"timeout": OCR_PAGE_TIMEOUT_SECONDS}]
+    assert 0 < OCR_PAGE_TIMEOUT_SECONDS <= OCR_CONVERT_TIMEOUT_SECONDS
+
+
+def test_ocr_02_rasterization_timeout_raises_ocr_no_text(monkeypatch: pytest.MonkeyPatch) -> None:
+    def _slow(data: bytes, **_: object) -> list[object]:
+        raise PDFPopplerTimeoutError("Run poppler timeout.")
+
+    monkeypatch.setattr(ocr, "convert_from_bytes", _slow)
+
+    with pytest.raises(OcrNoText):
+        ocr_pdf_text(_scanned_pdf())
+
+
+def test_ocr_02_tesseract_timeout_raises_ocr_no_text(monkeypatch: pytest.MonkeyPatch) -> None:
+    _use_engine(monkeypatch, ["unused"])
+
+    def _slow(image: object, **_: object) -> str:
+        raise RuntimeError("Tesseract process timeout")
+
+    monkeypatch.setattr(ocr.pytesseract, "image_to_string", _slow)
 
     with pytest.raises(OcrNoText):
         ocr_pdf_text(_scanned_pdf())
