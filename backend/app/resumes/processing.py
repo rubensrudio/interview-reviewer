@@ -17,8 +17,9 @@ Transactions:
 
 Versions already ``ready`` or ``failed`` are never processed again. Expected failures (PDF,
 language, LLM) end as ``failed`` with a machine code; unexpected errors (e.g. database) are
-raised so the worker fails or retries the job, and a retried job resumes a ``processing``
-version. Logs carry the version id, status, failure code and duration, never resume content.
+raised again after the version is marked ``failed`` in a fresh session, so a version never
+stays ``processing`` once its job failed. Logs carry the version id, status, failure code
+and duration, never resume content.
 """
 
 import time
@@ -26,6 +27,7 @@ import uuid
 from dataclasses import dataclass, field
 
 from sqlalchemy import select, update
+from sqlalchemy import text as sql_text
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -60,6 +62,12 @@ EXTRACTION_INVALID = "EXTRACTION_INVALID"
 LLM_UNAVAILABLE = "LLM_UNAVAILABLE"
 
 _FINISHED = frozenset({ResumeStatus.READY, ResumeStatus.FAILED})
+_UNFINISHED = (ResumeStatus.RECEIVED, ResumeStatus.PROCESSING)
+
+# Code used when processing stops on an unexpected error (storage, database): the user is
+# told to try again later, as for an unavailable inference server (CV-93).
+UNEXPECTED_ERROR_CODE = LLM_UNAVAILABLE
+FAILURE_MARK_LOCK_TIMEOUT = "5s"
 
 
 @dataclass(frozen=True)
@@ -134,7 +142,13 @@ def _run_pipeline(storage_key: str | None) -> _Outcome:
         return _Outcome(failure_code=NOT_ENGLISH)
 
     try:
-        items = extract_resume_items(get_llm_client(), text)
+        llm = get_llm_client()
+    except ValueError:
+        # Misconfigured inference server (e.g. host outside llm_allowed_hosts).
+        log_event("resume.llm_client_unavailable", reason="invalid_configuration")
+        return _Outcome(failure_code=LLM_UNAVAILABLE)
+    try:
+        items = extract_resume_items(llm, text)
     except ExtractionFailed as error:
         code = LLM_UNAVAILABLE if error.reason == "llm_unavailable" else EXTRACTION_INVALID
         return _Outcome(failure_code=code)
@@ -158,9 +172,61 @@ def _duration_ms(started: float) -> int:
     return int((time.perf_counter() - started) * 1000)
 
 
+def _fail_after_error(resume_id: uuid.UUID, error: Exception) -> None:
+    """Mark an unfinished version ``failed`` in a fresh session after an unexpected error.
+
+    The worker session may be broken (e.g. lost connection), so a new one is used. A short
+    lock timeout keeps the worker from hanging when the row is locked elsewhere.
+    """
+    try:
+        with get_sessionmaker()() as session:
+            session.execute(sql_text(f"SET LOCAL lock_timeout = '{FAILURE_MARK_LOCK_TIMEOUT}'"))
+            changed = session.execute(
+                update(Resume)
+                .where(Resume.id == resume_id, Resume.status.in_(_UNFINISHED))
+                .values(
+                    status=ResumeStatus.FAILED,
+                    failure_code=UNEXPECTED_ERROR_CODE,
+                    extracted_text=None,
+                    extraction=None,
+                )
+            ).rowcount  # type: ignore[attr-defined]
+            session.commit()
+    except Exception as mark_error:
+        log_event(
+            "resume.failure_mark_failed",
+            resume_id=str(resume_id),
+            error_code=type(mark_error).__name__,
+        )
+        return
+    if changed:
+        log_event(
+            "resume.status_changed",
+            resume_id=str(resume_id),
+            failure_code=UNEXPECTED_ERROR_CODE,
+            error_code=type(error).__name__,
+            to=ResumeStatus.FAILED.value,
+        )
+
+
 def process_resume(db: Session, payload: dict[str, str]) -> None:
-    """Job handler for ``resume.process``. Does not commit (CT-7)."""
+    """Job handler for ``resume.process``. Does not commit (CT-7).
+
+    An unexpected error (storage, database) marks the version ``failed`` in a fresh session
+    and is raised again, so the job is recorded as failed and the version never stays
+    ``processing``.
+    """
     resume_id = _parse_payload(payload)
+    try:
+        _process(db, resume_id)
+    except Exception as error:
+        # Release any row lock held by the worker session before the fresh session writes.
+        db.rollback()
+        _fail_after_error(resume_id, error)
+        raise
+
+
+def _process(db: Session, resume_id: uuid.UUID) -> None:
     started = time.perf_counter()
 
     current = db.execute(

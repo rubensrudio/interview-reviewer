@@ -14,6 +14,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.pdfencrypt import StandardEncryption
 from reportlab.pdfgen import canvas
 from sqlalchemy import delete, func, select
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -492,3 +493,90 @@ def test_cv_07_logs_never_contain_resume_text(
     raw = caplog.text + json.dumps([vars(record) for record in caplog.records], default=str)
     for fragment in ("Northwind", "Riley", "Lakeside", "order routing", "cv.pdf"):
         assert fragment not in raw
+
+
+# --- unexpected errors never leave a version in processing (QA finding TASK-031-1) --------
+
+
+def _committed_state(resume_id: uuid.UUID) -> tuple[ResumeStatus, str | None, object]:
+    with Session(get_engine()) as session:
+        row = session.execute(
+            select(Resume.status, Resume.failure_code, Resume.extraction).where(
+                Resume.id == resume_id
+            )
+        ).one()
+    return row[0], row[1], row[2]
+
+
+def test_cv_05_major_oserror_on_read_marks_failed(
+    committed_resume: uuid.UUID, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _use_llm(monkeypatch, FakeLLM({EXTRACTION_TASK: [VALID_EXTRACTION]}))
+
+    def denied(key: str) -> bytes:
+        raise PermissionError("denied")
+
+    monkeypatch.setattr(storage, "read_file", denied)
+
+    with Session(get_engine()) as session, pytest.raises(PermissionError):
+        process_resume(session, {"resume_id": str(committed_resume)})
+
+    status, failure_code, extraction = _committed_state(committed_resume)
+    assert status is ResumeStatus.FAILED
+    assert failure_code == "LLM_UNAVAILABLE"
+    assert extraction is None
+
+
+def test_cv_93_major_misconfigured_llm_host_marks_llm_unavailable(
+    committed_resume: uuid.UUID, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("IR_LLM_BASE_URL", "http://ollama.internal:11434/v1")
+    get_settings.cache_clear()
+
+    with Session(get_engine()) as session:
+        process_resume(session, {"resume_id": str(committed_resume)})
+        session.commit()
+
+    status, failure_code, extraction = _committed_state(committed_resume)
+    assert status is ResumeStatus.FAILED
+    assert failure_code == "LLM_UNAVAILABLE"
+    assert extraction is None
+
+
+def test_know_92_major_db_error_at_lock_marks_failed(
+    committed_resume: uuid.UUID, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _use_llm(monkeypatch, FakeLLM({EXTRACTION_TASK: [VALID_EXTRACTION]}))
+
+    def broken_lock(db: Session, resume_id: uuid.UUID) -> Resume | None:
+        raise OperationalError("SELECT", {}, Exception("server closed the connection"))
+
+    monkeypatch.setattr(processing, "_lock_resume", broken_lock)
+
+    with Session(get_engine()) as session, pytest.raises(OperationalError):
+        process_resume(session, {"resume_id": str(committed_resume)})
+
+    status, failure_code, extraction = _committed_state(committed_resume)
+    assert status is ResumeStatus.FAILED
+    assert failure_code == "LLM_UNAVAILABLE"
+    assert extraction is None
+
+
+def test_cv_05_major_error_after_lock_does_not_block_failure_mark(
+    committed_resume: uuid.UUID, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The row lock of the worker session is released before the fresh session writes."""
+    _use_llm(monkeypatch, FakeLLM({EXTRACTION_TASK: [VALID_EXTRACTION]}))
+    original_lock = processing._lock_resume
+
+    def lock_then_fail(db: Session, resume_id: uuid.UUID) -> Resume | None:
+        original_lock(db, resume_id)
+        raise OperationalError("UPDATE", {}, Exception("connection lost"))
+
+    monkeypatch.setattr(processing, "_lock_resume", lock_then_fail)
+    with Session(get_engine()) as session, pytest.raises(OperationalError):
+        process_resume(session, {"resume_id": str(committed_resume)})
+
+    status, failure_code, _ = _committed_state(committed_resume)
+    assert status is ResumeStatus.FAILED
+    assert failure_code == "LLM_UNAVAILABLE"
