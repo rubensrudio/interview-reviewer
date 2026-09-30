@@ -285,3 +285,24 @@ The backend needs outbound HTTPS access to `accounts.google.com`, `oauth2.google
 and `www.googleapis.com`. A cancelled sign-in, an invalid `state`, an `id_token` that fails
 validation (signature, `iss`, `aud`, `exp`, `nonce`) or an e-mail that Google has not
 verified all end with the `GOOGLE_AUTH_FAILED` error and no account is created or linked.
+
+## Frontend
+
+Angular 21 single-page app in `frontend/`: standalone components, zoneless change detection,
+signals and plain SCSS (no UI component library).
+
+- Development server: `npx ng serve --proxy-config proxy.conf.json` serves the app on
+  <http://localhost:4200> and proxies `/api` to the backend on `http://localhost:8000`
+  (`proxy.conf.json`), so the browser only talks to one origin.
+- Unit tests run on Vitest through the `@angular/build:unit-test` builder. Its runner config
+  is `vitest-base.config.ts`, which writes a JUnit report to `frontend/reports/junit.xml`.
+  Run a single spec with `npx ng test --watch=false --include=src/app/app.spec.ts`.
+- Lint uses angular-eslint (`eslint.config.js`) over `src/**/*.ts` and `src/**/*.html`.
+- End-to-end tests use Playwright (`playwright.config.ts`, specs in `frontend/e2e/`). Install
+  the browser once with `npx playwright install chromium`. `npx playwright test` starts
+  `ng serve` automatically (or reuses one already running) and writes a JUnit report to
+  `frontend/reports/e2e-junit.xml`; `npx playwright test --list` lists specs without running
+  them. Regression specs live in `frontend/e2e/regressao/` and mock the backend with
+  `page.route`, so they do not need the API running.
+
+`frontend/reports/` and `frontend/test-results/` are git-ignored.
