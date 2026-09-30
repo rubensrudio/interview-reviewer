@@ -17,7 +17,7 @@ from app.db import Base
 
 class TokenPurpose(enum.StrEnum):
     VERIFY_EMAIL = "verify_email"
-    RESET_PASSWORD = "reset_password"
+    RESET_PASSWORD = "reset_password"  # noqa: S105 - enum label, not a secret
     GOOGLE_LINK = "google_link"
 
 
