@@ -2,7 +2,8 @@
 
 ``resolve_google_login`` maps a validated Google identity to an account:
 
-* ``google_sub`` already linked -> ``signed_in`` (AUTH-13);
+* ``google_sub`` already linked -> ``signed_in``, or ``needs_terms`` when the account lacks
+  the current terms acceptance (AUTH-13, LAC-35);
 * no account with the normalized e-mail -> a verified, password-less account linked to the
   identity is created and ``needs_terms`` is returned (AUTH-10);
 * e-mail of a local account not yet linked -> nothing is linked; a ``google_link`` one-time
@@ -16,6 +17,7 @@ or unverified identities fail with ``GOOGLE_AUTH_FAILED``.
 wrong password counts on the same per-account throttle key as the local login; the failure is
 committed before ``INVALID_CREDENTIALS`` is raised (the request session is rolled back on
 errors) and the link token stays usable, so a typo does not force a new Google round trip.
+Linking an unverified local account marks its e-mail as verified (LAC-34).
 
 Lock order is fixed: user row, then throttle row, then token row. Password reset locks user
 then token and local login locks only throttle rows, so no path waits in the opposite order.
@@ -47,6 +49,7 @@ from app.errors import (
     TOO_MANY_ATTEMPTS,
     AppError,
 )
+from app.legal.consent import has_current_consent
 from app.models.account import OneTimeToken, TokenPurpose, User
 from app.observability import log_event
 
@@ -114,11 +117,14 @@ def _user_by_email(db: Session, email: str) -> User | None:
     return db.execute(select(User).where(User.email_normalized == email)).scalar_one_or_none()
 
 
-def _signed_in(user: User) -> GoogleLoginResult:
+def _linked_result(user: User) -> GoogleLoginResult:
+    """Result for an account already linked to the Google identity (AUTH-13, LAC-35)."""
     if user.deletion_requested_at is not None:
         raise _google_failed("pending_deletion")
-    log_event("auth.google_login_resolved", kind="signed_in")
-    return GoogleLoginResult(kind="signed_in", user=user, pending_link_token=None)
+    # LAC-35: without the current terms acceptance (LAC-30) the account must accept first.
+    kind: GoogleLoginKind = "signed_in" if has_current_consent(user) else "needs_terms"
+    log_event("auth.google_login_resolved", kind=kind)
+    return GoogleLoginResult(kind=kind, user=user, pending_link_token=None)
 
 
 def _create_google_account(db: Session, sub: str, email: str) -> User | None:
@@ -141,7 +147,7 @@ def _create_google_account(db: Session, sub: str, email: str) -> User | None:
 def _resolve(db: Session, sub: str, email: str, *, retry: bool) -> GoogleLoginResult:
     linked = _user_by_sub(db, sub)
     if linked is not None:
-        return _signed_in(linked)
+        return _linked_result(linked)
 
     existing = _user_by_email(db, email)
     if existing is None:
@@ -154,6 +160,9 @@ def _resolve(db: Session, sub: str, email: str, *, retry: bool) -> GoogleLoginRe
         log_event("auth.google_login_resolved", kind="needs_terms")
         return GoogleLoginResult(kind="needs_terms", user=created, pending_link_token=None)
 
+    if existing.google_sub == sub:
+        # A concurrent first sign-in committed the account between the two lookups.
+        return _linked_result(existing)
     if existing.deletion_requested_at is not None:
         raise _google_failed("pending_deletion")
     if existing.google_sub is not None:
@@ -269,6 +278,9 @@ def complete_link(db: Session, pending_link_token: str, password: str) -> User:
         raise _link_invalid("identity_linked_elsewhere")
 
     user.google_sub = sub
+    if user.email_verified_at is None:
+        # LAC-34: Google asserted the e-mail and the local password was just proven.
+        user.email_verified_at = datetime.now(UTC)
     try:
         db.flush()
     except IntegrityError:

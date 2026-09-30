@@ -152,10 +152,66 @@ def test_auth_13_second_google_login_of_new_account_returns_same_user(db: Sessio
 
     assert first.user is not None and second.user is not None
     assert second.user.id == first.user.id
+    # LAC-35: still no terms acceptance, so the second login also asks for it.
+    assert second.kind == "needs_terms"
     assert (
         db.scalar(select(func.count()).select_from(User).where(User.google_sub == identity.sub))
         == 1
     )
+
+
+def test_auth_13_linked_identity_after_accepting_terms_signs_in(db: Session) -> None:
+    identity = _identity(_unique_email())
+    first = resolve_google_login(db, identity)
+    assert first.user is not None
+    record_consent(db, first.user)
+
+    second = resolve_google_login(db, identity)
+
+    assert second.kind == "signed_in"
+    assert second.user is not None
+    assert second.user.id == first.user.id
+
+
+def test_auth_13_linked_identity_with_outdated_terms_needs_terms(
+    db: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # LAC-35 with LAC-30: a new terms version forces a new acceptance.
+    user = _local_user(db)
+    user.google_sub = _unique_sub()
+    db.flush()
+    monkeypatch.setattr(get_settings(), "terms_version", "terms-next")
+
+    result = resolve_google_login(db, _identity(user.email_normalized, user.google_sub))
+
+    assert result.kind == "needs_terms"
+    assert result.user is not None
+    assert result.user.id == user.id
+    assert result.pending_link_token is None
+
+
+def test_auth_10_race_sub_committed_between_lookups_resolves_same_account(
+    db: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Run-gate finding TASK-021: a concurrent first login committed the account after the
+    # lookup by sub and before the lookup by e-mail; the loser got GOOGLE_AUTH_FAILED.
+    identity = _identity(_unique_email())
+    winner = resolve_google_login(db, identity)
+    assert winner.user is not None
+    real_lookup = google_accounts._user_by_sub
+    calls: list[str] = []
+
+    def stale_first_lookup(session: Session, sub: str) -> User | None:
+        calls.append(sub)
+        return None if len(calls) == 1 else real_lookup(session, sub)
+
+    monkeypatch.setattr(google_accounts, "_user_by_sub", stale_first_lookup)
+
+    loser = resolve_google_login(db, identity)
+
+    assert loser.kind == "needs_terms"
+    assert loser.user is not None
+    assert loser.user.id == winner.user.id
 
 
 # --- AUTH-11: local account with the same e-mail --------------------------------------------
@@ -200,6 +256,40 @@ def test_auth_11_complete_link_with_correct_password_links_and_then_signs_in(
     assert again.kind == "signed_in"
     assert again.user is not None
     assert again.user.id == user.id
+
+
+def test_auth_11_linking_unverified_local_account_marks_email_verified(db: Session) -> None:
+    # LAC-34: Google asserted the e-mail and the local password was proven.
+    user = _local_user(db, verified=False)
+    raw, sub = _needs_link(db, user)
+
+    complete_link(db, raw, GOOD_PASSWORD)
+
+    db.refresh(user)
+    assert user.google_sub == sub
+    assert user.email_verified_at is not None
+
+
+def test_auth_11_linking_keeps_existing_verification_date(db: Session) -> None:
+    user = _local_user(db)
+    verified_at = user.email_verified_at
+    raw, _ = _needs_link(db, user)
+
+    complete_link(db, raw, GOOD_PASSWORD)
+
+    db.refresh(user)
+    assert user.email_verified_at == verified_at
+
+
+def test_auth_12_wrong_password_does_not_verify_unverified_account(db: Session) -> None:
+    user = _local_user(db, verified=False)
+    raw, _ = _needs_link(db, user)
+
+    _error(lambda: complete_link(db, raw, WRONG_PASSWORD))
+
+    db.refresh(user)
+    assert user.email_verified_at is None
+    assert user.google_sub is None
 
 
 def test_auth_11_link_token_cannot_be_reused(db: Session) -> None:
@@ -604,7 +694,8 @@ def test_auth_10_concurrent_first_google_logins_create_one_account(
     assert errors == []
     assert len(results) == 2
     assert results[0][1] == results[1][1]
-    assert {kind for kind, _ in results} <= {"needs_terms", "signed_in"}
+    # LAC-35: the account has no terms acceptance yet, so both requests ask for it.
+    assert [kind for kind, _ in results] == ["needs_terms", "needs_terms"]
     with get_sessionmaker()() as session:
         count = session.scalar(
             select(func.count()).select_from(User).where(User.google_sub == identity.sub)
