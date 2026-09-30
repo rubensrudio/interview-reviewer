@@ -301,6 +301,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-011 — Implement password hashing and password policy
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-14`
 - **Tipo**: lógica-negócio
