@@ -121,6 +121,14 @@ the local services from `docker-compose.yml`.
 | `IR_LLM_BASE_URL` | `http://localhost:11434/v1` |
 | `IR_LLM_MODEL` | `qwen2.5:7b-instruct` (development only) |
 | `IR_LLM_ALLOWED_HOSTS` | `["localhost", "127.0.0.1", "llm"]` |
+| `IR_MAX_PDF_BYTES` | `5242880` (5 MB) |
+| `IR_MAX_RESUMES_PER_USER` | `10` |
+| `IR_MAX_ANSWER_CHARS` | `5000` |
+| `IR_SESSION_EXPIRY_DAYS` | `30` |
+| `IR_MAX_REQUIRED_SKILLS` | `20` |
+| `IR_OCR_ENABLED` | `false` |
+
+The full list of variables and their defaults is in `backend/.env.example`.
 
 Secrets have no default and must be provided through the environment, never committed:
 `IR_THROTTLE_SECRET`, `IR_OIDC_STATE_SECRET`, `IR_GOOGLE_CLIENT_ID` and
