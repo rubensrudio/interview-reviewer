@@ -318,3 +318,11 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-qa)**: code_is_token 0.71; attributable_to_wave 0.55 (dúvida); exploitable 0.15.
 - **Decisão (humano)**: B.
 - **Impacto**: AUTH-95 pendente. **Dívida obrigatória antes do PR final da feature**: redigir `code`/`state`/`token` no `uvicorn.access` (filtro em logging_setup.py) ou rodar com `--no-access-log`/log_config; atualizar o comando "Subir ambiente local" do plan/README. **Requer atualização de plan**.
+
+### LAC-38 — Recuperar jobs presos em `running` (TASK-009, implementação)
+- **Etapa**: /implement, antes da onda 20 (lacuna apontada pelo QA da onda 10)
+- **Problema**: nenhuma task recupera job que fica `running` quando o worker morre; avaliação trava (EVAL-93, KNOW-92).
+- **Opções**: A) reaper na TASK-009 (jobs `running` com `locked_at` antigo voltam a `queued` ou viram `failed` se esgotaram `max_attempts`); B) task separada / dívida; C) aceitar o risco.
+- **Jev (hm-qa)**: lacuna do plano 0.91.
+- **Decisão (humano)**: A.
+- **Impacto**: escopo da TASK-009 ampliado. **Requer atualização de plan**: TASK-009 / CT-6 devem citar o reaper e o limite de `locked_at`.
