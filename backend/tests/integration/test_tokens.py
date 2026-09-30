@@ -117,7 +117,7 @@ def test_auth_94_wrong_purpose_raises_link_invalid(db: Session) -> None:
     assert consume_one_time_token(db, raw, TokenPurpose.VERIFY_EMAIL).used_at is not None
 
 
-@pytest.mark.parametrize("raw", ["", "does-not-exist", "x" * 5000])
+@pytest.mark.parametrize("raw", ["", "does-not-exist", "x" * 5000, "\ud800", "bad token!"])
 def test_auth_94_unknown_token_raises_link_invalid(db: Session, raw: str) -> None:
     with pytest.raises(AppError) as exc_info:
         consume_one_time_token(db, raw, TokenPurpose.VERIFY_EMAIL)

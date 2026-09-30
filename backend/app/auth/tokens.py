@@ -6,6 +6,7 @@ functions flush but never commit.
 """
 
 import hashlib
+import re
 import secrets
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
@@ -18,8 +19,9 @@ from app.models.account import OneTimeToken, TokenPurpose
 from app.observability import log_event
 
 _SECRET_BYTES = 32
-# token_urlsafe(32) yields 43 characters; anything far longer is not one of ours.
-_MAX_RAW_LENGTH = 256
+# token_urlsafe(32) yields 43 base64url characters; anything outside that alphabet or far
+# longer is not one of ours (and non-ASCII input such as lone surrogates cannot be hashed).
+_RAW_TOKEN_PATTERN = re.compile(r"[A-Za-z0-9_-]{1,256}")
 
 
 def new_secret() -> str:
@@ -69,7 +71,7 @@ def consume_one_time_token(db: Session, raw: str, purpose: TokenPurpose) -> OneT
     consume it. Unknown, expired, already used or other-purpose tokens raise
     ``AppError(LINK_INVALID)`` without telling the caller which case applied.
     """
-    if not raw or len(raw) > _MAX_RAW_LENGTH:
+    if _RAW_TOKEN_PATTERN.fullmatch(raw) is None:
         raise _link_invalid("malformed", purpose)
 
     token = db.execute(
