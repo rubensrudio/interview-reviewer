@@ -615,6 +615,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-021 — Resolve Google sign-in and account linking
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-10`, `AUTH-11`, `AUTH-12`, `AUTH-13`
 - **Tipo**: lógica-negócio
