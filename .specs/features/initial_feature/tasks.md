@@ -1499,6 +1499,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-051 — Implement LLM answer evaluator
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-01`, `EVAL-02`, `EVAL-09`, `EVAL-10`, `EVAL-16`, `INTV-07`
 - **Tipo**: lógica-negócio
