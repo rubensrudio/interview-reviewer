@@ -458,6 +458,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-016 — Implement local registration and e-mail verification
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-01`, `AUTH-02`, `AUTH-03`, `AUTH-91`, `AUTH-92`, `AUTH-94`, `DATA-07`
 - **Tipo**: lógica-negócio
