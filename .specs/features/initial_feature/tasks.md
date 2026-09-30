@@ -915,6 +915,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-031 — Implement asynchronous resume processing job
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-05`, `CV-06`, `CV-07`, `CV-09`, `CV-14`, `CV-92`, `CV-93`, `CV-96`, `KNOW-92`
 - **Tipo**: lógica-negócio
