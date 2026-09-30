@@ -1,7 +1,7 @@
 """Shared FastAPI dependencies for API routes.
 
 Every private route must depend on ``CurrentUser`` (or ``Depends(get_current_user)``), which
-enforces the session cookie, CSRF on non-safe methods and a current terms acceptance.
+enforces the session cookie, CSRF on non-GET methods and a current terms acceptance.
 ``CurrentUserPendingTerms`` is reserved for the few routes a user must reach before accepting
 the terms (e.g. ``POST /api/account/terms``).
 """

@@ -3,7 +3,7 @@
 The raw session secret only ever travels in the HttpOnly ``ir_session`` cookie; the database
 keeps its SHA-256 digest, so logout (or ``revoke_all_sessions``) invalidates it on the server.
 CSRF uses the double-submit pattern supported natively by Angular: a readable ``XSRF-TOKEN``
-cookie that must be echoed in the ``X-XSRF-TOKEN`` header on every non-safe authenticated
+cookie that must be echoed in the ``X-XSRF-TOKEN`` header on every non-GET authenticated
 request. The XSRF value is derived from the session secret, so a cookie planted by an attacker
 cannot produce a valid pair. Callers own the transaction (CT-2): nothing here commits.
 """
@@ -30,7 +30,8 @@ SESSION_COOKIE = "ir_session"
 XSRF_COOKIE = "XSRF-TOKEN"  # noqa: S105 - cookie name, not a secret
 XSRF_HEADER = "X-XSRF-TOKEN"  # noqa: S105 - header name, not a secret
 COOKIE_PATH = "/"
-SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
+# DA-5: the X-XSRF-TOKEN header is required on every authenticated non-GET request.
+CSRF_EXEMPT_METHODS = frozenset({"GET"})
 
 # new_secret() yields 43 base64url characters; the XSRF value is a 64-char hex digest.
 # Values are validated before any encode/hash/compare so malformed input (non-ASCII, lone
@@ -110,16 +111,24 @@ def create_auth_session(db: Session, user: User, response: Response) -> None:
 
 
 def revoke_auth_session(db: Session, request: Request, response: Response) -> None:
-    """Revoke the session identified by the request cookie (if any) and clear the cookies."""
+    """Revoke the session identified by the request cookie (if any) and clear the cookies.
+
+    When the cookie points to an active session, the CSRF check applies (403 CSRF_FAILED
+    leaves the session untouched). A missing, malformed or already invalid cookie only
+    clears the cookies.
+    """
     raw = _valid_session_token(request.cookies.get(SESSION_COOKIE))
     if raw is not None:
-        result = db.execute(
-            update(AuthSession)
+        auth_session = db.execute(
+            select(AuthSession)
             .where(AuthSession.token_hash == hash_secret(raw), AuthSession.revoked_at.is_(None))
-            .values(revoked_at=datetime.now(UTC))
-        )
-        db.flush()
-        log_event("auth.session_revoked", revoked=bool(getattr(result, "rowcount", 0)))
+            .with_for_update()
+        ).scalar_one_or_none()
+        if auth_session is not None:
+            _check_csrf(request, raw)
+            auth_session.revoked_at = datetime.now(UTC)
+            db.flush()
+            log_event("auth.session_revoked")
     _clear_cookies(response)
 
 
@@ -135,7 +144,7 @@ def revoke_all_sessions(db: Session, user_id: UUID) -> None:
 
 
 def _check_csrf(request: Request, raw_session: str) -> None:
-    if request.method.upper() in SAFE_METHODS:
+    if request.method.upper() in CSRF_EXEMPT_METHODS:
         return
     header = request.headers.get(XSRF_HEADER)
     cookie = request.cookies.get(XSRF_COOKIE)

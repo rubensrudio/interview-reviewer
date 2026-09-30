@@ -77,6 +77,10 @@ def _build_app(db: Session) -> FastAPI:
     def pending_post(user: CurrentUserPendingTerms) -> dict[str, str]:
         return {"id": str(user.id)}
 
+    @app.api_route("/test/me", methods=["HEAD", "OPTIONS"])
+    def me_head_options(user: CurrentUser) -> dict[str, str]:
+        return {"id": str(user.id)}
+
     @app.post("/test/logout")
     def logout(
         request: Request, response: Response, session: Annotated[Session, Depends(get_db)]
@@ -333,3 +337,41 @@ def test_lone_surrogate_cookie_is_rejected_without_error(db: Session) -> None:
     with pytest.raises(AppError) as exc_info:
         get_current_user(request, db)
     assert exc_info.value.code == "AUTH_REQUIRED"
+
+
+@pytest.mark.parametrize("method", ["HEAD", "OPTIONS"])
+def test_csrf_head_and_options_without_header_get_403(
+    client: TestClient, db: Session, method: str
+) -> None:
+    user = _user(db)
+    _, xsrf = _login(client, user)
+
+    response = client.request(method, "/test/me")
+    assert response.status_code == 403
+    response = client.request(method, "/test/me", headers={XSRF_HEADER: xsrf})
+    assert response.status_code == 200
+
+
+def test_auth_06_logout_without_xsrf_header_gets_403_and_keeps_session(
+    client: TestClient, db: Session
+) -> None:
+    user = _user(db)
+    _login(client, user)
+
+    response = client.post("/test/logout")
+    assert response.status_code == 403
+    assert _error_code(response) == "CSRF_FAILED"
+    db.expire_all()
+    row = db.execute(select(AuthSession).where(AuthSession.user_id == user.id)).scalar_one()
+    assert row.revoked_at is None
+    assert client.get("/test/me").status_code == 200
+
+
+def test_auth_06_logout_with_invalid_session_cookie_only_clears_cookies(
+    client: TestClient,
+) -> None:
+    client.cookies.set(SESSION_COOKIE, "does-not-exist")
+    response = client.post("/test/logout")
+    assert response.status_code == 200
+    cleared = response.headers.get_list("set-cookie")
+    assert any(h.startswith(f"{SESSION_COOKIE}=") and "Max-Age=0" in h for h in cleared)
