@@ -266,6 +266,31 @@ def test_auth_01_invalid_email_raises_validation_error(
     assert mailer.sent == []
 
 
+@pytest.mark.parametrize(
+    "undeliverable_email",
+    [
+        "a@b",
+        "a,b@x.com",
+        '"a"@x.com',
+        "a<b@x.com",
+        f"{'a' * 64}@{'b' * 187}.com",  # 256 characters: over the 254 SMTP limit
+    ],
+)
+def test_auth_01_undeliverable_email_raises_validation_error_without_creating_user(
+    db: Session, mailer: FakeMailer, undeliverable_email: str
+) -> None:
+    """Regression (QA TASK-016-1): e-mails the sender refuses must not create an account."""
+    normalized = normalize_email(undeliverable_email)
+
+    with pytest.raises(AppError) as caught:
+        register_local(db, undeliverable_email, GOOD_PASSWORD, accepted_terms=True)
+
+    assert caught.value.code == VALIDATION_ERROR
+    assert _count_users(db, normalized) == 0
+    assert mailer.sent == []
+    assert resend_verification(db, undeliverable_email) == "skipped"
+
+
 def test_auth_01_too_long_email_raises_validation_error(db: Session, mailer: FakeMailer) -> None:
     with pytest.raises(AppError) as caught:
         register_local(db, f"{'a' * 320}@x.com", GOOD_PASSWORD, accepted_terms=True)

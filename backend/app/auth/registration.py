@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 from app.auth.passwords import hash_password, password_policy_violations
 from app.auth.tokens import consume_one_time_token, issue_one_time_token
 from app.config import get_settings
-from app.email.sender import send_email, verification_email
+from app.email.sender import _is_valid_address, send_email, verification_email
 from app.errors import (
     LINK_INVALID,
     PASSWORD_POLICY,
@@ -58,10 +58,11 @@ def _is_encodable(value: str) -> bool:
 def _is_plausible_email(normalized: str) -> bool:
     if not normalized or len(normalized) > MAX_EMAIL_LENGTH or not _is_encodable(normalized):
         return False
-    if any(ch.isspace() or not ch.isprintable() for ch in normalized):
+    if any(not ch.isprintable() for ch in normalized):
         return False
-    local, sep, domain = normalized.partition("@")
-    return bool(sep) and bool(local) and bool(domain) and "@" not in domain
+    # Same rule the sender applies (CT-12): an address it would refuse can never receive the
+    # verification link, so accepting it would create an account that can never be verified.
+    return _is_valid_address(normalized)
 
 
 def _validation_error(field: str) -> AppError:
