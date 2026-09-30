@@ -188,6 +188,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-007 — Create job table and migration 0001
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-93`, `KNOW-92`
 - **Tipo**: migration
@@ -721,6 +722,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-025 — Add model version identification and release gate
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `MODEL-03`, `MODEL-04`
 - **Tipo**: infra
@@ -1450,6 +1452,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-050 — Implement deterministic adherence scoring
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-03`, `EVAL-04`, `EVAL-05`, `EVAL-90`, `EVAL-91`, `EVAL-92`
 - **Tipo**: lógica-negócio
@@ -1856,6 +1859,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-064 — Implement validation dataset checker
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `MODEL-01`, `DATA-09`
 - **Tipo**: lógica-negócio
