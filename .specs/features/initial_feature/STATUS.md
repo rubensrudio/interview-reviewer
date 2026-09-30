@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-09-30T19:12:40 · integradora `feature/initial_feature-integration` · baseline `develop@46d1dcc` (2026-09-30)
+Atualizado em 2026-09-30T19:39:06 · integradora `feature/initial_feature-integration` · baseline `develop@ffeed15` (2026-09-30)
 
 ## Baseline
 
@@ -36,7 +36,7 @@ Atualizado em 2026-09-30T19:12:40 · integradora `feature/initial_feature-integr
 | 14 | TASK-016 | ✅ | G1, G5 | EXAUSTIVO: APROVADO |
 | 15 | TASK-017 | ✅ | G1 | EXAUSTIVO: APROVADO |
 | 16 | TASK-018 | ✅ | G1, G5 | EXAUSTIVO: APROVADO |
-| 17 | TASK-019 | — | — | — |
+| 17 | TASK-019 | ✅ | G1, G5 | EXAUSTIVO: APROVADO |
 | 18 | TASK-021 | — | — | — |
 | 19 | TASK-022 | — | — | — |
 | 20 | TASK-009, TASK-026 | — | — | — |
@@ -86,6 +86,7 @@ Atualizado em 2026-09-30T19:12:40 · integradora `feature/initial_feature-integr
 | 9 | 13 | TASK-015 | `feature/initial_feature-phase-9` → `feature/initial_feature-phase-8` | https://github.com/rubensrudio/interview-reviewer/pull/9 |
 | 10 | 14 | TASK-016 | `feature/initial_feature-phase-10` → `feature/initial_feature-phase-9` | https://github.com/rubensrudio/interview-reviewer/pull/10 |
 | 11 | 15 | TASK-017 | `feature/initial_feature-phase-11` → `feature/initial_feature-phase-10` | https://github.com/rubensrudio/interview-reviewer/pull/11 |
+| 12 | 16 | TASK-018 | `feature/initial_feature-phase-12` → `feature/initial_feature-phase-11` | https://github.com/rubensrudio/interview-reviewer/pull/12 |
 
 ## Tasks
 
@@ -109,7 +110,7 @@ Atualizado em 2026-09-30T19:12:40 · integradora `feature/initial_feature-integr
 | TASK-016 | ✅ APROVADA | crítico | 0/0/1 |  |
 | TASK-017 | ✅ APROVADA | crítico | 0/0/0 |  |
 | TASK-018 | ✅ APROVADA | crítico | 0/0/1 |  |
-| TASK-019 |  PENDENTE | crítico | 0/0/0 |  |
+| TASK-019 | ✅ APROVADA | crítico | 1/0/0 |  |
 | TASK-020 | ✅ APROVADA | crítico | 0/0/0 |  |
 | TASK-021 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-022 |  PENDENTE | crítico | 0/0/0 |  |
@@ -189,8 +190,8 @@ Atualizado em 2026-09-30T19:12:40 · integradora `feature/initial_feature-integr
 
 ## Métricas
 
-- Aprovadas: 28/95 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 24/28
-- Ondas fechadas: 16 · QA semântico invocado em 12
+- Aprovadas: 29/95 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 24/29
+- Ondas fechadas: 17 · QA semântico invocado em 13
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 0
