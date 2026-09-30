@@ -257,3 +257,11 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-reviewer)**: "0.0 com uma lista vazia cumpre o Done when" p=0.22.
 - **Decisão (humano)**: B.
 - **Impacto**: gabarito vazio no dataset é erro; extração vazia do modelo é medida como F1 0 (MODEL-02). **Requer atualização de spec/plan**: Done when da TASK-066 / CT-55 devem dizer "expected vazio levanta ValueError".
+
+### LAC-30 — Critério de "aceite vigente" dos termos (TASK-013, implementação)
+- **Etapa**: /implement, onda 12, TASK-013 (get_current_user → 403 TERMS_REQUIRED)
+- **Problema**: a task diz "aceite vigente" sem definir se exige só `terms_accepted_at` ou também versões iguais às atuais.
+- **Opções**: A) `terms_accepted_at` + `terms_version` e `privacy_version` iguais às de settings; B) só `terms_accepted_at`.
+- **Jev (hm-engineer)**: `vigente_version` noul=0.63 (dúvida; área de permissão).
+- **Decisão (humano)**: A.
+- **Impacto**: nova versão de termos/privacidade força novo aceite de todos os usuários. **Requer atualização de spec/plan**: AUTH-15 / CT-11 devem explicitar a comparação de versões.
