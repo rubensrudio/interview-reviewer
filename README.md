@@ -140,6 +140,28 @@ The LLM client only connects to hosts listed in `IR_LLM_ALLOWED_HOSTS`. When a c
 deletes their account, all of their data is removed immediately; copies in backups expire
 within 30 days.
 
+## LLM server
+
+All inference runs on a self-hosted, OpenAI-compatible server (vLLM in production, Ollama in
+development); no external LLM provider is ever called. The backend reaches it only through
+`httpx` (`backend/app/llm/client.py`), posting to `<IR_LLM_BASE_URL>/chat/completions` with a
+`json_schema` response format, and validates every answer against a pydantic model.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `IR_LLM_BASE_URL` | `http://localhost:11434/v1` | Base URL of the OpenAI-compatible API |
+| `IR_LLM_MODEL` | `qwen2.5:7b-instruct` | Model name sent with each request |
+| `IR_LLM_ALLOWED_HOSTS` | `["localhost", "127.0.0.1", "llm"]` | Hosts the client may connect to (JSON list) |
+| `IR_LLM_TIMEOUT_SECONDS` | `120` | Timeout of each inference request |
+| `IR_LLM_MAX_ATTEMPTS` | `3` | Attempts per operation before its failure state applies |
+
+The client refuses to start when the host of `IR_LLM_BASE_URL` is not in
+`IR_LLM_ALLOWED_HOSTS`; in production, egress to any other host is also blocked. Timeouts,
+connection errors and non-2xx responses raise `LLMUnavailable`; answers that are not valid
+JSON for the expected model raise `LLMInvalidOutput`. Each call is measured as the
+`llm.inference` metric with the task name only, never the prompt or the answer. Tests use
+`FakeLLM` (`backend/tests/fakes/fake_llm.py`) and never call a real LLM.
+
 ## Email (SMTP)
 
 The backend sends verification, password reset and "Google-only account" e-mails
