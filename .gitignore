@@ -1,4 +1,4 @@
-reports/
+backend/reports/
 .venv/
 node_modules/
 storage/
