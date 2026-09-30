@@ -286,9 +286,7 @@ def test_eval_16_injected_quote_that_is_not_in_the_answer_is_dropped() -> None:
 
 
 def test_eval_01_control_characters_are_removed_before_the_llm_and_from_output() -> None:
-    llm = _llm(
-        _verdict(justification="Good\x00 answer\x07.", quotes=["B-tree"], gap="Gap\x00.")
-    )
+    llm = _llm(_verdict(justification="Good\x00 answer\x07.", quotes=["B-tree"], gap="Gap\x00."))
 
     result = evaluate_answer(llm, _input(answer="It uses a B\x00-tree\x1b index."))
 
