@@ -281,3 +281,11 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-engineer)**: cap_changes_policy noul 0.80.
 - **Decisão (humano)**: A. Excesso responde 422 VALIDATION_ERROR, igual para conta existente ou não.
 - **Impacto**: nova regra de máximo de senha (1024) fora de AUTH-14. **Requer atualização de spec/plan**: AUTH-14 e 8.1 devem citar os limites.
+
+### LAC-33 — Enumeração de contas via `email_delivery` com SMTP indisponível (TASK-019, risco aceito)
+- **Etapa**: /implement, onda 17, review da TASK-019
+- **Problema**: com SMTP fora, `POST /api/auth/register` responde `delayed` para e-mail novo e `sent` para e-mail existente. AUTH-92 (informar atraso) conflita com AUTH-02 (resposta neutra) nesse cenário.
+- **Opções**: A) aceitar o risco residual; B) sempre responder `sent` (neutro, mas descumpre AUTH-92).
+- **Jev (hm-reviewer)**: viola contrato da rota? 0.34 (não).
+- **Decisão (humano)**: A — risco aceito. Vazamento só ocorre durante indisponibilidade de SMTP.
+- **Impacto**: sem mudança de código. **Requer atualização de spec**: registrar o trade-off AUTH-02 × AUTH-92.
