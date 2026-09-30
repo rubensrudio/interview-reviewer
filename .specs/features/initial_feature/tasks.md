@@ -1237,6 +1237,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-042 — Implement interview session lifecycle service
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `PLAN-01`, `PLAN-02`, `CV-11`, `CV-12`, `INTV-12`, `LANG-01`, `LANG-02`, `DATA-01`
 - **Tipo**: lógica-negócio
@@ -1361,6 +1362,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-046 — Build safe interview session view
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `INTV-01`, `INTV-10`, `INTV-14`
 - **Tipo**: lógica-negócio
@@ -1449,6 +1451,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-049 — Expire inactive interview sessions
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `INTV-13`
 - **Tipo**: lógica-negócio
@@ -1570,6 +1573,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-053 — Build immutable report content
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-05`, `EVAL-08`, `EVAL-11`, `EVAL-15`, `EVAL-91`, `KNOW-08`, `KNOW-91`, `PLAN-06`
 - **Tipo**: lógica-negócio
