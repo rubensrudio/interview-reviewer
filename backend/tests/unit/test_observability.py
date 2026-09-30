@@ -70,3 +70,13 @@ def test_log_event_is_reexported(captured: io.StringIO) -> None:
 
     (line,) = _lines(captured)
     assert line == {**line, "event": "auth.login", "outcome": "success"}
+
+
+def test_ct_4_regression_timed_reports_error_even_if_caller_passes_outcome(
+    captured: io.StringIO,
+) -> None:
+    with pytest.raises(RuntimeError), timed("llm.inference", task="x", outcome="ok"):
+        raise RuntimeError("boom")
+
+    (line,) = _lines(captured)
+    assert line["outcome"] == "error"

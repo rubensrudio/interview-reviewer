@@ -168,3 +168,59 @@ def test_configure_logging_is_idempotent() -> None:
         for handler in before:
             root.addHandler(handler)
         root.setLevel(previous_level)
+
+
+@pytest.mark.parametrize("key", ["email_to", "user_email_address", "reset_link_url"])
+def test_auth_95_regression_email_and_link_segments_anywhere_are_removed(
+    captured: io.StringIO, key: str
+) -> None:
+    log_event("auth.reset", **{key: "leaked-value"})
+
+    assert "leaked-value" not in captured.getvalue()
+    (line,) = _lines(captured)
+    assert key not in line
+
+
+def test_auth_95_regression_reset_link_path_and_email_in_message_are_masked(
+    captured: io.StringIO,
+) -> None:
+    logging.getLogger("app.auth").info(
+        "reset link sent https://h/reset-password/SECRETPATHTOKEN123 to a@b.com"
+    )
+
+    raw = captured.getvalue()
+    assert "SECRETPATHTOKEN123" not in raw
+    assert "a@b.com" not in raw
+    (line,) = _lines(captured)
+    assert "https://h/reset-password/[REDACTED]" in str(line["message"])
+
+
+def test_auth_95_regression_client_secret_in_message_is_masked(captured: io.StringIO) -> None:
+    logging.getLogger("app.auth").info("oidc client_secret=GOCSPX-abc123 password=hunter2")
+
+    raw = captured.getvalue()
+    assert "GOCSPX-abc123" not in raw
+    assert "hunter2" not in raw
+    (line,) = _lines(captured)
+    assert "client_secret=[REDACTED]" in str(line["message"])
+
+
+def test_auth_95_regression_email_and_link_in_field_value_are_masked(
+    captured: io.StringIO,
+) -> None:
+    log_event("evt", detail="to a@b.com via https://h/verify-email/ABCSECRET")
+
+    raw = captured.getvalue()
+    assert "a@b.com" not in raw
+    assert "ABCSECRET" not in raw
+
+
+def test_ct_4_regression_log_event_cannot_override_log_metadata(captured: io.StringIO) -> None:
+    log_event("x", level="FAKE", logger="evil", timestamp="1999", message="m")
+
+    (line,) = _lines(captured)
+    assert line["event"] == "x"
+    assert line["level"] == "INFO"
+    assert line["logger"] == "app.events"
+    assert line["timestamp"] != "1999"
+    assert "message" not in line

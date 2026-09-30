@@ -39,10 +39,28 @@ BLACKLISTED_KEYS: frozenset[str] = frozenset(
     }
 )
 # Segments that make a field sensitive wherever they appear in its name
-# (e.g. ``password_hash``, ``token_value``, ``session_cookie``).
-ALWAYS_SENSITIVE_SEGMENTS: frozenset[str] = frozenset({"password", "token", "secret", "cookie"})
+# (e.g. ``password_hash``, ``user_email_address``, ``reset_link_url``).
+ALWAYS_SENSITIVE_SEGMENTS: frozenset[str] = frozenset(
+    {"password", "token", "secret", "cookie", "email", "link"}
+)
+# Log metadata keys that event fields can never override.
+RESERVED_KEYS: frozenset[str] = frozenset({"timestamp", "level", "logger", "message", "exc_type"})
 
-_TOKEN_PATTERN = re.compile(r"(token=)[^&\s\"'#]+", re.IGNORECASE)
+# ``key=value`` pairs whose value is a credential (``token=``, ``client_secret=``,
+# ``password=``, OAuth ``code=``...).
+_CREDENTIAL_PAIR = re.compile(
+    r"(?<![\w-])((?:[\w.-]*?(?:token|secret|password|passwd|cookie)[\w.-]*|code)=)"
+    r"[^&\s\"',;#]+",
+    re.IGNORECASE,
+)
+_BEARER = re.compile(r"(\bbearer\s+)[^\s\"',;]+", re.IGNORECASE)
+_EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+_URL = re.compile(r"https?://[^\s\"'<>]+", re.IGNORECASE)
+_URL_USERINFO = re.compile(r"^(https?://)[^/@]+@", re.IGNORECASE)
+# Path segments that introduce one-time links (verification, reset, sign-in).
+_LINK_SEGMENT = re.compile(
+    r"verif|reset|confirm|activat|magic|invite|link|token|unsubscribe", re.IGNORECASE
+)
 _KEY_SPLIT = re.compile(r"[_.\-]")
 
 _STANDARD_ATTRS = frozenset(logging.makeLogRecord({}).__dict__) | {"message", "asctime"}
@@ -61,9 +79,30 @@ def is_sensitive_key(key: str) -> bool:
     return any(segment in ALWAYS_SENSITIVE_SEGMENTS for segment in segments)
 
 
-def mask_tokens(value: str) -> str:
-    """Mask the value of every ``token=`` occurrence in a string."""
-    return _TOKEN_PATTERN.sub(rf"\g<1>{REDACTED}", value)
+def _mask_url(match: re.Match[str]) -> str:
+    url = _URL_USERINFO.sub(rf"\g<1>{REDACTED}@", match.group(0))
+    scheme_end = url.index("://") + 3
+    path_start = url.find("/", scheme_end)
+    if path_start == -1:
+        return url
+    split_at = min(
+        (i for i in (url.find("?", path_start), url.find("#", path_start)) if i != -1),
+        default=len(url),
+    )
+    segments = url[path_start:split_at].split("/")
+    for index, segment in enumerate(segments):
+        if _LINK_SEGMENT.search(segment):
+            segments[index + 1 :] = [REDACTED if part else part for part in segments[index + 1 :]]
+            break
+    return url[:path_start] + "/".join(segments) + url[split_at:]
+
+
+def mask_sensitive(value: str) -> str:
+    """Mask one-time link paths, credential pairs, bearer tokens and e-mails in a string."""
+    masked = _URL.sub(_mask_url, value)
+    masked = _CREDENTIAL_PAIR.sub(rf"\g<1>{REDACTED}", masked)
+    masked = _BEARER.sub(rf"\g<1>{REDACTED}", masked)
+    return _EMAIL.sub(REDACTED, masked)
 
 
 def _is_scalar(value: object) -> bool:
@@ -73,10 +112,10 @@ def _is_scalar(value: object) -> bool:
 def _clean_fields(fields: dict[str, object]) -> dict[str, Scalar]:
     cleaned: dict[str, Scalar] = {}
     for key, value in fields.items():
-        if is_sensitive_key(key) or not _is_scalar(value):
+        if key in RESERVED_KEYS or is_sensitive_key(key) or not _is_scalar(value):
             continue
         scalar: Scalar = value  # type: ignore[assignment]
-        cleaned[key] = mask_tokens(scalar) if isinstance(scalar, str) else scalar
+        cleaned[key] = mask_sensitive(scalar) if isinstance(scalar, str) else scalar
     return cleaned
 
 
@@ -88,7 +127,7 @@ class RedactionFilter(logging.Filter):
             message = record.getMessage()
         except (TypeError, ValueError):
             message = str(record.msg)
-        record.msg = mask_tokens(message)
+        record.msg = mask_sensitive(message)
         record.args = None
 
         fields = getattr(record, FIELDS_ATTR, None)
@@ -100,7 +139,7 @@ class RedactionFilter(logging.Filter):
             if is_sensitive_key(key) or not _is_scalar(value):
                 del record.__dict__[key]
             elif isinstance(value, str):
-                record.__dict__[key] = mask_tokens(value)
+                record.__dict__[key] = mask_sensitive(value)
         return True
 
 
@@ -115,7 +154,7 @@ class JsonFormatter(logging.Formatter):
         }
         fields = getattr(record, FIELDS_ATTR, None)
         if isinstance(fields, dict):
-            payload.update(fields)
+            payload.update({k: v for k, v in fields.items() if k not in RESERVED_KEYS})
         else:
             payload["message"] = record.getMessage()
         for key, value in record.__dict__.items():
@@ -145,7 +184,8 @@ def configure_logging(level: int | str = logging.INFO) -> None:
 
 def log_event(event: str, **fields: str | int | float | bool | None) -> None:
     """Log a structured event. Only scalar values are accepted; others are dropped."""
-    payload: dict[str, object] = {"event": event, **fields}
+    payload: dict[str, object] = {"event": event}
+    payload.update((key, value) for key, value in fields.items() if key not in RESERVED_KEYS)
     logging.getLogger(EVENTS_LOGGER_NAME).info(event, extra={FIELDS_ATTR: payload})
 
 
@@ -162,5 +202,8 @@ def timed(metric: str, **fields: str | int | float | bool | None) -> Iterator[No
     finally:
         duration_ms = max(0, int((time.perf_counter() - start) * 1000))
         event_fields: dict[str, str | int | float | bool | None] = {"outcome": outcome, **fields}
+        if outcome == "error":
+            # A failure must never be reported with the caller's success outcome.
+            event_fields["outcome"] = outcome
         event_fields["duration_ms"] = duration_ms
         log_event(metric, **event_fields)
