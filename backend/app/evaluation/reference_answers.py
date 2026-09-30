@@ -9,9 +9,11 @@ Sources are never taken from the model (EVAL-15): the model returns the URLs it 
 only URLs that belong to ``inp.sources`` are kept, mapped back to the input ``SourceRef``.
 
 The model may add an experience example. It must then quote the resume snapshot evidence the
-example is based on; when that quote does not appear literally in the snapshot (whitespace
-differences aside), or is missing, the example is flagged as hypothetical so the report labels
-it "Hypothetical example" and never attributes it to the candidate (EVAL-07). Only the
+example is based on. Unless that quote is one whole evidence quote of an experience item of
+the snapshot (whitespace differences aside) with at least ``_MIN_EVIDENCE_WORDS`` words, the
+example is flagged as hypothetical so the report labels it "Hypothetical example" and never
+attributes it to the candidate (EVAL-07). Fragments such as a skill name, a title or a single
+word never count as evidence. Only the
 descriptive fields and the evidence of snapshot items are sent; employers, institutions and
 dates are left out.
 
@@ -39,6 +41,10 @@ REFERENCE_ANSWER_TASK = "reference_answer"
 # Snapshot fields that describe what the candidate did, without identifying where or when.
 _SNAPSHOT_FIELDS = ("title", "name", "degree", "description")
 
+# An example is attributed to the candidate only through a whole experience evidence quote
+# of at least this many words.
+_MIN_EVIDENCE_WORDS = 4
+
 _WHITESPACE_RE = re.compile(r"\s+")
 # NUL is dropped (PostgreSQL text cannot hold it); other C0/C1 controls and lone surrogates
 # (which cannot be encoded as UTF-8) become spaces.
@@ -62,9 +68,10 @@ _SYSTEM_PROMPT = (
     "given or none was used.\n"
     '- "example_text" is an optional short experience example that illustrates the answer, '
     "or null.\n"
-    '- "example_evidence" is the evidence quote, copied verbatim from the resume items, of '
-    "the experience the example is based on, or null when the example is not based on the "
-    "resume items. Never invent or paraphrase evidence.\n\n" + UNTRUSTED_RULES
+    '- "example_evidence" is one whole evidence line, copied verbatim from an experience '
+    "resume item, of the experience the example is based on, or null when the example is "
+    "not based on an experience of the resume items. Never invent, shorten or paraphrase "
+    "evidence.\n\n" + UNTRUSTED_RULES
 )
 
 
@@ -98,13 +105,6 @@ def _sanitize(text: str) -> str:
 
 def _normalize(text: str) -> str:
     return _WHITESPACE_RE.sub(" ", _sanitize(text)).strip()
-
-
-def _snapshot_texts(item: ExtractionItem) -> list[str]:
-    """Texts of ``item`` that may be shown to the model and quoted as evidence."""
-    texts = [item.fields[name] for name in _SNAPSHOT_FIELDS if item.fields.get(name)]
-    texts.extend(item.evidence)
-    return [text for text in (_normalize(value) for value in texts) if text]
 
 
 def _snapshot_item_prompt(item: ExtractionItem) -> str:
@@ -166,10 +166,20 @@ def _known_sources(urls: list[str], sources: list[SourceRef]) -> list[SourceRef]
 
 
 def _is_literal_evidence(evidence: str | None, snapshot: list[ExtractionItem]) -> bool:
+    """True only when ``evidence`` is one whole, substantive evidence quote of an experience.
+
+    Fragments (a skill name, a title, a single word, part of a quote) could fit any invented
+    story, so they never make an example the candidate's own; in doubt it is hypothetical.
+    """
     normalized = _normalize(evidence or "")
-    if not normalized:
+    if len(normalized.split(" ")) < _MIN_EVIDENCE_WORDS:
         return False
-    return any(normalized in text for item in snapshot for text in _snapshot_texts(item))
+    return any(
+        normalized == _normalize(quote)
+        for item in snapshot
+        if item.kind == "experience"
+        for quote in item.evidence
+    )
 
 
 def build_reference_answer(

@@ -252,13 +252,31 @@ def test_eval07_evidence_match_tolerates_whitespace_only() -> None:
     llm = _llm(
         _output(
             example_text="Your billing report work.",
-            example_evidence="Tuned  PostgreSQL\nB-tree indexes",
+            example_evidence="  Tuned  PostgreSQL\nB-tree indexes for the billing   reports ",
         )
     )
 
     result = build_reference_answer(llm, _input(), _snapshot())
 
     assert result.hypothetical_example is False
+
+
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        "PostgreSQL",  # skill name, also a whole one-word evidence quote of a skill item
+        "billing",  # single common word inside an experience evidence quote
+        "Backend Engineer",  # whole title field of the experience item
+        "Owned the billing service.",  # whole description field, not evidence
+        "Tuned PostgreSQL B-tree indexes",  # partial evidence quote
+    ],
+)
+def test_eval07_short_or_partial_evidence_is_hypothetical(fragment: str) -> None:
+    llm = _llm(_output(example_text="Invented migration story.", example_evidence=fragment))
+
+    result = build_reference_answer(llm, _input(), _snapshot())
+
+    assert result.hypothetical_example is True
 
 
 def test_eval07_empty_snapshot_makes_any_example_hypothetical() -> None:
