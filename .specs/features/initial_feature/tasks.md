@@ -2658,6 +2658,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-090 — Build interview session page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `PLAN-01`, `PLAN-10`, `PLAN-12`, `PLAN-15`, `PLAN-90`, `PLAN-92`, `PLAN-94`, `INTV-08`, `INTV-11`, `INTV-12`, `INTV-13`, `EVAL-13`, `EVAL-14`, `EVAL-93`
 - **Tipo**: ui-puro
