@@ -1,10 +1,10 @@
 {
  "versao": 2,
  "feature": "initial_feature",
- "gerado_em": "2026-10-01T16:08:45",
+ "gerado_em": "2026-10-01T17:19:18",
  "hashes": {
   "plan": "d2490da6dbc9e167",
-  "tasks": "4798b837f0dd2d6d"
+  "tasks": "74a82b720a707a60"
  },
  "comandos": [
   {
@@ -3595,10 +3595,12 @@
     "frontend/src/app/features/account/account-page.html"
    ],
    "teste": [
-    "frontend/src/app/features/account/account-page.spec.ts"
+    "frontend/src/app/features/account/account-page.spec.ts",
+    "frontend/src/app/features/auth/accept-terms-page.spec.ts"
    ],
    "wiring": [
-    "frontend/src/app/app.routes.ts"
+    "frontend/src/app/app.routes.ts",
+    "frontend/src/app/features/auth/accept-terms-page.html"
    ],
    "contratos": [
     "CT-58",
@@ -4002,13 +4004,13 @@
    "risco_max": "médio",
    "gatilhos_previstos": {
     "G2": {
-     "CT-35": [
-      "TASK-042",
-      "TASK-049"
-     ],
      "CT-33": [
       "TASK-042",
       "TASK-046",
+      "TASK-049"
+     ],
+     "CT-35": [
+      "TASK-042",
       "TASK-049"
      ],
      "CT-34": [
@@ -4043,19 +4045,11 @@
    "risco_max": "médio",
    "gatilhos_previstos": {
     "G2": {
+     "CT-20": [
+      "TASK-043",
+      "TASK-048"
+     ],
      "CT-33": [
-      "TASK-043",
-      "TASK-044",
-      "TASK-047",
-      "TASK-048"
-     ],
-     "CT-36": [
-      "TASK-043",
-      "TASK-044",
-      "TASK-047",
-      "TASK-048"
-     ],
-     "CT-35": [
       "TASK-043",
       "TASK-044",
       "TASK-047",
@@ -4065,8 +4059,16 @@
       "TASK-043",
       "TASK-048"
      ],
-     "CT-20": [
+     "CT-35": [
       "TASK-043",
+      "TASK-044",
+      "TASK-047",
+      "TASK-048"
+     ],
+     "CT-36": [
+      "TASK-043",
+      "TASK-044",
+      "TASK-047",
       "TASK-048"
      ],
      "CT-6": [
