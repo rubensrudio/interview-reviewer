@@ -363,3 +363,14 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-engineer)**: cópia compromete a validade do gate 0.80; choice A 0.45 / ampliar 0.44 / db falso 0.11 (incerto, muda escopo).
 - **Decisão (humano)**: B. `tasks.md` atualizado pelo orquestrador a pedido do humano: TASK-067 inclui `backend/app/interviews/requirements.py` e expõe `structure_requirements_text(llm, text)`; `structure_requirements` passa a usá-la sem mudar comportamento. `check_plan.py` reexecutado (ondas inalteradas).
 - **Impacto**: CT-37 ganha função pública pura. **Requer atualização de plan**: CT-37 e seção de validação de modelo.
+
+### LAC-44 — Jobs longos de LLM contra o reaper de 30 min (dívida obrigatória)
+- **Etapa**: /implement, review da onda 31 (TASK-054; mesmo desenho em TASK-045)
+- **Problema**: avaliação (`session.evaluate`) e geração de perguntas (`session.prepare_questions`) podem passar de `STALE_LOCK_TIMEOUT` (30 min, LAC-38) no pior caso (20 itens × 3 tentativas × 120 s). O reaper re-enfileira, o worker atrasado perde o fencing e descarta; com tentativas esgotadas a sessão fica em `evaluating`/`preparing_questions` sem job (EVAL-13/KNOW-92).
+- **Opções**: A) dívida obrigatória antes do PR final; B) aceitar o risco; C) parar e corrigir agora.
+- **Jev (hm-reviewer)**: esta task deve corrigir 0.22.
+- **Decisão (humano)**: A.
+- **Impacto**: **Dívida obrigatória antes do PR final da feature**: heartbeat que renova `locked_at`, timeout por kind, ou sweeper de sessões órfãs em `evaluating`/`preparing_questions`. **Requer atualização de plan** (DA de jobs/worker).
+
+### Registro — Limite de body de 128 KiB nas rotas de requisitos (TASK-056)
+- Hardening fora do plan: `RequirementsBodyRoute` com 128 KiB (o texto de 20.000 chars não cabe em 16 KiB). Excesso → 422 VALIDATION_ERROR. **Requer atualização de plan 8.1** para os consumidores do front.
