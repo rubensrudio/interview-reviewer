@@ -1,12 +1,16 @@
+import copy
 import io
 import json
 import logging
+import logging.config
 from collections.abc import Iterator
 
 import pytest
+from uvicorn.logging import AccessFormatter
 
 from app.logging_setup import (
     REDACTED,
+    AccessLogRedactionFilter,
     JsonFormatter,
     RedactionFilter,
     configure_logging,
@@ -224,3 +228,133 @@ def test_ct_4_regression_log_event_cannot_override_log_metadata(captured: io.Str
     assert line["logger"] == "app.events"
     assert line["timestamp"] != "1999"
     assert "message" not in line
+
+
+# --- uvicorn access log (LAC-37) ---------------------------------------------
+#
+# uvicorn logs each request on ``uvicorn.access`` as
+# ``logger.info('%s - "%s %s HTTP/%s" %d', client_addr, method, full_path,
+# http_version, status_code)`` and its default ``log_config`` gives that logger
+# its own handler with ``propagate=False``, so the root RedactionFilter never sees
+# it. The fix is a filter on the ``uvicorn.access`` logger itself, which rewrites
+# ``full_path`` inside ``record.args`` (``AccessFormatter`` unpacks the args).
+#
+# Ordering: ``uvicorn.Config.__init__`` (and ``_subprocess.subprocess_started``
+# with --reload/--workers) runs ``dictConfig`` BEFORE the app module is imported,
+# so ``create_app`` -> ``configure_logging`` runs AFTER uvicorn configured logging.
+# Both orders are covered below; ``dictConfig`` replaces handlers but keeps the
+# filters already attached to a logger.
+
+ACCESS_FORMAT = '%s - "%s %s HTTP/%s" %d'
+
+
+@pytest.fixture
+def access_logger() -> Iterator[logging.Logger]:
+    logger = logging.getLogger("uvicorn.access")
+    saved = (list(logger.filters), list(logger.handlers), logger.level, logger.propagate)
+    yield logger
+    logger.filters[:] = saved[0]
+    logger.handlers[:] = saved[1]
+    logger.setLevel(saved[2])
+    logger.propagate = saved[3]
+
+
+@pytest.fixture
+def isolated_root() -> Iterator[None]:
+    root = logging.getLogger()
+    before = list(root.handlers)
+    previous_level = root.level
+    yield
+    root.handlers[:] = before
+    root.setLevel(previous_level)
+
+
+def _uvicorn_log_config() -> dict[str, object]:
+    from uvicorn.config import LOGGING_CONFIG
+
+    return copy.deepcopy(LOGGING_CONFIG)
+
+
+def _emit_access(logger: logging.Logger, full_path: str, status: int = 302) -> str:
+    stream = io.StringIO()
+    # Same formatter class uvicorn's default log_config uses for "uvicorn.access".
+    handler = logging.StreamHandler(stream)
+    handler.setFormatter(AccessFormatter(fmt="%(client_addr)s - %(request_line)s %(status_code)s"))
+    logger.addHandler(handler)
+    try:
+        logger.info(ACCESS_FORMAT, "127.0.0.1:5000", "GET", full_path, "1.1", status)
+    finally:
+        logger.removeHandler(handler)
+    return stream.getvalue()
+
+
+def test_auth_95_access_log_oidc_callback_query_is_removed(
+    access_logger: logging.Logger, isolated_root: None
+) -> None:
+    logging.config.dictConfig(_uvicorn_log_config())
+    configure_logging()
+
+    out = _emit_access(access_logger, "/api/auth/google/callback?state=abc&code=xyz")
+
+    assert "abc" not in out
+    assert "xyz" not in out
+    assert "GET /api/auth/google/callback HTTP/1.1" in out
+    assert "302" in out
+
+
+def test_auth_95_access_log_oidc_error_query_is_removed(
+    access_logger: logging.Logger, isolated_root: None
+) -> None:
+    configure_logging()
+
+    out = _emit_access(access_logger, "/api/auth/google/callback?error=access_denied&state=xyz")
+
+    assert "xyz" not in out
+    assert "access_denied" not in out
+    assert "/api/auth/google/callback" in out
+
+
+def test_auth_95_access_log_verify_email_token_is_removed(
+    access_logger: logging.Logger, isolated_root: None
+) -> None:
+    configure_logging()
+
+    out = _emit_access(access_logger, "/api/auth/verify-email?token=SECRETTOKEN123", 200)
+
+    assert "SECRETTOKEN123" not in out
+    assert "GET /api/auth/verify-email HTTP/1.1" in out
+    assert "200" in out
+
+
+def test_auth_95_access_log_filter_survives_uvicorn_dict_config(
+    access_logger: logging.Logger, isolated_root: None
+) -> None:
+    # Reverse order: configure_logging first, then uvicorn (re)configures logging.
+    configure_logging()
+    logging.config.dictConfig(_uvicorn_log_config())
+
+    out = _emit_access(access_logger, "/api/auth/google/callback?state=abc&code=xyz")
+
+    assert "abc" not in out
+    assert "xyz" not in out
+
+
+def test_auth_95_access_log_other_routes_mask_credentials_and_keep_path(
+    access_logger: logging.Logger, isolated_root: None
+) -> None:
+    configure_logging()
+
+    out = _emit_access(access_logger, "/api/sessions?page=2&token=abc", 200)
+
+    assert "abc" not in out
+    assert "/api/sessions?page=2&token=[REDACTED]" in out
+
+
+def test_auth_95_configure_logging_twice_does_not_duplicate_access_filter(
+    access_logger: logging.Logger, isolated_root: None
+) -> None:
+    configure_logging()
+    configure_logging()
+
+    assert sum(isinstance(f, AccessLogRedactionFilter) for f in access_logger.filters) == 1
+    assert access_logger.handlers or access_logger.propagate  # access log stays on
