@@ -2372,6 +2372,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-080 — Build Google account link page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-11`, `AUTH-12`
 - **Tipo**: ui-puro
