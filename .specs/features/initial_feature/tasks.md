@@ -1333,6 +1333,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-045 — Implement interview question generation job
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `PLAN-12`, `PLAN-13`, `PLAN-14`, `PLAN-92`, `KNOW-05`, `KNOW-06`, `KNOW-90`, `KNOW-92`
 - **Tipo**: lógica-negócio
@@ -1639,6 +1640,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-055 — Expose interview session API routes
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `PLAN-01`, `PLAN-02`, `INTV-10`, `INTV-12`, `DATA-01`, `DATA-92`, `LANG-01`, `AUTH-16`
 - **Tipo**: crud-padrão
@@ -1976,6 +1978,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-067 — Implement model validation runner and report
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `MODEL-02`, `MODEL-03`, `MODEL-04`, `MODEL-05`, `MODEL-90`
 - **Tipo**: infra
@@ -2107,6 +2110,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-071 — Add API error model and auth redirect interceptor
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-17`
 - **Tipo**: lógica-negócio
