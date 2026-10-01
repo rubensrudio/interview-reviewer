@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-10-01T09:04:39 · integradora `feature/initial_feature-integration` · baseline `develop@f6aa73c` (2026-10-01)
+Atualizado em 2026-10-01T10:29:31 · integradora `feature/initial_feature-integration` · baseline `develop@9e69643` (2026-10-01)
 
 ## Baseline
 
@@ -50,8 +50,8 @@ Atualizado em 2026-10-01T09:04:39 · integradora `feature/initial_feature-integr
 | 28 | TASK-061 | ✅ | G1 | EXAUSTIVO: APROVADO |
 | 29 | TASK-043, TASK-044, TASK-047, TASK-048 | ✅ | G2, G5 | PADRAO: APROVADO |
 | 30 | TASK-045, TASK-055, TASK-067, TASK-071 | ✅ | G3 | PADRAO: APROVADO |
-| 31 | TASK-054, TASK-056, TASK-072, TASK-074 | — | — | — |
-| 32 | TASK-062 | — | — | — |
+| 31 | TASK-054, TASK-056, TASK-072, TASK-074 | ✅ | — | NAO_INVOCADO |
+| 32 | TASK-062 | ✅ | G1 | EXAUSTIVO: APROVADO |
 | 33 | TASK-063 | — | — | — |
 | 34 | TASK-057, TASK-073, TASK-083, TASK-086 | — | — | — |
 | 35 | TASK-058, TASK-075, TASK-088, TASK-089 | — | — | — |
@@ -99,6 +99,7 @@ Atualizado em 2026-10-01T09:04:39 · integradora `feature/initial_feature-integr
 | 22 | 27 | TASK-042, TASK-046, TASK-049, TASK-053 | `feature/initial_feature-phase-22` → `feature/initial_feature-phase-21` | https://github.com/rubensrudio/interview-reviewer/pull/22 |
 | 23 | 28 | TASK-061 | `feature/initial_feature-phase-23` → `feature/initial_feature-phase-22` | https://github.com/rubensrudio/interview-reviewer/pull/23 |
 | 24 | 29 | TASK-043, TASK-044, TASK-047, TASK-048 | `feature/initial_feature-phase-24` → `feature/initial_feature-phase-23` | https://github.com/rubensrudio/interview-reviewer/pull/24 |
+| 25 | 30 | TASK-045, TASK-055, TASK-067, TASK-071 | `feature/initial_feature-phase-25` → `develop` | https://github.com/rubensrudio/interview-reviewer/pull/25 |
 
 ## Tasks
 
@@ -157,15 +158,15 @@ Atualizado em 2026-10-01T09:04:39 · integradora `feature/initial_feature-integr
 | TASK-051 | ✅ APROVADA | alto | 1/0/0 |  |
 | TASK-052 | ✅ APROVADA | médio | 1/0/0 |  |
 | TASK-053 | ✅ APROVADA | médio | 0/0/0 |  |
-| TASK-054 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-054 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-055 | ✅ APROVADA | médio | 0/0/0 |  |
-| TASK-056 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-056 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-057 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-058 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-059 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-060 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-061 | ✅ APROVADA | crítico | 0/0/0 |  |
-| TASK-062 |  PENDENTE | crítico | 0/0/0 |  |
+| TASK-062 | ✅ APROVADA | crítico | 0/0/0 |  |
 | TASK-063 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-064 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-065 | ✅ APROVADA | médio | 0/0/0 |  |
@@ -175,9 +176,9 @@ Atualizado em 2026-10-01T09:04:39 · integradora `feature/initial_feature-integr
 | TASK-069 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-070 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-071 | ✅ APROVADA | médio | 0/0/0 |  |
-| TASK-072 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-072 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-073 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-074 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-074 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-075 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-076 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-077 |  PENDENTE | médio | 0/0/0 |  |
@@ -202,8 +203,8 @@ Atualizado em 2026-10-01T09:04:39 · integradora `feature/initial_feature-integr
 
 ## Métricas
 
-- Aprovadas: 61/95 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 45/61
-- Ondas fechadas: 30 · QA semântico invocado em 25
+- Aprovadas: 66/95 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 50/66
+- Ondas fechadas: 32 · QA semântico invocado em 26
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 0
