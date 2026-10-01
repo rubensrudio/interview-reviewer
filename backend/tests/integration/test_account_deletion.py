@@ -696,6 +696,40 @@ def test_api_delete_account_requires_csrf_header(client: TestClient, db: Session
     assert stored.deletion_requested_at is None
 
 
+def test_lac_45_api_delete_account_works_with_pending_terms(
+    client: TestClient, db: Session, storage_dir: Path
+) -> None:
+    user, _, _ = _full_account(db)
+    user.terms_version = "outdated-terms"
+    user.privacy_version = "outdated-privacy"
+    db.flush()
+    user_id = user.id
+    _sign_in(client, db, user)
+    assert client.get("/api/resumes").status_code == 403  # TERMS_REQUIRED elsewhere
+
+    response = client.delete("/api/account", headers=_xsrf(client))
+
+    assert response.status_code == 200
+    assert response.json() == {"message": ACCOUNT_DELETED_MESSAGE}
+    assert _rows_referencing(db, user_id) == {}
+    assert not (storage_dir / str(user_id)).exists()
+
+
+def test_lac_45_api_delete_account_with_pending_terms_still_requires_csrf(
+    client: TestClient, db: Session
+) -> None:
+    user = _user(db)
+    user.terms_version = "outdated-terms"
+    db.flush()
+    _sign_in(client, db, user)
+
+    response = client.delete("/api/account")
+
+    assert response.status_code == 403
+    assert response.json()["error"]["code"] == "CSRF_FAILED"
+    assert _user_exists(db, user.id)
+
+
 def test_api_delete_account_requires_authentication(client: TestClient, db: Session) -> None:
     user = _user(db)
     db.commit()
