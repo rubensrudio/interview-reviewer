@@ -407,3 +407,10 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Problema**: plan e tasks definem só a API `GET /api/sessions/{id}/report`; nenhuma rota de frontend para a página de relatório. A TASK-090 linka "View report" e a TASK-093 (histórico) também abre o relatório.
 - **Decisão (orquestrador, sem impacto de contrato/modelo/permissão)**: rota `/sessions/:id/report`, filha do Shell, espelhando a API. TASK-092 registra essa rota; TASK-093 linka para ela.
 - **Impacto**: **Requer atualização de plan** (mapa de rotas do frontend).
+
+### LAC-50 — PDF do relatório diferente da tela (TASK-059 × TASK-092, EXPT-01)
+- **Etapa**: /implement, review e QA da onda 47 (TASK-092)
+- **Problema**: o PDF (TASK-059) não tem os pontos satisfatórios nem a lista global de fontes, não mostra o trecho das fontes nem "No verified source" na seção de perguntas, e usa títulos, textos de vazio, rótulo de evidência, formato de nota e de data diferentes da tela; o percentual aparece duas vezes. EXPT-01 pede o mesmo conteúdo da tela.
+- **Opções**: A) ampliar a TASK-093; B) task nova de backend; C) dívida.
+- **Decisão (humano)**: primeiro A, por recomendação do orquestrador; a TASK-093 já tinha 2 arquivos de produção (regra E2) e é de frontend, então o humano mudou para B.
+- **Impacto**: nova TASK-096 (backend, `pdf_export.py`), mantendo o CT-49. **Requer atualização de plan** (lista de tasks/ondas).

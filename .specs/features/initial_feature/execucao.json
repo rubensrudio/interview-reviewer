@@ -1,10 +1,10 @@
 {
  "versao": 2,
  "feature": "initial_feature",
- "gerado_em": "2026-10-01T14:18:24",
+ "gerado_em": "2026-10-01T16:08:45",
  "hashes": {
   "plan": "d2490da6dbc9e167",
-  "tasks": "1824664a02b30e1d"
+  "tasks": "4798b837f0dd2d6d"
  },
  "comandos": [
   {
@@ -3610,6 +3610,34 @@
    ],
    "gate": null,
    "paralelo_seguro": true
+  },
+  "TASK-096": {
+   "titulo": "Align report PDF with the report page (LAC-50)",
+   "tipo": "crud-padrão",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-059",
+    "TASK-092"
+   ],
+   "producao": [
+    "backend/app/reports/pdf_export.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_pdf_export.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-49"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EXPT-01"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
   }
  },
  "ondas": [
@@ -4015,6 +4043,18 @@
    "risco_max": "médio",
    "gatilhos_previstos": {
     "G2": {
+     "CT-33": [
+      "TASK-043",
+      "TASK-044",
+      "TASK-047",
+      "TASK-048"
+     ],
+     "CT-36": [
+      "TASK-043",
+      "TASK-044",
+      "TASK-047",
+      "TASK-048"
+     ],
      "CT-35": [
       "TASK-043",
       "TASK-044",
@@ -4025,20 +4065,8 @@
       "TASK-043",
       "TASK-048"
      ],
-     "CT-33": [
-      "TASK-043",
-      "TASK-044",
-      "TASK-047",
-      "TASK-048"
-     ],
      "CT-20": [
       "TASK-043",
-      "TASK-048"
-     ],
-     "CT-36": [
-      "TASK-043",
-      "TASK-044",
-      "TASK-047",
       "TASK-048"
      ],
      "CT-6": [
@@ -4284,7 +4312,8 @@
   {
    "n": 48,
    "tasks": [
-    "TASK-093"
+    "TASK-093",
+    "TASK-096"
    ],
    "risco_max": "médio",
    "gatilhos_previstos": {},
