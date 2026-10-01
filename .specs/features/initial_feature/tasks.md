@@ -1725,6 +1725,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-058 — Expose report API route
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-02`, `EVAL-08`, `EVAL-12`, `INTV-14`, `AUTH-16`
 - **Tipo**: crud-padrão
@@ -2229,6 +2230,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-075 — Build registration page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-01`, `AUTH-02`, `AUTH-14`, `AUTH-15`, `AUTH-92`
 - **Tipo**: ui-puro
@@ -2577,6 +2579,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-088 — Build requirement list editor component
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `PLAN-03`, `PLAN-04`, `PLAN-05`, `PLAN-06`, `PLAN-07`, `PLAN-08`, `PLAN-09`, `PLAN-11`
 - **Tipo**: ui-puro
@@ -2606,6 +2609,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-089 — Build interview question panel component
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `INTV-01`, `INTV-02`, `INTV-03`, `INTV-04`, `INTV-05`, `INTV-06`, `INTV-07`, `INTV-09`, `INTV-10`, `INTV-90`, `INTV-91`, `INTV-92`
 - **Tipo**: ui-puro

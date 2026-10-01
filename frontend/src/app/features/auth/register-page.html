@@ -1,0 +1,108 @@
+@if (result(); as response) {
+  <section class="notice" aria-labelledby="register-result-title">
+    <h1 id="register-result-title" #resultHeading tabindex="-1">Check your e-mail</h1>
+    <div role="status">
+      <p>{{ response.message || neutralMessage }}</p>
+      @if (response.email_delivery === 'delayed') {
+        <p>{{ delayedMessage }}</p>
+      }
+    </div>
+    @if (response.email_delivery === 'delayed') {
+      <button
+        type="button"
+        class="secondary"
+        [disabled]="resending()"
+        [attr.aria-busy]="resending()"
+        (click)="resend()"
+      >
+        Resend verification e-mail
+      </button>
+      <div aria-live="polite">
+        @if (resendMessage(); as message) {
+          <p>{{ message }}</p>
+        }
+      </div>
+      @if (resendError(); as message) {
+        <p class="resend-error" role="alert">{{ message }}</p>
+      }
+    }
+    <p><a routerLink="/login">Go to sign in</a></p>
+  </section>
+} @else {
+  <h1>Create your account</h1>
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    @if (formError(); as message) {
+      <p class="form-error" role="alert">{{ message }}</p>
+    }
+
+    <div class="field">
+      <label for="register-email">E-mail</label>
+      <input
+        id="register-email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        required
+        [attr.maxlength]="maxLength"
+        [attr.aria-invalid]="showFieldError('email')"
+        [attr.aria-describedby]="showFieldError('email') ? 'register-email-error' : null"
+      />
+      @if (showFieldError('email')) {
+        <p id="register-email-error" class="field-error" role="alert">
+          @if (form.controls.email.hasError('maxlength')) {
+            Use at most {{ maxLength }} characters.
+          } @else {
+            Enter your e-mail.
+          }
+        </p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="register-password">Password</label>
+      <input
+        id="register-password"
+        type="password"
+        formControlName="password"
+        autocomplete="new-password"
+        required
+        [attr.maxlength]="maxLength"
+        [attr.aria-invalid]="showFieldError('password') || passwordPolicyError() !== null"
+        [attr.aria-describedby]="
+          passwordPolicyError() !== null || showFieldError('password')
+            ? 'register-password-error'
+            : null
+        "
+      />
+      @if (passwordPolicyError(); as message) {
+        <p id="register-password-error" class="field-error" role="alert">{{ message }}</p>
+      } @else if (showFieldError('password')) {
+        <p id="register-password-error" class="field-error" role="alert">
+          @if (form.controls.password.hasError('maxlength')) {
+            Use at most {{ maxLength }} characters.
+          } @else {
+            Enter a password.
+          }
+        </p>
+      }
+    </div>
+
+    <div class="consent">
+      <input id="register-accept" type="checkbox" formControlName="accept" />
+      <label for="register-accept">
+        I accept the <a routerLink="/terms">Terms of Use</a> and the
+        <a routerLink="/privacy">Privacy Policy</a>.
+      </label>
+    </div>
+
+    <button
+      type="submit"
+      class="primary"
+      [disabled]="submitting() || !form.controls.accept.value"
+      [attr.aria-busy]="submitting()"
+    >
+      Create account
+    </button>
+  </form>
+  <p class="alt">Already have an account? <a routerLink="/login">Sign in</a></p>
+}
