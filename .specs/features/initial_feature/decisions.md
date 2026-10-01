@@ -388,3 +388,9 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-reviewer)**: resíduo é dado pessoal 0.50 (dúvida).
 - **Decisão (humano)**: A.
 - **Impacto**: CT-53 passa a remover o throttle da conta. Comentário "sha256" em `models/account.py` está desatualizado (é HMAC). **Requer atualização de plan**: DATA-06/CT-53.
+
+### LAC-47 — Pedido de esclarecimento com 503 não fica gravado (TASK-057)
+- **Etapa**: /implement, onda 34, TASK-057 (`POST /api/sessions/{id}/clarifications`)
+- **Opções**: A) rollback — nada gravado no `CLARIFICATION_UNAVAILABLE`; B) commit da mensagem do candidato mesmo com 503.
+- **Decisão (humano)**: A. Chat sem pergunta órfã; o front mostra o erro e o candidato reenvia.
+- **Impacto**: **Requer atualização de plan 8.1/INTV-92**: explicitar que o 503 não persiste a dúvida.
