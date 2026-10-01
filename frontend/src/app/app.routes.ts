@@ -70,6 +70,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/resumes/resume-list-page').then((m) => m.ResumeListPage),
       },
+      {
+        path: 'resumes/:id',
+        title: 'Resume',
+        loadComponent: () =>
+          import('./features/resumes/resume-detail-page').then((m) => m.ResumeDetailPage),
+      },
     ],
   },
 ];
