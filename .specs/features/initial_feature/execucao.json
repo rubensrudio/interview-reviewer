@@ -1,10 +1,10 @@
 {
  "versao": 2,
  "feature": "initial_feature",
- "gerado_em": "2026-10-01T14:12:42",
+ "gerado_em": "2026-10-01T14:18:24",
  "hashes": {
   "plan": "d2490da6dbc9e167",
-  "tasks": "8a703d3a04492ed2"
+  "tasks": "1824664a02b30e1d"
  },
  "comandos": [
   {
@@ -3298,7 +3298,8 @@
    "wiring": [
     "frontend/src/app/app.routes.ts",
     "frontend/src/app/features/resumes/resume-list-page.html",
-    "/resumes/{id}"
+    "/resumes/{id}",
+    "frontend/src/app/features/resumes/resume-list-page.ts"
    ],
    "contratos": [
     "CT-60",
@@ -3973,13 +3974,13 @@
    "risco_max": "médio",
    "gatilhos_previstos": {
     "G2": {
+     "CT-35": [
+      "TASK-042",
+      "TASK-049"
+     ],
      "CT-33": [
       "TASK-042",
       "TASK-046",
-      "TASK-049"
-     ],
-     "CT-35": [
-      "TASK-042",
       "TASK-049"
      ],
      "CT-34": [
@@ -4014,17 +4015,13 @@
    "risco_max": "médio",
    "gatilhos_previstos": {
     "G2": {
-     "CT-19": [
-      "TASK-043",
-      "TASK-048"
-     ],
-     "CT-36": [
+     "CT-35": [
       "TASK-043",
       "TASK-044",
       "TASK-047",
       "TASK-048"
      ],
-     "CT-20": [
+     "CT-19": [
       "TASK-043",
       "TASK-048"
      ],
@@ -4034,7 +4031,11 @@
       "TASK-047",
       "TASK-048"
      ],
-     "CT-35": [
+     "CT-20": [
+      "TASK-043",
+      "TASK-048"
+     ],
+     "CT-36": [
       "TASK-043",
       "TASK-044",
       "TASK-047",
