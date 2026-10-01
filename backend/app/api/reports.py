@@ -14,7 +14,8 @@ from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
+from pydantic import ValidationError
 from sqlalchemy import select
 
 from app.api.deps import CurrentUser, DbSession
@@ -22,6 +23,8 @@ from app.errors import REPORT_NOT_AVAILABLE, RESOURCE_NOT_FOUND, AppError
 from app.interviews.sessions import get_owned_session
 from app.models.assessment import Report
 from app.models.interview import SessionStatus
+from app.reports.builder import ReportContent
+from app.reports.pdf_export import render_report_pdf
 
 router = APIRouter(prefix="/api", tags=["reports"])
 
@@ -43,6 +46,37 @@ def get_report(session_id: str, user: CurrentUser, db: DbSession) -> JSONRespons
         raise AppError.from_catalog(REPORT_NOT_AVAILABLE)
     # The stored JSON goes out untouched: no model round trip that could reshape it (EVAL-12).
     return JSONResponse(content=content)
+
+
+@router.get("/sessions/{session_id}/report.pdf", response_model=None)
+def export_report_pdf(session_id: str, user: CurrentUser, db: DbSession) -> Response:
+    """Export the frozen report as a PDF (EXPT-01); only for a completed session (EXPT-02)."""
+    try:
+        parsed = UUID(session_id)
+    except ValueError:
+        # Same uniform 404 as the JSON report route (AUTH-16).
+        raise AppError.from_catalog(RESOURCE_NOT_FOUND) from None
+    session = get_owned_session(db, user, parsed)
+    if session.status != SessionStatus.COMPLETED:
+        raise AppError.from_catalog(REPORT_NOT_AVAILABLE)
+    stored: dict[str, Any] | None = db.scalar(
+        select(Report.content).where(Report.session_id == session.id)
+    )
+    if stored is None:
+        raise AppError.from_catalog(REPORT_NOT_AVAILABLE)
+    try:
+        content = ReportContent.model_validate(stored)
+    except ValidationError:
+        # A stored report that does not match the schema cannot be rendered; no detail leaks.
+        raise AppError.from_catalog(REPORT_NOT_AVAILABLE) from None
+    return Response(
+        content=render_report_pdf(content),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="report-{session.id}.pdf"',
+            "Cache-Control": "no-store",
+        },
+    )
 
 
 __all__ = ["router"]
