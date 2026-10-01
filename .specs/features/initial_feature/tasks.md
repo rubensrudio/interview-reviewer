@@ -1782,6 +1782,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-060 — Compare two completed sessions
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `CMP-01`, `CMP-02`
 - **Tipo**: crud-padrão
@@ -2046,6 +2047,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-069 — Add database and file backup routine
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-06`
 - **Tipo**: infra
@@ -2288,6 +2290,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-077 — Build e-mail verification page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-03`, `AUTH-94`, `AUTH-04`
 - **Tipo**: ui-puro
