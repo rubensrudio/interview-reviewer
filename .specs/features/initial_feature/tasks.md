@@ -1608,6 +1608,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-054 — Implement evaluation pipeline job
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `EVAL-01`, `EVAL-11`, `EVAL-12`, `EVAL-13`, `EVAL-14`, `EVAL-90`, `EVAL-93`, `DATA-91`, `KNOW-92`
 - **Tipo**: lógica-negócio
@@ -1668,6 +1669,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-056 — Expose requirements and plan API routes
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `PLAN-03`, `PLAN-04`, `PLAN-05`, `PLAN-07`, `PLAN-08`, `PLAN-09`, `PLAN-10`, `PLAN-15`, `PLAN-90`, `PLAN-92`, `AUTH-16`
 - **Tipo**: crud-padrão
@@ -2139,6 +2141,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-072 — Add auth API client and route guards
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-17`, `AUTH-06`, `AUTH-10`
 - **Tipo**: crud-padrão
@@ -2195,6 +2198,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-074 — Add shared confirmation dialog
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-03`, `INTV-12`, `DATA-06`
 - **Tipo**: ui-puro
