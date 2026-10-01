@@ -60,6 +60,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    // Outside the Shell and without termsGuard (LAC-45, LAC-51): deleting the account must stay
+    // possible while a terms acceptance is pending.
+    path: 'account',
+    title: 'Account',
+    loadComponent: () => import('./features/account/account-page').then((m) => m.AccountPage),
+    canActivate: [authGuard],
+  },
+  {
     path: '',
     loadComponent: () => import('./layout/shell').then((m) => m.Shell),
     canActivate: [authGuard, termsGuard],
