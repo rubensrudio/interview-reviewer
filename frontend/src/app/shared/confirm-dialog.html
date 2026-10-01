@@ -1,0 +1,18 @@
+<dialog
+  #dialog
+  role="alertdialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="titleId"
+  [attr.aria-describedby]="messageId"
+  (cancel)="onNativeCancel($event)"
+  (keydown)="onKeydown($event)"
+>
+  <h2 [id]="titleId">{{ title() }}</h2>
+  <p [id]="messageId">{{ message() }}</p>
+  <div class="actions">
+    <button #cancelButton type="button" class="cancel" (click)="cancel()">
+      {{ cancelLabel() }}
+    </button>
+    <button type="button" class="confirm" (click)="confirm()">{{ confirmLabel() }}</button>
+  </div>
+</dialog>
