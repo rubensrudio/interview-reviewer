@@ -39,6 +39,7 @@ from app.errors import FILE_TOO_LARGE, RESOURCE_NOT_FOUND, VALIDATION_ERROR, App
 from app.models.account import User
 from app.models.resume import ExtractionItem, ExtractionKind, Resume, ResumeStatus
 from app.observability import log_event
+from app.privacy.resume_deletion import delete_resume
 from app.resumes import storage
 from app.resumes.editing import ItemInput, add_item, remove_item, update_item
 from app.resumes.processing import (
@@ -292,6 +293,17 @@ def update(
     item = update_item(db, resume, item_id, ItemInput(kind=body.kind, fields=body.fields))
     db.commit()
     return item
+
+
+@router.delete("/{resume_id}", status_code=204, response_class=Response)
+def delete_one(resume_id: str, user: CurrentUser, db: DbSession) -> None:
+    # Malformed ids get the same 404 as unknown ones (AUTH-16); the file goes after commit.
+    try:
+        parsed = UUID(resume_id)
+    except ValueError:
+        raise AppError.from_catalog(RESOURCE_NOT_FOUND) from None
+    delete_resume(db, user, parsed)
+    db.commit()
 
 
 @router.delete("/{resume_id}/items/{item_id}", status_code=204, response_class=Response)

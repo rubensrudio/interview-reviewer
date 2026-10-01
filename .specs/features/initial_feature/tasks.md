@@ -1800,6 +1800,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-061 — Delete resume versions with minimal snapshot
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-03`, `DATA-04`, `DATA-90`, `CV-96`
 - **Tipo**: crud-padrão
