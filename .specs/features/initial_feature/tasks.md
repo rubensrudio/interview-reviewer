@@ -2426,6 +2426,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-082 — Build privacy policy and terms pages
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-08`
 - **Tipo**: ui-puro
