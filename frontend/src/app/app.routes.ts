@@ -42,6 +42,17 @@ export const routes: Routes = [
     canActivate: [guestGuard],
   },
   {
+    // Public on purpose (DATA-08): readable with or without a session, so no guard.
+    path: 'privacy',
+    title: 'Privacy Policy',
+    loadComponent: () => import('./features/legal/privacy-page').then((m) => m.PrivacyPage),
+  },
+  {
+    path: 'terms',
+    title: 'Terms of Use',
+    loadComponent: () => import('./features/legal/terms-page').then((m) => m.TermsPage),
+  },
+  {
     // Signed-in only: termsGuard sends users here, so it must not run termsGuard itself.
     path: 'accept-terms',
     title: 'Accept the Terms of Use',
