@@ -1,0 +1,203 @@
+<h1>Interview report</h1>
+
+@if (loading()) {
+  <p role="status">Loading report…</p>
+} @else if (loadError(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+  <div class="actions">
+    <button type="button" class="secondary" (click)="reload()">Try again</button>
+  </div>
+} @else if (report(); as current) {
+  <section aria-labelledby="report-summary-title">
+    <h2 id="report-summary-title">Summary</h2>
+    <div class="headline">
+      <p>
+        <span class="percentage">{{ current.adherence_percentage }}%</span>
+        <span> adherence to the required skills</span>
+      </p>
+      <p>Completed on {{ current.completed_at | date: 'longDate' }}</p>
+    </div>
+    <p class="text">{{ current.summary }}</p>
+  </section>
+
+  <p class="notice disclaimer">{{ current.disclaimer }}</p>
+
+  <div class="actions">
+    <a class="button-link" [href]="pdfUrl()" download>Download PDF</a>
+  </div>
+
+  <section aria-labelledby="report-skills-title">
+    <h2 id="report-skills-title">Performance by skill</h2>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Skill</th>
+          <th scope="col">Average score</th>
+          <th scope="col">Questions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (skill of current.skills; track skill.skill) {
+          <tr>
+            <td>{{ skill.skill }}</td>
+            <td>{{ skill.average }}</td>
+            <td>{{ skill.question_positions.join(', ') }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section aria-labelledby="report-questions-title">
+    <h2 id="report-questions-title">Questions and answers</h2>
+    <ol class="plain">
+      @for (item of current.items; track item.position) {
+        <li>
+          <h3>Question {{ item.position }} · {{ item.skill }}</h3>
+          @if (item.no_verified_source) {
+            <span class="label">{{ noVerifiedSourceLabel }}</span>
+          }
+          <p class="text">{{ item.question }}</p>
+          <dl>
+            <dt>Your answer</dt>
+            <dd>{{ item.answer }}</dd>
+            <dt>Score</dt>
+            <dd>{{ item.score }}</dd>
+            <dt>Justification</dt>
+            <dd>{{ item.justification }}</dd>
+            @if (item.evidence_quotes.length > 0) {
+              <dt>Evidence from your answer</dt>
+              @for (quote of item.evidence_quotes; track $index) {
+                <dd>“{{ quote }}”</dd>
+              }
+            }
+          </dl>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <section aria-labelledby="report-satisfactory-title">
+    <h2 id="report-satisfactory-title">Satisfactory points</h2>
+    @if (satisfactoryItems().length > 0) {
+      <ul>
+        @for (item of satisfactoryItems(); track item.position) {
+          <li>
+            Question {{ item.position }} · {{ item.skill }}:
+            <span class="text">{{ item.question }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p>No satisfactory items.</p>
+    }
+  </section>
+
+  <section aria-labelledby="report-unsatisfactory-title">
+    <h2 id="report-unsatisfactory-title">Unsatisfactory items</h2>
+    @if (unsatisfactoryItems().length > 0) {
+      <ol class="plain">
+        @for (item of unsatisfactoryItems(); track item.position) {
+          <li>
+            <h3>Question {{ item.position }} · {{ item.skill }}</h3>
+            @if (item.no_verified_source) {
+              <span class="label">{{ noVerifiedSourceLabel }}</span>
+            }
+            <p class="text">{{ item.question }}</p>
+            <dl>
+              @if (item.gap_explanation) {
+                <dt>What was missing</dt>
+                <dd>{{ item.gap_explanation }}</dd>
+              }
+              @if (item.reference_answer; as reference) {
+                <dt>Reference answer</dt>
+                <dd>{{ reference.text }}</dd>
+                @if (reference.points.length > 0) {
+                  <dt>Key points</dt>
+                  <dd>
+                    <ul>
+                      @for (point of reference.points; track $index) {
+                        <li>{{ point }}</li>
+                      }
+                    </ul>
+                  </dd>
+                }
+                @if (reference.hypothetical_example) {
+                  <dt>Example</dt>
+                  <dd>
+                    <span class="label">{{ hypotheticalExampleLabel }}</span>
+                    @if (reference.example_text) {
+                      <p class="text">{{ reference.example_text }}</p>
+                    }
+                  </dd>
+                } @else if (reference.example_text) {
+                  <dt>Example</dt>
+                  <dd>{{ reference.example_text }}</dd>
+                }
+                @if (!item.no_verified_source && reference.sources.length > 0) {
+                  <dt>Sources</dt>
+                  <dd>
+                    <ul class="plain">
+                      @for (source of reference.sources; track source.url) {
+                        <li>
+                          <ng-container
+                            *ngTemplateOutlet="sourceTpl; context: { $implicit: source }"
+                          />
+                        </li>
+                      }
+                    </ul>
+                  </dd>
+                }
+              }
+            </dl>
+          </li>
+        }
+      </ol>
+    } @else {
+      <p>{{ noUnsatisfactoryMessage }}</p>
+    }
+  </section>
+
+  <section aria-labelledby="report-sources-title">
+    <h2 id="report-sources-title">Sources</h2>
+    @if (current.sources_used.length > 0) {
+      <ul class="plain">
+        @for (source of current.sources_used; track source.url) {
+          <li class="card">
+            <ng-container *ngTemplateOutlet="sourceTpl; context: { $implicit: source }" />
+          </li>
+        }
+      </ul>
+    } @else {
+      <p>No sources were cited in this report.</p>
+    }
+  </section>
+
+  @if (hasNonEvaluated()) {
+    <section aria-labelledby="report-not-evaluated-title">
+      <h2 id="report-not-evaluated-title">{{ notEvaluatedLabel }}</h2>
+      <ul>
+        @for (name of current.non_evaluated.nice_to_have; track $index) {
+          <li>{{ name }} (desirable)</li>
+        }
+        @for (name of current.non_evaluated.non_technical; track $index) {
+          <li>{{ name }} (non-technical)</li>
+        }
+      </ul>
+    </section>
+  }
+}
+
+<ng-template #sourceTpl let-source>
+  <div class="source">
+    @if (isWebUrl(source.url)) {
+      <a [href]="source.url" target="_blank" rel="noopener noreferrer">{{ source.title }}</a>
+    } @else {
+      <span>{{ source.title }}</span>
+    }
+    <p class="meta">
+      <span>{{ source.url }}</span> · Collected on {{ source.collected_at | date: 'longDate' }}
+    </p>
+    <p class="text">{{ source.excerpt }}</p>
+  </div>
+</ng-template>

@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-10-01T15:25:55 · integradora `feature/initial_feature-integration` · baseline `develop@3c36b11` (2026-10-01)
+Atualizado em 2026-10-01T15:46:55 · integradora `feature/initial_feature-integration` · baseline `develop@3c36b11` (2026-10-01)
 
 ## Baseline
 
@@ -66,7 +66,7 @@ Atualizado em 2026-10-01T15:25:55 · integradora `feature/initial_feature-integr
 | 44 | TASK-085 | ✅ | — | NAO_INVOCADO |
 | 45 | TASK-087 | ✅ | G3 | PADRAO: APROVADO |
 | 46 | TASK-090 | ✅ | G3, G5 | PADRAO: APROVADO |
-| 47 | TASK-092 | — | — | — |
+| 47 | TASK-092 | ✅ | G3 | PADRAO: APROVADO |
 | 48 | TASK-093 | — | — | — |
 | 49 | TASK-094 | — | — | — |
 | 50 | TASK-095 | — | — | — |
@@ -107,6 +107,7 @@ Atualizado em 2026-10-01T15:25:55 · integradora `feature/initial_feature-integr
 | 30 | 36 | TASK-059, TASK-068, TASK-076, TASK-091 | `feature/initial_feature-phase-30` → `feature/initial_feature-phase-29` | https://github.com/rubensrudio/interview-reviewer/pull/30 |
 | 31 | 37, 38, 39, 40, 41 | TASK-060, TASK-069, TASK-077, TASK-078, TASK-079, TASK-080, TASK-081 | `feature/initial_feature-phase-31` → `feature/initial_feature-phase-30` | https://github.com/rubensrudio/interview-reviewer/pull/31 |
 | 32 | 42, 43, 44, 45 | TASK-082, TASK-084, TASK-085, TASK-087 | `feature/initial_feature-phase-32` → `feature/initial_feature-phase-31` | https://github.com/rubensrudio/interview-reviewer/pull/32 |
+| 33 | 46 | TASK-090 | `feature/initial_feature-phase-33` → `feature/initial_feature-phase-32` | https://github.com/rubensrudio/interview-reviewer/pull/33 |
 
 ## Tasks
 
@@ -203,15 +204,15 @@ Atualizado em 2026-10-01T15:25:55 · integradora `feature/initial_feature-integr
 | TASK-089 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-090 | ✅ APROVADA | médio | 0/0/1 |  |
 | TASK-091 | ✅ APROVADA | médio | 0/0/0 |  |
-| TASK-092 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-092 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-093 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-094 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-095 |  PENDENTE | médio | 0/0/0 |  |
 
 ## Métricas
 
-- Aprovadas: 91/95 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 72/91
-- Ondas fechadas: 46 · QA semântico invocado em 33
+- Aprovadas: 92/95 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 73/92
+- Ondas fechadas: 47 · QA semântico invocado em 34
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 1

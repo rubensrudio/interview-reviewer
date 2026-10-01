@@ -2715,6 +2715,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-092 — Build report page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `EVAL-06`, `EVAL-07`, `EVAL-08`, `EVAL-15`, `EVAL-90`, `EVAL-91`, `DATA-02`, `EXPT-01`, `EXPT-02`
 - **Tipo**: ui-puro
