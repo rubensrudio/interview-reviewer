@@ -16,6 +16,39 @@ export const routes: Routes = [
     canActivate: [guestGuard],
   },
   {
+    path: 'verify-email',
+    title: 'Verify your e-mail',
+    loadComponent: () => import('./features/auth/verify-email-page').then((m) => m.VerifyEmailPage),
+    canActivate: [guestGuard],
+  },
+  {
+    path: 'forgot-password',
+    title: 'Reset your password',
+    loadComponent: () =>
+      import('./features/auth/forgot-password-page').then((m) => m.ForgotPasswordPage),
+    canActivate: [guestGuard],
+  },
+  {
+    path: 'reset-password',
+    title: 'Choose a new password',
+    loadComponent: () =>
+      import('./features/auth/reset-password-page').then((m) => m.ResetPasswordPage),
+    canActivate: [guestGuard],
+  },
+  {
+    path: 'link-google',
+    title: 'Link your Google account',
+    loadComponent: () => import('./features/auth/link-google-page').then((m) => m.LinkGooglePage),
+    canActivate: [guestGuard],
+  },
+  {
+    // Signed-in only: termsGuard sends users here, so it must not run termsGuard itself.
+    path: 'accept-terms',
+    title: 'Accept the Terms of Use',
+    loadComponent: () => import('./features/auth/accept-terms-page').then((m) => m.AcceptTermsPage),
+    canActivate: [authGuard],
+  },
+  {
     path: '',
     loadComponent: () => import('./layout/shell').then((m) => m.Shell),
     canActivate: [authGuard, termsGuard],

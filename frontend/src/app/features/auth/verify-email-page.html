@@ -1,0 +1,72 @@
+@switch (phase()) {
+  @case ('verifying') {
+    <section aria-labelledby="verify-title" aria-busy="true">
+      <h1 id="verify-title" #heading tabindex="-1">Verify your e-mail</h1>
+      <p role="status">Verifying your e-mail…</p>
+    </section>
+  }
+  @case ('verified') {
+    <section aria-labelledby="verify-title">
+      <h1 id="verify-title" #heading tabindex="-1">E-mail verified</h1>
+      <p role="status">{{ verifiedMessage() }}</p>
+      <p><a routerLink="/login">Go to sign in</a></p>
+    </section>
+  }
+  @case ('invalid') {
+    <section aria-labelledby="verify-title">
+      <h1 id="verify-title" #heading tabindex="-1">Request a new link</h1>
+      <p class="form-error" role="alert">{{ linkInvalidMessage }}</p>
+
+      <form [formGroup]="form" (ngSubmit)="resend()" novalidate>
+        <div class="field">
+          <label for="verify-email">E-mail</label>
+          <input
+            id="verify-email"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            required
+            [attr.maxlength]="maxLength"
+            [attr.aria-invalid]="showEmailError()"
+            [attr.aria-describedby]="showEmailError() ? 'verify-email-error' : null"
+          />
+          @if (showEmailError()) {
+            <p id="verify-email-error" class="field-error" role="alert">
+              @if (form.controls.email.hasError('maxlength')) {
+                Use at most {{ maxLength }} characters.
+              } @else {
+                Enter your e-mail.
+              }
+            </p>
+          }
+        </div>
+
+        <button
+          type="submit"
+          class="primary"
+          [disabled]="resending()"
+          [attr.aria-busy]="resending()"
+        >
+          Send a new link
+        </button>
+      </form>
+
+      <div aria-live="polite">
+        @if (resendMessage(); as sent) {
+          <p>{{ sent }}</p>
+        }
+      </div>
+      @if (resendError(); as failed) {
+        <p class="resend-error" role="alert">{{ failed }}</p>
+      }
+      <p><a routerLink="/login">Back to sign in</a></p>
+    </section>
+  }
+  @case ('failed') {
+    <section aria-labelledby="verify-title">
+      <h1 id="verify-title" #heading tabindex="-1">We could not verify your e-mail</h1>
+      <p class="form-error" role="alert">{{ failureMessage() }}</p>
+      <button type="button" class="primary" (click)="verify()">Try again</button>
+    </section>
+  }
+}
