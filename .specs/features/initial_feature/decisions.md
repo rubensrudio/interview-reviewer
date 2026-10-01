@@ -348,3 +348,10 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-engineer)**: tirar tudo menos name 0.52 (dúvida); skill sem evidência sai 0.78.
 - **Decisão (humano)**: A — minimização máxima.
 - **Impacto**: skills `user_provided` (sem evidência) não sobrevivem no retrato mínimo. **Requer atualização de spec/plan**: glossário "retrato mínimo" e CT-51.
+
+### LAC-42 — Formato de `RequirementItemInput` e limites da lista de requisitos (TASK-044)
+- **Etapa**: /implement, onda 29, TASK-044 (CT-38)
+- **Problema**: o plan usa `RequirementItemInput` sem defini-lo.
+- **Decisão (humano)**: aceitar o formato da implementação — `id: str | None` (None = item novo), `name` strip 1..255, `original_terms` sem duplicados (máx. 50; vazio vira `[name]`), `classification`, `level`, `extra="ignore"`; máximo de 100 itens por lista (`MAX_ITEMS`); `pending_clarification` controlado pelo servidor (preservado se id, nome e classificação não mudarem).
+- **Jev (hm-engineer)**: muda contrato além do plan 0.76; tratamento de pending = server_preserves p=1.00.
+- **Impacto**: contrato consumido pela API (TASK-056) e pelo front. **Requer atualização de plan**: CT-38 e 8.1.
