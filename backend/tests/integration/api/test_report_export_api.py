@@ -202,9 +202,7 @@ def test_expt02_completed_session_without_report_is_409(client: TestClient, db: 
     assert response.json()["error"]["code"] == "REPORT_NOT_AVAILABLE"
 
 
-def test_expt02_stored_content_not_matching_schema_is_409(
-    client: TestClient, db: Session
-) -> None:
+def test_expt02_stored_content_not_matching_schema_is_409(client: TestClient, db: Session) -> None:
     user = _user(db)
     session = _session(db, user, SessionStatus.COMPLETED)
     _report(db, session, {"summary": "legacy shape"})
