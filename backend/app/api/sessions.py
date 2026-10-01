@@ -17,7 +17,7 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 from pydantic import BaseModel, ConfigDict, StrictStr, ValidationError
 from sqlalchemy.orm import Session
 
@@ -37,6 +37,7 @@ from app.interviews.views import SessionView, build_session_view
 from app.models.account import User
 from app.models.interview import ExpectedLevel, InterviewSession, RequirementItem, SessionStatus
 from app.observability import log_event
+from app.privacy.session_deletion import delete_session
 
 # Display labels of the interview languages (spec section 9; LAC-08: English only).
 LANGUAGE_LABELS: dict[str, str] = {"en": "English"}
@@ -170,6 +171,17 @@ def cancel(session_id: str, user: CurrentUser, db: DbSession) -> SessionView:
     view = build_session_view(db, session)
     db.commit()
     return view
+
+
+@router.delete("/sessions/{session_id}", status_code=204, response_class=Response)
+def delete_one(session_id: str, user: CurrentUser, db: DbSession) -> None:
+    # Malformed ids get the same 404 as unknown ones and sessions of other users (AUTH-16).
+    try:
+        parsed = UUID(session_id)
+    except ValueError:
+        raise AppError.from_catalog(RESOURCE_NOT_FOUND) from None
+    delete_session(db, user, parsed)
+    db.commit()
 
 
 __all__ = ["router"]
