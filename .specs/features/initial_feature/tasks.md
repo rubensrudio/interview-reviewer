@@ -336,6 +336,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-012 — Implement secret tokens and one-time links
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-03`, `AUTH-08`, `AUTH-94`
 - **Tipo**: lógica-negócio
