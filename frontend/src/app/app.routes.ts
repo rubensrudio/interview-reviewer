@@ -88,6 +88,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/sessions/session-page').then((m) => m.SessionPage),
       },
       {
+        path: 'history',
+        title: 'History',
+        loadComponent: () => import('./features/history/history-page').then((m) => m.HistoryPage),
+      },
+      {
         path: 'sessions/:id/report',
         title: 'Interview report',
         loadComponent: () => import('./features/reports/report-page').then((m) => m.ReportPage),
