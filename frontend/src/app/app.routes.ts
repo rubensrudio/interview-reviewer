@@ -36,6 +36,12 @@ export const routes: Routes = [
     canActivate: [guestGuard],
   },
   {
+    path: 'link-google',
+    title: 'Link your Google account',
+    loadComponent: () => import('./features/auth/link-google-page').then((m) => m.LinkGooglePage),
+    canActivate: [guestGuard],
+  },
+  {
     path: '',
     loadComponent: () => import('./layout/shell').then((m) => m.Shell),
     canActivate: [authGuard, termsGuard],
