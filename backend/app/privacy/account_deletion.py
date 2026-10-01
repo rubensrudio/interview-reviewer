@@ -10,8 +10,10 @@
 2. Delete the stored files of the user (``delete_user_files``, CT-23).
 3. Delete the ``users`` row. Resumes, extractions, sessions, messages, answers, evaluations,
    reports, auth sessions and one-time tokens go with it through ``ON DELETE CASCADE``; the
-   Google link is a column of the row. The queued ``account.purge`` jobs of the user are
-   deleted in the same transaction, so no row keeps the user id.
+   Google link is a column of the row. The queued ``account.purge`` jobs of the user and the
+   ``login_throttles`` row of the account (``account:<HMAC of the e-mail>``, LAC-46) are deleted
+   in the same transaction, so no row keeps the user id and a new sign-up with the same e-mail
+   never inherits a lock. Origin rows (``ip:...``) are not tied to the account and stay.
 
 Steps 2-3 run inline under the ``users`` row lock and commit together. If they fail (e.g. the
 storage is unavailable) they are rolled back as a whole, the account stays unusable with all of
@@ -21,8 +23,9 @@ closes the current job, so the deletion is never abandoned after a fixed number 
 (DATA-93). Every step is idempotent: an unknown user or one already purged is a no-op, and an
 account without a deletion request is never purged.
 
-Lock order is fixed: ``users`` row, then ``jobs`` rows. Resume uploads lock the same ``users``
-row before writing a file, so no file is written between steps 2 and 3. The inline job has a
+Lock order is fixed: ``users`` row, then the ``login_throttles`` row, then ``jobs`` rows (login
+locks throttle rows but never the ``users`` row, so no lock cycle exists). Resume uploads lock
+the same ``users`` row before writing a file, so no file is written between steps 2 and 3. The inline job has a
 short grace period (``INLINE_PURGE_GRACE``) so the worker normally finds the work already done;
 if it runs concurrently it waits on the ``users`` lock and then finds nothing to do.
 
@@ -38,9 +41,10 @@ from sqlalchemy import Select, delete, event, select
 from sqlalchemy.orm import Session, SessionTransaction
 
 from app.auth.sessions import COOKIE_PATH, SESSION_COOKIE, XSRF_COOKIE, revoke_all_sessions
+from app.auth.throttle import account_key
 from app.config import get_settings
 from app.jobs.queue import enqueue
-from app.models.account import User
+from app.models.account import LoginThrottle, User
 from app.models.job import Job, JobStatus
 from app.observability import log_event
 from app.resumes import storage
@@ -183,9 +187,11 @@ def _purge(db: Session, user_id: UUID) -> bool:
     user = _lock_user(db, user_id)
     if user is None or user.deletion_requested_at is None:
         return False
+    throttle_key = account_key(user.email_normalized)
     storage.delete_user_files(user_id)
     db.delete(user)
     db.flush()
+    db.execute(delete(LoginThrottle).where(LoginThrottle.key == throttle_key))
     _delete_finished_purge_jobs(db, user_id)
     db.flush()
     return True

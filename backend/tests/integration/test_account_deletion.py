@@ -23,7 +23,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Session
 from starlette.responses import Response as StarletteResponse
 
-from app.auth import registration
+from app.auth import registration, throttle
 from app.auth.login import login_local
 from app.auth.passwords import hash_password
 from app.auth.registration import register_local
@@ -41,7 +41,7 @@ from app.errors import INVALID_CREDENTIALS, AppError
 from app.jobs.registry import JobRegistry, default_registry
 from app.jobs.worker import Worker
 from app.main import create_app
-from app.models.account import AuthSession, OneTimeToken, TokenPurpose, User
+from app.models.account import AuthSession, LoginThrottle, OneTimeToken, TokenPurpose, User
 from app.models.assessment import Answer, Evaluation, Report
 from app.models.interview import InterviewSession, Question, SessionStatus
 from app.models.job import Job, JobStatus
@@ -417,6 +417,77 @@ def test_data_93_purge_with_invalid_payload_raises_and_changes_nothing(
 
 def test_data_93_purge_job_is_registered_for_the_worker() -> None:
     assert default_registry.handler_for(ACCOUNT_PURGE_JOB) is purge_account
+
+
+# --- LAC-46: login throttle of the account -------------------------------------------------
+
+
+def _lock_account_throttle(db: Session, email: str, origin: str = "203.0.113.7") -> str:
+    """Create a live lock on the account throttle (and an origin row); return the account key."""
+    account = throttle.account_key(email)
+    entries = throttle.acquire(db, [account, throttle.origin_key(origin)])
+    for entry in entries.values():
+        entry.failures = 99
+        entry.locked_until = datetime.now(UTC) + timedelta(hours=1)
+    db.flush()
+    return account
+
+
+def _throttle_exists(db: Session, key: str) -> bool:
+    db.expire_all()
+    found = db.execute(select(LoginThrottle.key).where(LoginThrottle.key == key))
+    return found.scalar_one_or_none() is not None
+
+
+def test_lac_46_inline_purge_deletes_the_account_throttle_and_keeps_the_origin_one(
+    db: Session,
+) -> None:
+    user = _user(db)
+    account = _lock_account_throttle(db, user.email_normalized)
+    origin = throttle.origin_key("203.0.113.7")
+
+    delete_account(db, user, StarletteResponse())
+
+    assert not _throttle_exists(db, account)
+    assert _throttle_exists(db, origin)
+
+
+def test_lac_46_job_purge_deletes_the_account_throttle(
+    db: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    user = _user(db)
+    user_id = user.id
+    account = _lock_account_throttle(db, user.email_normalized)
+    with monkeypatch.context() as patch:
+        patch.setattr(storage, "delete_user_files", _failing_delete_user_files)
+        delete_account(db, user, StarletteResponse())
+    # Steps 2-3 failed: the throttle row goes only together with the account.
+    assert _throttle_exists(db, account)
+
+    purge_account(db, {"user_id": str(user_id)})
+    db.commit()
+
+    assert not _user_exists(db, user_id)
+    assert not _throttle_exists(db, account)
+
+
+def test_lac_46_new_sign_up_with_the_same_email_does_not_inherit_the_lock(
+    db: Session, mailer: FakeMailer
+) -> None:
+    email = f"locked-{uuid.uuid4().hex}@example.com"
+    old = _user(db, email)
+    _lock_account_throttle(db, email)
+    delete_account(db, old, StarletteResponse())
+
+    register_local(db, email, PASSWORD, accepted_terms=True)
+    db.commit()
+    new = db.execute(select(User).where(User.email_normalized == email)).scalar_one()
+    new.email_verified_at = datetime.now(UTC)
+    db.commit()
+
+    signed_in = login_local(db, email, PASSWORD, "198.51.100.1")
+
+    assert signed_in.id == new.id
 
 
 # --- DATA-07: new sign-up with the same e-mail ----------------------------------------------
