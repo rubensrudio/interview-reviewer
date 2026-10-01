@@ -18,6 +18,10 @@ type Scalar = str | int | float | bool | None
 
 REDACTED = "[REDACTED]"
 EVENTS_LOGGER_NAME = "app.events"
+ACCESS_LOGGER_NAME = "uvicorn.access"
+# Routes whose query string is dropped from the access log (OIDC state/code,
+# verification and reset tokens, provider error details).
+AUTH_PATH_PREFIX = "/api/auth"
 FIELDS_ATTR = "event_fields"
 
 # Field names that must never be logged (plan section 14).
@@ -143,6 +147,29 @@ class RedactionFilter(logging.Filter):
         return True
 
 
+def redact_access_path(full_path: str) -> str:
+    """Drop the query string of auth routes and mask credentials elsewhere."""
+    path, separator, _query = full_path.partition("?")
+    if path == AUTH_PATH_PREFIX or path.startswith(AUTH_PATH_PREFIX + "/"):
+        return path
+    return mask_sensitive(full_path) if separator else full_path
+
+
+class AccessLogRedactionFilter(logging.Filter):
+    """Redact the request path of ``uvicorn.access`` records (AUTH-95, LAC-37).
+
+    uvicorn logs ``(client_addr, method, full_path, http_version, status_code)``
+    as ``record.args`` and its ``AccessFormatter`` unpacks them, so the path is
+    rewritten in place and the record shape is kept.
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        args = record.args
+        if isinstance(args, tuple) and len(args) == 5 and isinstance(args[2], str):
+            record.args = (*args[:2], redact_access_path(args[2]), *args[3:])
+        return True
+
+
 class JsonFormatter(logging.Formatter):
     """Format records as one JSON object per line, without stack traces."""
 
@@ -171,7 +198,15 @@ class _JsonHandler(logging.StreamHandler):  # type: ignore[type-arg]
 
 
 def configure_logging(level: int | str = logging.INFO) -> None:
-    """Install the JSON + redaction handler on the root logger (idempotent)."""
+    """Install the JSON + redaction handler on the root logger (idempotent).
+
+    Also attaches the access-log filter to the ``uvicorn.access`` logger. A logger
+    filter applies whatever handlers uvicorn's ``log_config`` installs and is kept
+    by ``logging.config.dictConfig`` when it reconfigures that logger.
+    """
+    access_logger = logging.getLogger(ACCESS_LOGGER_NAME)
+    if not any(isinstance(f, AccessLogRedactionFilter) for f in access_logger.filters):
+        access_logger.addFilter(AccessLogRedactionFilter())
     root = logging.getLogger()
     root.setLevel(level)
     if any(isinstance(handler, _JsonHandler) for handler in root.handlers):
