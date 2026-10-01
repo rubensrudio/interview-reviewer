@@ -2812,15 +2812,19 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
   - `frontend/src/app/features/account/account-page.html`
 - **Arquivos de teste**:
   - `frontend/src/app/features/account/account-page.spec.ts`
+  - `frontend/src/app/features/auth/accept-terms-page.spec.ts`
 - **Wiring permitido**:
-  - `frontend/src/app/app.routes.ts` (apenas adicionar a rota da página)
+  - `frontend/src/app/app.routes.ts` (apenas adicionar a rota da página; LAC-51: `/account` no nível de topo só com `authGuard`, fora do Shell)
+  - `frontend/src/app/features/auth/accept-terms-page.html` (apenas o link "Delete my account" para `/account`, LAC-51)
 - **Reusa**: — (greenfield; usar só os contratos CT-n listados)
 - **Contrato**: CT-58, CT-59 (consome)
 - **Testes**: unit
-- **Descrição**: Mostra e-mail e método de login; "Delete account" abre `ConfirmDialog` com "This will permanently delete your account and all your data now. Backup copies expire within 30 days."; após sucesso mostra a confirmação e navega para `/login`.
+- **Descrição**: Mostra e-mail e método de login; "Delete account" abre `ConfirmDialog` com "This will permanently delete your account and all your data now. Backup copies expire within 30 days."; após sucesso mostra a confirmação e navega para `/login`. A rota `/account` fica fora do Shell, só com `authGuard`, para que quem tem termos pendentes consiga excluir a conta (LAC-45/LAC-51); `/accept-terms` ganha o link "Delete my account" para `/account`.
 - **Done when**:
   - [ ] Teste: `deleteAccount` só é chamado após confirmar
   - [ ] Teste: após 200 navega para `/login` e `currentUser` fica nulo
+  - [ ] Teste: a rota `account` não tem `termsGuard` (só `authGuard`) (LAC-51)
+  - [ ] Teste: `/accept-terms` mostra link para `/account` (LAC-51)
 - **Não fazer**:
   - Não oferecer desativação temporária (LAC-12=A)
 

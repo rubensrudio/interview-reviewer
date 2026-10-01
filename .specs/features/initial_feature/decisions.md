@@ -414,3 +414,10 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Opções**: A) ampliar a TASK-093; B) task nova de backend; C) dívida.
 - **Decisão (humano)**: primeiro A, por recomendação do orquestrador; a TASK-093 já tinha 2 arquivos de produção (regra E2) e é de frontend, então o humano mudou para B.
 - **Impacto**: nova TASK-096 (backend, `pdf_export.py`), mantendo o CT-49. **Requer atualização de plan** (lista de tasks/ondas).
+
+### LAC-51 — Exclusão de conta pela UI com termos pendentes (TASK-095 × LAC-45)
+- **Etapa**: /implement, onda 50, TASK-095
+- **Problema**: `/account` como filha do Shell herda `termsGuard`; quem tem termos pendentes cai em `/accept-terms` (só "Continue"/"Sign out") e não alcança a exclusão, embora o backend permita (LAC-45).
+- **Opções**: A) `/account` no topo só com `authGuard` (sem menu do Shell) + link "Delete my account" em `/accept-terms`; B) `termsGuard` por rota filha, exceto `/account`; C) dívida.
+- **Decisão (humano)**: A.
+- **Impacto**: TASK-095 ganha `accept-terms-page.html` (wiring, só o link) e `accept-terms-page.spec.ts`, e dois Done when. Página de conta sem o menu do Shell. **Requer atualização de plan** (mapa de rotas/guards).
