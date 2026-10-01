@@ -1,0 +1,40 @@
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header>
+  <div class="bar">
+    <nav aria-label="Main">
+      <ul>
+        @for (item of navItems; track item.path) {
+          <li>
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="active"
+              ariaCurrentWhenActive="page"
+              >{{ item.label }}</a
+            >
+          </li>
+        }
+      </ul>
+    </nav>
+    <button
+      type="button"
+      class="sign-out"
+      [disabled]="signingOut()"
+      [attr.aria-busy]="signingOut()"
+      (click)="signOut()"
+    >
+      Sign out
+    </button>
+  </div>
+</header>
+@if (signOutError(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+}
+<main id="main-content" tabindex="-1">
+  <router-outlet />
+</main>
+<footer>
+  <ul>
+    <li><a routerLink="/privacy">Privacy</a></li>
+    <li><a routerLink="/terms">Terms</a></li>
+  </ul>
+</footer>
