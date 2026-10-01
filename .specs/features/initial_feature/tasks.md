@@ -2801,6 +2801,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-095 — Build account page with account deletion
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-06`
 - **Tipo**: ui-puro

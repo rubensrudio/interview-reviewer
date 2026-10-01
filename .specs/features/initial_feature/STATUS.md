@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-10-01T16:25:34 · integradora `feature/initial_feature-integration` · baseline `develop@d036191` (2026-10-01)
+Atualizado em 2026-10-01T19:06:57 · integradora `feature/initial_feature-integration` · baseline `develop@5a9383b` (2026-10-01)
 
 ## Baseline
 
@@ -69,7 +69,7 @@ Atualizado em 2026-10-01T16:25:34 · integradora `feature/initial_feature-integr
 | 47 | TASK-092 | ✅ | G3 | PADRAO: APROVADO |
 | 48 | TASK-093, TASK-096 | ✅ | — | NAO_INVOCADO |
 | 49 | TASK-094 | ✅ | — | NAO_INVOCADO |
-| 50 | TASK-095 | — | — | — |
+| 50 | TASK-095 | ✅ | G3, G5 | PADRAO: APROVADO |
 
 ## Fases (PRs)
 
@@ -208,13 +208,13 @@ Atualizado em 2026-10-01T16:25:34 · integradora `feature/initial_feature-integr
 | TASK-092 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-093 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-094 | ✅ APROVADA | médio | 0/0/0 |  |
-| TASK-095 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-095 | ✅ APROVADA | médio | 0/0/1 |  |
 | TASK-096 | ✅ APROVADA | médio | 0/0/0 |  |
 
 ## Métricas
 
-- Aprovadas: 95/96 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 76/95
-- Ondas fechadas: 49 · QA semântico invocado em 34
+- Aprovadas: 96/96 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 76/96
+- Ondas fechadas: 50 · QA semântico invocado em 35
 - Regressões capturadas pelo gate mecânico: 0
-- Testes e2e de regressão criados a partir de achados do QA: 1
+- Testes e2e de regressão criados a partir de achados do QA: 2
