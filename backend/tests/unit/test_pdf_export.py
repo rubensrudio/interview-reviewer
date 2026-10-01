@@ -109,20 +109,143 @@ def test_expt01_pdf_keeps_screen_section_order() -> None:
     text = _text(render_report_pdf(content))
 
     markers = [
+        "Summary",
+        "62.5% adherence to the required skills",
+        "Completed on February 1, 2026",
         "You answered 2 questions.",
-        "62.5%",
         _flat(REPORT_DISCLAIMER),
         "Performance by skill",
-        "What does the GIL protect?",
-        "Items to improve",
+        "Questions and answers",
+        "Evidence from your answer",
+        "Satisfactory points",
+        "Unsatisfactory items",
         "The GIL serialises bytecode execution.",
-        "https://docs.python.org/3/glossary.html",
-        "Not evaluated",
-        "Kubernetes",
-        "Teamwork",
+        "Key points",
+        "Sources",
+        "Python glossary",
+        "Not evaluated in this session",
+        "Kubernetes (desirable)",
+        "Teamwork (non-technical)",
+        "Model version: model-v1",
     ]
     positions = [text.index(marker) for marker in markers]
     assert positions == sorted(positions)
+
+
+def test_expt01_pdf_uses_screen_section_titles() -> None:
+    content = _content([_item(1, "What does the GIL protect?", 1)])
+
+    text = _text(render_report_pdf(content))
+
+    assert "Unsatisfactory items" in text
+    assert "Not evaluated in this session" in text
+    assert "Items to improve" not in text
+    assert "Desirable skills" not in text
+
+
+def test_expt01_pdf_lists_satisfactory_items() -> None:
+    content = _content(
+        [
+            _item(1, "What does the GIL protect?", 4),
+            _item(2, "How do you profile a slow function?", 1),
+        ]
+    )
+
+    text = _text(render_report_pdf(content))
+
+    satisfactory = text[text.index("Satisfactory points") : text.index("Unsatisfactory items")]
+    assert "Question 1 · Python: What does the GIL protect?" in satisfactory
+    assert "How do you profile a slow function?" not in satisfactory
+
+
+def test_expt01_pdf_without_satisfactory_items_shows_empty_text() -> None:
+    content = _content([_item(1, "What does the GIL protect?", 1)])
+
+    text = _text(render_report_pdf(content))
+
+    assert "No satisfactory items." in text
+
+
+def test_expt01_pdf_without_unsatisfactory_items_shows_empty_text() -> None:
+    content = _content([_item(1, "What does the GIL protect?", 4)])
+
+    text = _text(render_report_pdf(content))
+
+    assert "No unsatisfactory items." in text
+    assert "All answers were satisfactory." not in text
+
+
+def test_expt01_pdf_lists_global_sources_with_excerpt() -> None:
+    other = SourceRef(
+        url="https://example.org/profiling",
+        title="Profiling guide",
+        collected_at=datetime(2026, 10, 1, 13, 30, tzinfo=UTC),
+        excerpt="Use cProfile to find hot spots.",
+    )
+    content = _content([_item(1, "What does the GIL protect?", 4)]).model_copy(
+        update={"sources_used": [other]}
+    )
+
+    text = _text(render_report_pdf(content))
+
+    sources = text[text.index("Unsatisfactory items") :]
+    assert "Profiling guide" in sources
+    assert "https://example.org/profiling" in sources
+    assert "Collected on October 1, 2026" in sources
+    assert "Use cProfile to find hot spots." in sources
+
+
+def test_expt01_pdf_without_sources_shows_empty_text() -> None:
+    content = _content([_item(1, "What does the GIL protect?", 4)]).model_copy(
+        update={"sources_used": []}
+    )
+
+    text = _text(render_report_pdf(content))
+
+    assert "No sources were cited in this report." in text
+
+
+def test_expt01_reference_sources_show_excerpt() -> None:
+    content = _content([_item(1, "What does the GIL protect?", 1)]).model_copy(
+        update={"sources_used": []}
+    )
+
+    text = _text(render_report_pdf(content))
+
+    assert "The global interpreter lock." in text
+    assert "Collected on January 10, 2026" in text
+
+
+def test_expt01_dates_use_long_english_format() -> None:
+    content = _content([_item(1, "What does the GIL protect?", 4)]).model_copy(
+        update={"completed_at": datetime(2026, 10, 1, 9, 0, tzinfo=UTC)}
+    )
+
+    text = _text(render_report_pdf(content))
+
+    assert "Completed on October 1, 2026" in text
+    assert "2026-10-01" not in text
+    assert "2026-01-10" not in text
+
+
+def test_expt01_score_and_percentage_match_screen() -> None:
+    content = _content([_item(1, "What does the GIL protect?", 4)])
+
+    text = _text(render_report_pdf(content))
+
+    assert "Score: 4" in text
+    assert "4/4" not in text
+    assert text.count("62.5%") == 1
+
+
+def test_expt01_not_evaluated_section_hidden_when_empty() -> None:
+    content = _content([_item(1, "What does the GIL protect?", 4)]).model_copy(
+        update={"non_evaluated": NonEvaluated(nice_to_have=[], non_technical=[])}
+    )
+
+    text = _text(render_report_pdf(content))
+
+    assert "Not evaluated in this session" not in text
 
 
 def test_expt01_no_verified_source_item_has_no_source_listed() -> None:
@@ -143,7 +266,11 @@ def test_expt01_no_verified_source_item_has_no_source_listed() -> None:
 
     text = _text(render_report_pdf(content))
 
-    assert "No verified source" in text
+    questions = text[text.index("Questions and answers") : text.index("Satisfactory points")]
+    assert "No verified source" in questions
+    unsatisfactory = text[text.index("Unsatisfactory items") :]
+    assert "No verified source" in unsatisfactory
+    assert "Hypothetical example" in unsatisfactory
     assert "Hypothetical example text." in text
     assert SOURCE.url not in text
 
