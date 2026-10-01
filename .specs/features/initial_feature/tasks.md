@@ -2317,6 +2317,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-078 — Build forgot password page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-07`, `AUTH-09`
 - **Tipo**: ui-puro
