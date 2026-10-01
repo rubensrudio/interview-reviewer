@@ -405,6 +405,50 @@ runs through the API and the job worker with a scripted LLM and ends `completed`
 cd backend && uv run pytest -q tests/system/test_offline_flow.py
 ```
 
+## Backup and restore
+
+`deploy/backup/backup.sh` backs up the PostgreSQL database and the resume storage to a local
+directory. Each run writes a pair of files with the same UTC timestamp to `IR_BACKUP_DIR`
+(default `/backups`), readable by the owner only:
+
+- `db-<timestamp>.dump`: `pg_dump` in custom format;
+- `storage-<timestamp>.tar.gz`: the contents of `IR_STORAGE_DIR` (default `/data/storage`).
+
+**Frequency:** run it once a day (for example from cron at 03:00). **Retention:** every run
+deletes backup files older than 30 days (`find -mtime +30`), so data removed by account
+deletion disappears from the backups within that window, as the deletion notice tells the
+user. Backups are never sent to an external service; copying them off the host is up to the
+operator.
+
+Both scripts connect with the standard libpq variables (`PGHOST`, `PGPORT`, `PGUSER`,
+`PGPASSWORD` or `~/.pgpass`, `PGDATABASE`, default `interview_reviewer`) and also accept
+`POSTGRES_USER`/`POSTGRES_PASSWORD` from `deploy/db.env`. With the production stack, run them
+in a one-off `postgres:16` container attached to the internal network:
+
+```bash
+# /etc/cron.d/interview-reviewer-backup (daily at 03:00)
+0 3 * * * root docker run --rm --network interview-reviewer-prod_internal --env-file /opt/interview-reviewer/deploy/db.env -e PGHOST=db -v interview-reviewer-prod_resume-storage:/data/storage:ro -v /srv/interview-reviewer/backups:/backups -v /opt/interview-reviewer/deploy/backup:/scripts:ro postgres:16 bash /scripts/backup.sh
+```
+
+To restore, stop `api` and `worker`, then pass a matching dump/archive pair. The restore is
+destructive: it drops and recreates the database objects from the dump and replaces the
+contents of the storage directory, so it requires `--yes`:
+
+```bash
+docker compose -f deploy/docker-compose.prod.yml stop api worker
+docker run --rm --network interview-reviewer-prod_internal \
+  --env-file deploy/db.env -e PGHOST=db \
+  -v interview-reviewer-prod_resume-storage:/data/storage \
+  -v /srv/interview-reviewer/backups:/backups:ro \
+  -v "$PWD/deploy/backup:/scripts:ro" \
+  postgres:16 bash /scripts/restore.sh --yes \
+  /backups/db-20260101T030000Z.dump /backups/storage-20260101T030000Z.tar.gz
+docker compose -f deploy/docker-compose.prod.yml start api worker
+```
+
+A restore brings back accounts deleted after the backup was taken. Delete them again (or
+restore an older pair) before reopening the service.
+
 ## Frontend
 
 Angular 21 single-page app in `frontend/`: standalone components, zoneless change detection,
