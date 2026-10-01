@@ -1268,6 +1268,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-043 — Implement job requirements structuring
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `PLAN-03`, `PLAN-04`, `PLAN-06`, `PLAN-11`, `PLAN-15`, `PLAN-90`, `PLAN-93`, `PLAN-94`
 - **Tipo**: lógica-negócio
@@ -1300,6 +1301,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-044 — Implement requirement list editing and plan confirmation
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `PLAN-04`, `PLAN-05`, `PLAN-07`, `PLAN-08`, `PLAN-09`, `PLAN-10`, `PLAN-11`, `PLAN-91`, `LANG-02`
 - **Tipo**: lógica-negócio
@@ -1390,6 +1392,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-047 — Implement idempotent answer submission
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `INTV-03`, `INTV-04`, `INTV-05`, `INTV-06`, `INTV-07`, `INTV-09`, `INTV-11`, `INTV-90`, `INTV-91`, `INTV-93`
 - **Tipo**: lógica-negócio
@@ -1422,6 +1425,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-048 — Implement clarification requests
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `INTV-08`, `INTV-92`, `INTV-93`
 - **Tipo**: lógica-negócio
