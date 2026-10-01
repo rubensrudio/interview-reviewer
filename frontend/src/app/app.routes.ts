@@ -76,6 +76,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/resumes/resume-detail-page').then((m) => m.ResumeDetailPage),
       },
+      {
+        path: 'sessions/new',
+        title: 'New interview',
+        loadComponent: () =>
+          import('./features/sessions/new-session-page').then((m) => m.NewSessionPage),
+      },
     ],
   },
 ];

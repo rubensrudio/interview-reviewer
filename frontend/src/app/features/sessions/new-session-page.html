@@ -1,0 +1,86 @@
+<h1>New interview</h1>
+
+<div [attr.aria-busy]="loading()">
+  @if (loading()) {
+    <p role="status">Loading…</p>
+  } @else if (loadError(); as message) {
+    <div class="state">
+      <p class="form-error" role="alert">{{ message }}</p>
+      <button type="button" class="secondary" (click)="retryLoad()">Try again</button>
+    </div>
+  } @else if (isEmpty()) {
+    <div class="state">
+      <p>You have no ready resumes yet. Upload one and wait for it to be processed.</p>
+      <a routerLink="/resumes">Go to resumes</a>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      @if (formError(); as message) {
+        <p class="form-error" role="alert">{{ message }}</p>
+      }
+
+      <div class="field">
+        <label for="session-resume">Resume</label>
+        <select
+          id="session-resume"
+          formControlName="resumeId"
+          required
+          [attr.aria-invalid]="showResumeError()"
+          [attr.aria-describedby]="showResumeError() ? 'session-resume-error' : null"
+        >
+          <option value="" disabled>Select a resume</option>
+          @for (resume of resumes(); track resume.id) {
+            <option [value]="resume.id">{{ resume.filename }}</option>
+          }
+        </select>
+        @if (showResumeError()) {
+          <p id="session-resume-error" class="field-error" role="alert">Choose a resume.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="session-language">Interview language</label>
+        <select id="session-language" formControlName="language" required>
+          @for (language of languages(); track language.code) {
+            <option [value]="language.code">{{ language.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="session-level">Interview level</label>
+        <select id="session-level" formControlName="level" aria-describedby="session-level-hint">
+          <option value="">No specific level</option>
+          @for (level of levels(); track level) {
+            <option [value]="level">{{ levelLabels[level] }}</option>
+          }
+        </select>
+        <p id="session-level-hint" class="hint">
+          Optional. Used as the expected level for skills without a level in the job requirements.
+        </p>
+      </div>
+
+      <button type="submit" class="primary" [disabled]="starting()" [attr.aria-busy]="starting()">
+        Start interview
+      </button>
+      @if (starting()) {
+        <p role="status">Starting…</p>
+      }
+    </form>
+  }
+</div>
+
+@if (inProgressId()) {
+  <!--
+    "Resume" is the dialog's cancel action so that Escape and the initial focus never cancel
+    the unfinished session; "Cancel" (destructive) is the explicit confirm action.
+  -->
+  <app-confirm-dialog
+    title="Interview in progress"
+    [message]="inProgressMessage"
+    cancelLabel="Resume"
+    confirmLabel="Cancel"
+    (cancelled)="resumeInProgress()"
+    (confirmed)="cancelInProgress()"
+  />
+}
