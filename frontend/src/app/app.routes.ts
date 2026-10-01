@@ -4,6 +4,12 @@ import { authGuard, guestGuard, termsGuard } from './core/auth/auth-guards';
 
 export const routes: Routes = [
   {
+    path: 'login',
+    title: 'Sign in',
+    loadComponent: () => import('./features/auth/login-page').then((m) => m.LoginPage),
+    canActivate: [guestGuard],
+  },
+  {
     path: 'register',
     title: 'Create your account',
     loadComponent: () => import('./features/auth/register-page').then((m) => m.RegisterPage),

@@ -1,0 +1,93 @@
+<h1>Sign in</h1>
+
+@if (googleError; as message) {
+  <p class="google-error" role="alert">{{ message }}</p>
+}
+
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  @if (formError(); as message) {
+    @if (needsVerification()) {
+      <div class="verify form-error">
+        <p role="alert">{{ message }}</p>
+        <button
+          type="button"
+          class="secondary"
+          [disabled]="resending()"
+          [attr.aria-busy]="resending()"
+          (click)="resend()"
+        >
+          Resend verification e-mail
+        </button>
+        <div aria-live="polite">
+          @if (resendMessage(); as sent) {
+            <p>{{ sent }}</p>
+          }
+        </div>
+        @if (resendError(); as failed) {
+          <p role="alert">{{ failed }}</p>
+        }
+      </div>
+    } @else {
+      <p class="form-error" role="alert">{{ message }}</p>
+    }
+  }
+
+  <div class="field">
+    <label for="login-email">E-mail</label>
+    <input
+      id="login-email"
+      type="email"
+      formControlName="email"
+      autocomplete="email"
+      required
+      [attr.maxlength]="maxLength"
+      [attr.aria-invalid]="showFieldError('email')"
+      [attr.aria-describedby]="showFieldError('email') ? 'login-email-error' : null"
+    />
+    @if (showFieldError('email')) {
+      <p id="login-email-error" class="field-error" role="alert">
+        @if (form.controls.email.hasError('maxlength')) {
+          Use at most {{ maxLength }} characters.
+        } @else {
+          Enter your e-mail.
+        }
+      </p>
+    }
+  </div>
+
+  <div class="field">
+    <label for="login-password">Password</label>
+    <input
+      id="login-password"
+      type="password"
+      formControlName="password"
+      autocomplete="current-password"
+      required
+      [attr.maxlength]="maxLength"
+      [attr.aria-invalid]="showFieldError('password')"
+      [attr.aria-describedby]="showFieldError('password') ? 'login-password-error' : null"
+    />
+    @if (showFieldError('password')) {
+      <p id="login-password-error" class="field-error" role="alert">
+        @if (form.controls.password.hasError('maxlength')) {
+          Use at most {{ maxLength }} characters.
+        } @else {
+          Enter your password.
+        }
+      </p>
+    }
+  </div>
+
+  <button type="submit" class="primary" [disabled]="submitting()" [attr.aria-busy]="submitting()">
+    Sign in
+  </button>
+</form>
+
+<p class="divider">or</p>
+
+<a class="google secondary" [href]="googleStartUrl">Continue with Google</a>
+
+<div class="alt">
+  <p><a routerLink="/forgot-password">Forgot your password?</a></p>
+  <p>No account yet? <a routerLink="/register">Create one</a></p>
+</div>
