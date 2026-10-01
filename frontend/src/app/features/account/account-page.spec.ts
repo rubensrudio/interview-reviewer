@@ -191,29 +191,37 @@ describe('AccountPage', () => {
     expect(router.url).toBe('/account');
   });
 
-  it('calls deleteAccount only after confirming, then clears the user and goes to /login', async () => {
+  it('calls deleteAccount only after confirming, then clears the user and keeps the confirmation on screen', async () => {
     await setup();
 
     await openAndConfirm();
 
     expect(api.deleteAccount).toHaveBeenCalledTimes(1);
     expect(api.currentUser()).toBeNull();
-    expect(router.url).toBe('/login');
+    const status = root.querySelector<HTMLElement>('[role="status"]');
+    expect(status?.textContent).toContain(DELETED_MESSAGE);
+    expect(document.activeElement).toBe(status);
+    expect(text()).not.toContain('raw backend text');
+    expect(router.url).toBe('/account');
+    expect(root.querySelector('a[href="/resumes"]')).toBeNull();
+    expect(root.querySelector('button')).toBeNull();
   });
 
-  it('shows the deletion confirmation without the raw backend message', async () => {
-    const pending = new Subject<MessageResponse>();
-    await setup((stub) => stub.deleteAccount.mockReturnValue(pending.asObservable()));
-    const navigate = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+  it('goes to /login from the confirmation, replacing the account page in history', async () => {
+    await setup();
+    const navigate = vi.spyOn(router, 'navigateByUrl');
 
     await openAndConfirm();
-    pending.next({ message: 'raw backend text' });
-    pending.complete();
+    const link = root.querySelector<HTMLAnchorElement>('a[href="/login"]');
+    expect(link?.textContent?.trim()).toBe('Go to sign in');
+    link?.click();
     await render();
 
-    expect(root.querySelector('[role="status"]')?.textContent).toContain(DELETED_MESSAGE);
-    expect(text()).not.toContain('raw backend text');
-    expect(navigate).toHaveBeenCalledWith('/login', { replaceUrl: true });
+    expect(router.url).toBe('/login');
+    expect(navigate).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ replaceUrl: true }),
+    );
   });
 
   it('blocks a second request while the deletion is in flight', async () => {

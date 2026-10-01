@@ -1,11 +1,15 @@
 import {
   ChangeDetectionStrategy,
+  afterNextRender,
   Component,
   DestroyRef,
+  ElementRef,
+  Injector,
   OnInit,
   computed,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -73,6 +77,15 @@ function signInMethods(user: Me): string {
     }
     a {
       color: #1d4ed8;
+    }
+    .success:focus {
+      outline: 3px solid #15803d;
+      outline-offset: 2px;
+    }
+    .continue {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.75rem;
     }
     a:focus-visible {
       outline: 3px solid #1d4ed8;
@@ -171,6 +184,8 @@ export class AccountPage implements OnInit {
   private readonly auth = inject(AuthApi);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
+  private readonly deletedStatus = viewChild<ElementRef<HTMLElement>>('deletedStatus');
 
   protected readonly user = this.auth.currentUser;
   protected readonly methods = computed(() => {
@@ -187,6 +202,7 @@ export class AccountPage implements OnInit {
 
   protected readonly deleteMessage = DELETE_ACCOUNT_MESSAGE;
   protected readonly deletedMessage = ACCOUNT_DELETED_MESSAGE;
+  protected readonly loginPath = LOGIN_PATH;
 
   ngOnInit(): void {
     if (this.user() === null) {
@@ -223,8 +239,12 @@ export class AccountPage implements OnInit {
       .subscribe({
         next: () => {
           this.deleting.set(false);
+          // Stay on the confirmation until the user moves on: the session is already gone, and
+          // /login has no place to show it (QA TASK-095-1).
           this.deleted.set(true);
-          void this.router.navigateByUrl(LOGIN_PATH, { replaceUrl: true });
+          afterNextRender(() => this.deletedStatus()?.nativeElement.focus(), {
+            injector: this.injector,
+          });
         },
         error: (err: ApiError) => {
           this.deleting.set(false);
