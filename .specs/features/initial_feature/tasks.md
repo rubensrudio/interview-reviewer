@@ -2344,6 +2344,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-079 — Build reset password page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-08`, `AUTH-14`, `AUTH-94`
 - **Tipo**: ui-puro
