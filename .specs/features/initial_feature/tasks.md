@@ -2774,6 +2774,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-094 — Build session comparison page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `CMP-01`, `CMP-02`
 - **Tipo**: ui-puro
