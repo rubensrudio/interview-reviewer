@@ -102,6 +102,11 @@ export const routes: Routes = [
         title: 'Compare interviews',
         loadComponent: () => import('./features/reports/compare-page').then((m) => m.ComparePage),
       },
+      {
+        path: 'account',
+        title: 'Account',
+        loadComponent: () => import('./features/account/account-page').then((m) => m.AccountPage),
+      },
     ],
   },
 ];
