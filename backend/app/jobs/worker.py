@@ -16,6 +16,15 @@ Stale-job reaper (LAC-38): at startup and then every ``reap_every_seconds``, job
 ``queued``, or to ``failed`` when they already used ``max_attempts``. Before recording the
 outcome of a job, the worker checks that it still owns it (same ``attempts`` and still
 ``running``), so a late finish never overwrites a job that was reaped and claimed again.
+
+Lock heartbeat (LAC-44): while a handler runs, a background thread renews the job's
+``locked_at`` every ``heartbeat_every_seconds`` (well below ``stale_after``) in a database
+session of its own, so the handler's transaction is never committed by it. The renewal is
+fenced by ``attempts``: if it matches no row, this execution lost the job, the heartbeat
+logs ``job.lock_lost`` and stops; the handler is not interrupted, and its result is discarded
+by the ownership check (``job.ownership_lost``). The heartbeat is always stopped and joined
+when the handler returns or raises. A dead worker sends no heartbeat, so the reaper still
+recovers its jobs.
 """
 
 import importlib
@@ -33,7 +42,13 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.db import get_sessionmaker
-from app.jobs.queue import ERROR_CODE_MAX_LENGTH, claim_next, mark_done, mark_failed
+from app.jobs.queue import (
+    ERROR_CODE_MAX_LENGTH,
+    claim_next,
+    mark_done,
+    mark_failed,
+    renew_lock,
+)
 from app.jobs.registry import (
     JobHandler,
     JobRegistry,
@@ -63,6 +78,10 @@ __all__ = [
 # Local constants: no Settings entry exists for them yet (config.py is outside TASK-009).
 STALE_LOCK_TIMEOUT = timedelta(minutes=30)
 REAPER_INTERVAL_SECONDS = 60
+# LAC-44: renew the lock of a running job far more often than STALE_LOCK_TIMEOUT.
+HEARTBEAT_INTERVAL_SECONDS = 60.0
+HEARTBEAT_JOIN_TIMEOUT_SECONDS = 30.0
+HEARTBEAT_THREAD_PREFIX = "job-heartbeat"
 POLL_INTERVAL_SECONDS = 1.0
 UNKNOWN_KIND_ERROR = "UnknownJobKind"
 STALE_LOCK_ERROR = "StaleJobLock"
@@ -125,6 +144,68 @@ def _lock_if_owned(db: Session, job_id: uuid.UUID, attempts: int) -> Job | None:
     return job
 
 
+class _LockHeartbeat:
+    """Background thread that renews one job's lock until stopped or the lock is lost."""
+
+    def __init__(
+        self,
+        session_factory: SessionFactory,
+        job_id: uuid.UUID,
+        kind: str,
+        attempts: int,
+        every_seconds: float,
+    ) -> None:
+        self._session_factory = session_factory
+        self._job_id = job_id
+        self._kind = kind
+        self._attempts = attempts
+        self._every_seconds = every_seconds
+        self._stop = threading.Event()
+        self._thread = threading.Thread(
+            target=self._run, name=f"{HEARTBEAT_THREAD_PREFIX}-{job_id}", daemon=True
+        )
+
+    def start(self) -> None:
+        self._thread.start()
+
+    def stop(self) -> None:
+        self._stop.set()
+        self._thread.join(HEARTBEAT_JOIN_TIMEOUT_SECONDS)
+        if self._thread.is_alive():
+            log_event("job.heartbeat_stuck", job_id=str(self._job_id), kind=self._kind)
+
+    def _run(self) -> None:
+        while not self._stop.wait(self._every_seconds):
+            try:
+                renewed = self._renew()
+            except Exception as exc:  # database hiccup: try again on the next beat
+                log_event(
+                    "job.heartbeat_failed",
+                    job_id=str(self._job_id),
+                    kind=self._kind,
+                    error_code=_error_code(exc),
+                )
+                continue
+            if not renewed:
+                log_event(
+                    "job.lock_lost",
+                    job_id=str(self._job_id),
+                    kind=self._kind,
+                    attempts=self._attempts,
+                )
+                return
+
+    def _renew(self) -> bool:
+        with self._session_factory() as db:
+            try:
+                renewed = renew_lock(db, self._job_id, self._attempts)
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+        return renewed
+
+
 class Worker:
     """One worker loop. Several workers (threads or processes) may run side by side."""
 
@@ -132,13 +213,24 @@ class Worker:
         self,
         registry: JobRegistry = default_registry,
         session_factory: SessionFactory | None = None,
-        stale_after: timedelta = STALE_LOCK_TIMEOUT,
+        stale_after: timedelta | None = None,
         reap_every_seconds: int | None = REAPER_INTERVAL_SECONDS,
         clock: Callable[[], float] = time.monotonic,
+        heartbeat_every_seconds: float | None = None,
     ) -> None:
+        # Defaults are read at construction so the module constants can be patched in tests.
+        stale = STALE_LOCK_TIMEOUT if stale_after is None else stale_after
+        heartbeat = (
+            HEARTBEAT_INTERVAL_SECONDS
+            if heartbeat_every_seconds is None
+            else heartbeat_every_seconds
+        )
+        if heartbeat <= 0 or heartbeat >= stale.total_seconds():
+            raise ValueError("heartbeat interval must be positive and shorter than stale_after")
         self._registry = registry
         self._session_factory = session_factory
-        self._stale_after = stale_after
+        self._stale_after = stale
+        self._heartbeat_every_seconds = heartbeat
         self._reap_every_seconds = reap_every_seconds
         self._clock = clock
         self._last_reap: float | None = None
@@ -224,8 +316,7 @@ class Worker:
         log_event("job.started", job_id=str(job_id), kind=kind, attempts=attempts)
         with self._new_session() as db:
             try:
-                with timed("job.handler", job_id=str(job_id), kind=kind, attempts=attempts):
-                    handler(db, payload)
+                self._run_handler_with_heartbeat(handler, db, payload, job_id, kind, attempts)
                 owned = _lock_if_owned(db, job_id, attempts)
                 if owned is None:
                     db.rollback()
@@ -242,6 +333,27 @@ class Worker:
         retry = isinstance(error, RetryableJobError)
         self._record_failure(job_id, kind, attempts, _error_code(error), retry=retry)
         return True
+
+    def _run_handler_with_heartbeat(
+        self,
+        handler: JobHandler,
+        db: Session,
+        payload: dict[str, str],
+        job_id: uuid.UUID,
+        kind: str,
+        attempts: int,
+    ) -> None:
+        # Stopped before the ownership check, so a late beat never waits on (or races) the
+        # row lock taken to record the outcome.
+        heartbeat = _LockHeartbeat(
+            self._new_session, job_id, kind, attempts, self._heartbeat_every_seconds
+        )
+        heartbeat.start()
+        try:
+            with timed("job.handler", job_id=str(job_id), kind=kind, attempts=attempts):
+                handler(db, payload)
+        finally:
+            heartbeat.stop()
 
     def _record_failure(
         self, job_id: uuid.UUID, kind: str, attempts: int, error_code: str, retry: bool
