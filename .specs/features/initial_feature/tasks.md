@@ -2792,3 +2792,33 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
   - Não oferecer desativação temporária (LAC-12=A)
 
 ---
+
+### TASK-096 — Align report PDF with the report page (LAC-50)
+
+- **Requisito**: `EXPT-01`
+- **Tipo**: crud-padrão
+- **Risco**: médio
+- **Perfil**: backend
+- **Depende de**: TASK-059, TASK-092
+- **Arquivos de produção**:
+  - `backend/app/reports/pdf_export.py`
+- **Arquivos de teste**:
+  - `backend/tests/unit/test_pdf_export.py`
+- **Wiring permitido**: —
+- **Reusa**: `render_report_pdf` (TASK-059)
+- **Contrato**:
+  - CT-49 — `render_report_pdf(content: ReportContent) -> bytes` (mantém a assinatura)
+- **Testes**: unit
+- **Descrição**: O PDF passa a ter o mesmo conteúdo e os mesmos rótulos da página de relatório (`frontend/src/app/features/reports/report-page.html`, TASK-092), na mesma ordem. Acrescentar a seção de pontos satisfatórios e a lista global de fontes (`sources_used`, com título, URL, data de coleta e trecho). Mostrar o trecho (`excerpt`) das fontes, inclusive nas fontes da referência. Mostrar "No verified source" também no item da seção de perguntas. Usar os mesmos títulos de seção da tela ("Unsatisfactory items", "Not evaluated in this session", sufixos "(desirable)"/"(non-technical)") e os mesmos textos de vazio ("No unsatisfactory items.", "No satisfactory items."), o mesmo rótulo de evidência e a nota no mesmo formato da tela. Datas (`completed_at`, `collected_at`) no formato longo em inglês da tela (ex.: "October 1, 2026"). O percentual aparece uma vez, como na tela. Versões de modelo e rubrica podem continuar no rodapé (metadado do arquivo). Só formatação: nenhum valor é recalculado (DATA-02).
+- **Done when**:
+  - [ ] Teste: texto extraído (pypdf) contém o título da seção de satisfatórios e o texto de um item satisfatório da fixture
+  - [ ] Teste: texto extraído contém o título, a URL e o trecho de uma fonte de `sources_used`
+  - [ ] Teste: texto extraído usa "Unsatisfactory items" e "Not evaluated in this session" e não contém "Items to improve"
+  - [ ] Teste: fixture sem insatisfatórios gera "No unsatisfactory items."
+  - [ ] Teste: `completed_at` aparece no formato longo (ex.: "October 1, 2026") e não em ISO
+  - [ ] Teste: as seções aparecem na mesma ordem da página de relatório
+- **Não fazer**:
+  - Não mudar a rota nem `backend/app/api/reports.py`
+  - Não recalcular percentual, médias nem notas
+
+---
