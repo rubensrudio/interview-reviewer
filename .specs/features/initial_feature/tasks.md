@@ -1752,6 +1752,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-059 — Export completed report as PDF
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `EXPT-01`, `EXPT-02`
 - **Tipo**: crud-padrão
@@ -2015,6 +2016,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-068 — Add egress-restricted production deployment
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `KNOW-01`, `KNOW-02`
 - **Tipo**: infra
@@ -2258,6 +2260,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-076 — Build login page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-04`, `AUTH-05`, `AUTH-90`, `AUTH-93`, `AUTH-10`
 - **Tipo**: ui-puro
@@ -2669,6 +2672,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-091 — Add report API client
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `EXPT-01`, `DATA-02`, `CMP-01`
 - **Tipo**: crud-padrão
