@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { AuthApi, Me } from '../../core/auth/auth-api';
 import { ApiError, NETWORK_ERROR } from '../../core/http/api-error';
@@ -47,17 +47,36 @@ function signInMethods(user: Me): string {
  * Account page (DATA-06): shows the e-mail and sign-in methods and lets the user delete the
  * account after an explicit confirmation. The backend deletes the data and ends the session;
  * this page only asks for it and maps the answer code. No temporary deactivation (LAC-12).
+ * It lives outside the Shell (LAC-51), so it carries its own landmark and way back.
  */
 @Component({
   selector: 'app-account-page',
-  imports: [ConfirmDialog],
+  imports: [ConfirmDialog, RouterLink],
   templateUrl: './account-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
       display: block;
-      max-width: 40rem;
       color: #1a1a1a;
+      background: #ffffff;
+    }
+    main {
+      max-width: 40rem;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    .back {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.75rem;
+      margin: 0 0 1rem;
+    }
+    a {
+      color: #1d4ed8;
+    }
+    a:focus-visible {
+      outline: 3px solid #1d4ed8;
+      outline-offset: 2px;
     }
     h1 {
       margin: 0 0 1.5rem;

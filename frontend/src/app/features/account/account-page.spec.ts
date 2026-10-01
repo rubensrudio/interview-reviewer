@@ -3,7 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { Observable, Subject, of, throwError } from 'rxjs';
 
+import { routes } from '../../app.routes';
 import { AuthApi, Me, MessageResponse } from '../../core/auth/auth-api';
+import { authGuard, termsGuard } from '../../core/auth/auth-guards';
 import { ApiError } from '../../core/http/api-error';
 import { AccountPage } from './account-page';
 
@@ -88,6 +90,23 @@ describe('AccountPage', () => {
 
   const failWith = (err: ApiError) => (stub: AuthApiStub) =>
     stub.deleteAccount.mockReturnValue(throwError(() => err));
+
+  it('is a top-level route guarded only by authGuard, outside the Shell (LAC-51)', () => {
+    const account = routes.find((route) => route.path === 'account');
+
+    expect(account).toBeDefined();
+    expect(account?.canActivate).toEqual([authGuard]);
+    expect(account?.canActivate).not.toContain(termsGuard);
+    const shellChildren = routes.flatMap((route) => route.children ?? []);
+    expect(shellChildren.some((route) => route.path === 'account')).toBe(false);
+  });
+
+  it('offers its own landmark and a way back, since it has no Shell', async () => {
+    await setup();
+
+    expect(root.querySelector('main')).not.toBeNull();
+    expect(root.querySelector('a[href="/resumes"]')?.textContent?.trim()).toBe('Back to resumes');
+  });
 
   it('shows the e-mail and the sign-in method of the current user', async () => {
     await setup();

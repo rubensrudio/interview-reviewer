@@ -1,49 +1,53 @@
-<h1>Account</h1>
+<main>
+  <a class="back" routerLink="/resumes">Back to resumes</a>
 
-@if (deleted()) {
-  <p class="success" role="status">{{ deletedMessage }}</p>
-} @else if (loading()) {
-  <p role="status">Loading your account…</p>
-} @else if (loadError(); as message) {
-  <p class="form-error" role="alert">{{ message }}</p>
-  <button type="button" class="secondary" (click)="retry()">Try again</button>
-} @else if (user(); as current) {
-  <section aria-labelledby="account-details-title">
-    <h2 id="account-details-title">Your details</h2>
-    <dl>
-      <dt>E-mail</dt>
-      <dd>{{ current.email }}</dd>
-      <dt>Sign-in method</dt>
-      <dd data-testid="sign-in-method">{{ methods() }}</dd>
-    </dl>
-  </section>
+  <h1>Account</h1>
 
-  <section class="danger-zone" aria-labelledby="delete-account-title">
-    <h2 id="delete-account-title">Delete account</h2>
-    <p>Permanently delete your account and all of your resumes, interviews and reports.</p>
+  @if (deleted()) {
+    <p class="success" role="status">{{ deletedMessage }}</p>
+  } @else if (loading()) {
+    <p role="status">Loading your account…</p>
+  } @else if (loadError(); as message) {
+    <p class="form-error" role="alert">{{ message }}</p>
+    <button type="button" class="secondary" (click)="retry()">Try again</button>
+  } @else if (user(); as current) {
+    <section aria-labelledby="account-details-title">
+      <h2 id="account-details-title">Your details</h2>
+      <dl>
+        <dt>E-mail</dt>
+        <dd>{{ current.email }}</dd>
+        <dt>Sign-in method</dt>
+        <dd data-testid="sign-in-method">{{ methods() }}</dd>
+      </dl>
+    </section>
 
-    @if (deleteError(); as message) {
-      <p class="form-error" role="alert">{{ message }}</p>
-    }
+    <section class="danger-zone" aria-labelledby="delete-account-title">
+      <h2 id="delete-account-title">Delete account</h2>
+      <p>Permanently delete your account and all of your resumes, interviews and reports.</p>
 
-    <button
-      type="button"
-      class="danger"
-      [disabled]="deleting()"
-      [attr.aria-busy]="deleting()"
-      (click)="askDelete()"
-    >
-      Delete account
-    </button>
-  </section>
-}
+      @if (deleteError(); as message) {
+        <p class="form-error" role="alert">{{ message }}</p>
+      }
 
-@if (confirming()) {
-  <app-confirm-dialog
-    title="Delete your account?"
-    [message]="deleteMessage"
-    confirmLabel="Delete account"
-    (confirmed)="confirmDelete()"
-    (cancelled)="cancelDelete()"
-  />
-}
+      <button
+        type="button"
+        class="danger"
+        [disabled]="deleting()"
+        [attr.aria-busy]="deleting()"
+        (click)="askDelete()"
+      >
+        Delete account
+      </button>
+    </section>
+  }
+
+  @if (confirming()) {
+    <app-confirm-dialog
+      title="Delete your account?"
+      [message]="deleteMessage"
+      confirmLabel="Delete account"
+      (confirmed)="confirmDelete()"
+      (cancelled)="cancelDelete()"
+    />
+  }
+</main>
