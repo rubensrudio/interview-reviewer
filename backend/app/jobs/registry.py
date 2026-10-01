@@ -98,9 +98,11 @@ def _register_domain_handlers() -> None:
         EXPIRE_PERIODIC_SECONDS,
         run_session_expiry,
     )
+    from app.interviews.question_generation import PREPARE_QUESTIONS_JOB, prepare_questions
     from app.resumes.processing import RESUME_PROCESS_JOB, process_resume
 
     register(RESUME_PROCESS_JOB, process_resume)
+    register(PREPARE_QUESTIONS_JOB, prepare_questions)
     register_periodic(EXPIRE_PERIODIC_NAME, EXPIRE_PERIODIC_SECONDS, run_session_expiry)
 
 
