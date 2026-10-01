@@ -93,6 +93,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-004 — Set up database session and Alembic
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `DATA-05`, `DATA-06`
 - **Tipo**: infra
@@ -155,6 +156,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-006 — Add redacting structured logging and metrics events
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-95`
 - **Tipo**: infra
@@ -778,6 +780,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-027 — Implement private resume file storage
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-01`, `DATA-04`
 - **Tipo**: lógica-negócio
@@ -1035,6 +1038,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-036 — Load approved knowledge sources registry
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-03`, `KNOW-04`
 - **Tipo**: config
