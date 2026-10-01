@@ -1,5 +1,7 @@
 # Interview Reviewer
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 ## Overview
 
 Interview Reviewer lets a candidate upload a resume, run a mock technical interview and receive
@@ -361,6 +363,48 @@ and `www.googleapis.com`. A cancelled sign-in, an invalid `state`, an `id_token`
 validation (signature, `iss`, `aud`, `exp`, `nonce`) or an e-mail that Google has not
 verified all end with the `GOOGLE_AUTH_FAILED` error and no account is created or linked.
 
+## Production deployment
+
+`deploy/docker-compose.prod.yml` runs the production stack with outbound traffic restricted,
+so no inference ever reaches an external LLM provider (KNOW-01) and the full flow works with
+the internet blocked except Google sign-in and e-mail (KNOW-02):
+
+- `api`, `worker`, `migrate` and `db` are attached only to `internal: true` networks and have
+  no route to the internet. Users reach the API through `ingress` (Caddy reverse proxy).
+- The LLM (vLLM) runs on its own private network (`llm-private`), shared only with `api` and
+  `worker`, fully offline (`HF_HUB_OFFLINE=1`): preload the model into the `llm-models` volume.
+- The only way out is `egress-proxy` (Squid, `deploy/egress-proxy/squid.conf`). It allows
+  `CONNECT` to `accounts.google.com`, `oauth2.googleapis.com` and `www.googleapis.com` on 443
+  and to the SMTP host on 465/587, and ends with `http_access deny all`. The backend reaches
+  it through `HTTPS_PROXY`; `llm` and `db` are in `NO_PROXY`.
+- `smtplib` cannot use an HTTP proxy, so `smtp-relay` (socat) tunnels SMTP through Squid. It
+  answers on the internal network under the SMTP host name, so STARTTLS still checks the
+  real certificate.
+
+Before the first start:
+
+1. Build or pull the backend image and set `IR_BACKEND_IMAGE` (default
+   `interview-reviewer-backend:latest`).
+2. Replace `smtp.example.com` in `squid.conf` with the real SMTP host and set the same value in
+   `IR_SMTP_HOST` (and `IR_SMTP_PORT`, default 587).
+3. Create `deploy/db.env` (`POSTGRES_USER`, `POSTGRES_PASSWORD`) and `deploy/prod.env` (the
+   `IR_` secrets: `IR_DATABASE_URL` pointing at host `db`, `IR_THROTTLE_SECRET`,
+   `IR_OIDC_STATE_SECRET`, `IR_GOOGLE_CLIENT_ID`, `IR_GOOGLE_CLIENT_SECRET`, SMTP
+   credentials, etc.). Never commit these files.
+
+```bash
+docker compose -f deploy/docker-compose.prod.yml config -q
+docker compose -f deploy/docker-compose.prod.yml --env-file deploy/prod.env up -d
+```
+
+The offline guarantee is checked by `backend/tests/system/test_offline_flow.py`: with
+`pytest-socket` allowing only the local PostgreSQL host, the flow from resume upload to report
+runs through the API and the job worker with a scripted LLM and ends `completed`:
+
+```bash
+cd backend && uv run pytest -q tests/system/test_offline_flow.py
+```
+
 ## Frontend
 
 Angular 21 single-page app in `frontend/`: standalone components, zoneless change detection,
@@ -381,3 +425,9 @@ signals and plain SCSS (no UI component library).
   `page.route`, so they do not need the API running.
 
 `frontend/reports/` and `frontend/test-results/` are git-ignored.
+
+## License
+
+Licensed under the **MIT License** — see [`LICENSE`](LICENSE).
+
+Copyright © 2026 Rubens Rudio.

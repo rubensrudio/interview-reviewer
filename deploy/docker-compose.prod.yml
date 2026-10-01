@@ -1,0 +1,150 @@
+# Production stack with restricted egress (KNOW-01, KNOW-02, DA-2).
+#
+# - api, worker and db sit only on internal networks: they have no route to the internet.
+# - The only way out is the Squid proxy (egress-proxy/squid.conf), which allows Google sign-in
+#   and the SMTP host and denies everything else.
+# - The LLM (vLLM) runs on its own internal network, shared only with api and worker, and
+#   never downloads anything: the model must be preloaded into the llm-models volume.
+# - Secrets come from prod.env (app) and db.env (database), both not versioned. This file
+#   holds no credentials.
+#
+# Usage: docker compose -f deploy/docker-compose.prod.yml --env-file deploy/prod.env up -d
+name: interview-reviewer-prod
+
+x-backend: &backend
+  image: ${IR_BACKEND_IMAGE:-interview-reviewer-backend:latest}
+  restart: unless-stopped
+  env_file:
+    - path: ./prod.env
+      required: false
+  environment: &backend-env
+    IR_APP_ENV: production
+    IR_COOKIE_SECURE: "true"
+    IR_STORAGE_DIR: /data/storage
+    IR_LLM_BASE_URL: http://llm:8000/v1
+    IR_LLM_ALLOWED_HOSTS: '["llm"]'
+    IR_SMTP_HOST: ${IR_SMTP_HOST:-smtp.example.com}
+    IR_SMTP_PORT: ${IR_SMTP_PORT:-587}
+    IR_SMTP_STARTTLS: "true"
+    # httpx (Google sign-in) goes through the egress proxy; internal hosts never do.
+    HTTPS_PROXY: http://egress-proxy:3128
+    HTTP_PROXY: http://egress-proxy:3128
+    NO_PROXY: llm,db,localhost,127.0.0.1
+  volumes:
+    - resume-storage:/data/storage
+  networks:
+    - internal
+    - llm-private
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    # POSTGRES_USER and POSTGRES_PASSWORD only; the app secrets stay out of this container.
+    env_file:
+      - path: ./db.env
+        required: false
+    environment:
+      POSTGRES_DB: interview_reviewer
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER:-postgres}\" -d interview_reviewer"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    <<: *backend
+    restart: "no"
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    <<: *backend
+    command: ["uvicorn", "app.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    <<: *backend
+    command: ["python", "-m", "app.jobs.worker"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  llm:
+    image: ${IR_LLM_IMAGE:-vllm/vllm-openai:latest}
+    restart: unless-stopped
+    command: ["--model", "${IR_LLM_MODEL:-Qwen/Qwen2.5-7B-Instruct}", "--port", "8000"]
+    environment:
+      # Offline only: the model is served from the preloaded volume (KNOW-01).
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      VLLM_NO_USAGE_STATS: "1"
+      DO_NOT_TRACK: "1"
+    volumes:
+      - llm-models:/root/.cache/huggingface
+    networks:
+      - llm-private
+
+  # Single way out: allowlist in egress-proxy/squid.conf, default deny.
+  egress-proxy:
+    image: ${IR_SQUID_IMAGE:-ubuntu/squid:latest}
+    restart: unless-stopped
+    volumes:
+      - ./egress-proxy/squid.conf:/etc/squid/squid.conf:ro
+    networks:
+      - internal
+      - egress
+
+  # smtplib cannot use an HTTP proxy: this relay tunnels SMTP through Squid (CONNECT), so the
+  # SMTP host stays subject to the allowlist. Its alias is the SMTP host name, so STARTTLS
+  # still validates the real certificate.
+  smtp-relay:
+    image: ${IR_SOCAT_IMAGE:-alpine/socat:latest}
+    restart: unless-stopped
+    command:
+      - "TCP-LISTEN:${IR_SMTP_PORT:-587},fork,reuseaddr"
+      - "PROXY:egress-proxy:${IR_SMTP_HOST:-smtp.example.com}:${IR_SMTP_PORT:-587},proxyport=3128"
+    depends_on:
+      - egress-proxy
+    networks:
+      internal:
+        aliases:
+          - ${IR_SMTP_HOST:-smtp.example.com}
+
+  # Public entry point: reverse proxy to the API. The app containers stay off public networks.
+  ingress:
+    image: ${IR_INGRESS_IMAGE:-caddy:2}
+    restart: unless-stopped
+    command: ["caddy", "reverse-proxy", "--from", ":8080", "--to", "api:8000"]
+    ports:
+      - "${IR_PUBLIC_PORT:-8080}:8080"
+    depends_on:
+      - api
+    networks:
+      - internal
+      - public
+
+networks:
+  # No route to the internet: api, worker, db, the egress proxy and the SMTP relay.
+  internal:
+    internal: true
+  # Private inference network: only api, worker and the LLM.
+  llm-private:
+    internal: true
+  # Outbound side of the egress proxy only.
+  egress: {}
+  # Inbound side of the ingress proxy only.
+  public: {}
+
+volumes:
+  db-data:
+  resume-storage:
+  llm-models:
