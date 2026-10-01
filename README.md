@@ -182,6 +182,29 @@ JSON for the expected model raise `LLMInvalidOutput`. Each call is measured as t
 `llm.inference` metric with the task name only, never the prompt or the answer. Tests use
 `FakeLLM` (`backend/tests/fakes/fake_llm.py`) and never call a real LLM.
 
+## Knowledge base collection
+
+The knowledge base (`knowledge_items`) is filled by a command-line collector, run by an operator
+or a scheduled job outside user sessions, never during a request:
+
+```bash
+cd backend
+uv run python -m app.knowledge.collector
+```
+
+It takes no arguments. It fetches only the URLs listed in the approved sources registry
+(`backend/config/approved_sources.yaml`, `IR_KNOWLEDGE_SOURCES_PATH`), exactly as written there:
+no query string is added, the User-Agent is fixed, cookies are never stored or sent, proxy
+settings from the environment are ignored and redirects are not followed (a redirecting URL is
+skipped). Non-HTML, non-200, empty or larger than 2 MiB responses are skipped as well.
+
+For each page it stores the URL, title, collection date, the first 2,000 characters of visible
+text and the source `skill_terms`. Running it again updates the existing rows (one row per URL).
+NUL and other control characters are removed from the stored text, and a URL that fails to be
+stored is skipped without aborting the run.
+Collected text is untrusted: it is stored as plain text, links in it are never followed and
+instructions in it are never executed. Search engines are never queried.
+
 ## Model release gate
 
 A model version is identified as `<IR_LLM_MODEL>+<IR_LLM_CONFIG_VERSION>` (base model plus the

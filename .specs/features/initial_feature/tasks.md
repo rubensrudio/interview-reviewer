@@ -1088,6 +1088,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-037 — Implement knowledge base collector CLI
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-03`, `KNOW-04`, `KNOW-07`
 - **Tipo**: infra
