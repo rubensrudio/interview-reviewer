@@ -554,6 +554,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-019 — Expose local authentication API routes
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-01`, `AUTH-02`, `AUTH-03`, `AUTH-04`, `AUTH-05`, `AUTH-06`, `AUTH-07`, `AUTH-08`, `AUTH-14`, `AUTH-17`, `AUTH-90`, `AUTH-92`, `AUTH-94`, `AUTH-95`
 - **Tipo**: crud-padrão

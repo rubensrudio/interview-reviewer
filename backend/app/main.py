@@ -2,6 +2,7 @@ import os
 
 from fastapi import FastAPI
 
+from app.api import auth_local
 from app.config import Settings, get_settings
 from app.errors import register_error_handlers
 from app.llm.model_version import assert_model_release_allowed
@@ -15,6 +16,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     _enforce_model_release_gate(settings)
     app = FastAPI(title="Interview Reviewer")
     register_error_handlers(app)
+    app.include_router(auth_local.router)
 
     @app.get("/api/health")
     def health() -> dict[str, str]:

@@ -265,3 +265,27 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-engineer)**: `vigente_version` noul=0.63 (dúvida; área de permissão).
 - **Decisão (humano)**: A.
 - **Impacto**: nova versão de termos/privacidade força novo aceite de todos os usuários. **Requer atualização de spec/plan**: AUTH-15 / CT-11 devem explicitar a comparação de versões.
+
+### LAC-31 — Texto de sucesso do POST /api/auth/verify-email (TASK-019, implementação)
+- **Etapa**: /implement, onda 17, TASK-019
+- **Problema**: plan 8.1 exige `200 {message}`; spec seção 9 não tem texto de sucesso para verificação de e-mail.
+- **Opções**: A) texto novo "Your e-mail has been verified. You can now sign in."; B) string vazia.
+- **Jev (hm-engineer)**: choice ask 0.76 / empty 0.21 / new_text 0.03.
+- **Decisão (humano)**: A.
+- **Impacto**: **requer atualização de spec**: incluir o texto na seção 9 (mensagens ao usuário).
+
+### LAC-32 — Limite de tamanho de campos e body nas rotas de auth (TASK-019, implementação)
+- **Etapa**: /implement, onda 17, TASK-019
+- **Problema**: módulos de auth não limitam tamanho de senha/e-mail; senha de 5 MB chega ao Argon2 (vetor de DoS).
+- **Opções**: A) 1024 chars por campo string (email, password, new_password, token) + body ≤ 16 KiB; B) senha ≤ 128 + demais 1024 + 16 KiB; C) só teto de body 16 KiB.
+- **Jev (hm-engineer)**: cap_changes_policy noul 0.80.
+- **Decisão (humano)**: A. Excesso responde 422 VALIDATION_ERROR, igual para conta existente ou não.
+- **Impacto**: nova regra de máximo de senha (1024) fora de AUTH-14. **Requer atualização de spec/plan**: AUTH-14 e 8.1 devem citar os limites.
+
+### LAC-33 — Enumeração de contas via `email_delivery` com SMTP indisponível (TASK-019, risco aceito)
+- **Etapa**: /implement, onda 17, review da TASK-019
+- **Problema**: com SMTP fora, `POST /api/auth/register` responde `delayed` para e-mail novo e `sent` para e-mail existente. AUTH-92 (informar atraso) conflita com AUTH-02 (resposta neutra) nesse cenário.
+- **Opções**: A) aceitar o risco residual; B) sempre responder `sent` (neutro, mas descumpre AUTH-92).
+- **Jev (hm-reviewer)**: viola contrato da rota? 0.34 (não).
+- **Decisão (humano)**: A — risco aceito. Vazamento só ocorre durante indisponibilidade de SMTP.
+- **Impacto**: sem mudança de código. **Requer atualização de spec**: registrar o trade-off AUTH-02 × AUTH-92.
