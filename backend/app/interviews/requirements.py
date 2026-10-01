@@ -58,6 +58,7 @@ __all__ = [
     "REQUIREMENTS_STRUCTURED_MESSAGE",
     "REQUIREMENTS_TASK",
     "structure_requirements",
+    "structure_requirements_text",
 ]
 
 REQUIREMENTS_TASK = "requirements_structuring"
@@ -321,6 +322,29 @@ def _ask_llm(llm: LLMClient, text: str) -> _LLMRequirements:
         raise AppError.from_catalog(LLM_UNAVAILABLE) from error
 
 
+def _clean_requirements_text(text: str) -> str:
+    raw = text if isinstance(text, str) else ""
+    return _sanitize(raw).strip()[:MAX_REQUIREMENTS_CHARS]
+
+
+def structure_requirements_text(
+    llm: LLMClient, text: str
+) -> tuple[list[RequirementItem], list[str]]:
+    """Structure ``text`` into technical items and non-technical requirements, without a session.
+
+    Pure with respect to the database: it only calls the LLM and post-validates the answer
+    (level scale, composite split, ambiguity, dedupe). Used by ``structure_requirements`` and
+    by the model validation runner, so both measure the same behaviour. The language check is
+    left to the caller. Raises ``AppError`` ``EMPTY_REQUIREMENTS`` for blank text and
+    ``LLM_UNAVAILABLE`` when the model fails after ``llm_max_attempts`` attempts.
+    """
+    clean_text = _clean_requirements_text(text)
+    if not clean_text:
+        raise AppError.from_catalog(EMPTY_REQUIREMENTS)
+    answer = _ask_llm(llm, clean_text)
+    return _to_items(answer), _to_non_technical(answer.non_technical)
+
+
 def structure_requirements(
     db: Session, llm: LLMClient, session: InterviewSession, text: str
 ) -> None:
@@ -335,8 +359,7 @@ def structure_requirements(
     commits.
     """
     _ensure_accepting(session)
-    raw = text if isinstance(text, str) else ""
-    clean_text = _sanitize(raw).strip()[:MAX_REQUIREMENTS_CHARS]
+    clean_text = _clean_requirements_text(text)
     if not clean_text:
         raise AppError.from_catalog(EMPTY_REQUIREMENTS)
 
@@ -351,9 +374,7 @@ def structure_requirements(
         log_event("requirements.rejected", session_id=str(session.id), reason="not_english")
         return
 
-    answer = _ask_llm(llm, clean_text)
-    items = _to_items(answer)
-    non_technical = _to_non_technical(answer.non_technical)
+    items, non_technical = structure_requirements_text(llm, clean_text)
 
     # The LLM call may take a while: lock and re-check before writing (PR-4).
     _lock_session(db, session)
