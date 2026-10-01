@@ -38,6 +38,7 @@ from app.observability import log_event
 from app.resumes import storage
 from app.resumes.extraction import ExtractionFailed, extract_resume_items
 from app.resumes.language import is_predominantly_english
+from app.resumes.ocr import ocr_pdf_text
 from app.resumes.pdf import PdfCorrupted, PdfEncrypted, PdfNoText, extract_pdf_text
 from app.resumes.service import RESUME_PROCESS_JOB
 
@@ -89,8 +90,8 @@ def _parse_payload(payload: dict[str, str]) -> uuid.UUID:
 
 
 def _ocr_fallback(data: bytes) -> str:
-    """OCR hook for PDFs without a text layer; OCR is not available yet (TASK-034)."""
-    raise PdfNoText("OCR is not available")
+    """OCR hook for PDFs without a text layer; ``OcrNoText`` is a ``PdfNoText`` (CT-29)."""
+    return ocr_pdf_text(data)
 
 
 def _mark_processing(resume_id: uuid.UUID) -> None:

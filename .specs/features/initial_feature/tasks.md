@@ -949,6 +949,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-032 — Implement resume extraction editing
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-10`
 - **Tipo**: lógica-negócio
@@ -1003,6 +1004,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-034 — Add optional OCR fallback for scanned resumes
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `OCR-01`, `OCR-02`
 - **Tipo**: lógica-negócio
@@ -1118,6 +1120,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-038 — Implement knowledge retrieval by skill
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-05`, `KNOW-06`, `KNOW-90`
 - **Tipo**: lógica-negócio
@@ -1145,6 +1148,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-039 — Create interview session tables and migration 0005
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `PLAN-01`, `PLAN-02`, `PLAN-10`, `CV-12`
 - **Tipo**: migration
