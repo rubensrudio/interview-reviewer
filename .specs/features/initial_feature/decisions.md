@@ -355,3 +355,11 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Decisão (humano)**: aceitar o formato da implementação — `id: str | None` (None = item novo), `name` strip 1..255, `original_terms` sem duplicados (máx. 50; vazio vira `[name]`), `classification`, `level`, `extra="ignore"`; máximo de 100 itens por lista (`MAX_ITEMS`); `pending_clarification` controlado pelo servidor (preservado se id, nome e classificação não mudarem).
 - **Jev (hm-engineer)**: muda contrato além do plan 0.76; tratamento de pending = server_preserves p=1.00.
 - **Impacto**: contrato consumido pela API (TASK-056) e pelo front. **Requer atualização de plan**: CT-38 e 8.1.
+
+### LAC-43 — Runner de validação mede a estruturação de produção (TASK-067)
+- **Etapa**: /implement, onda 30, TASK-067 (antes de qualquer código)
+- **Problema**: a task pedia "função pura interna ao runner" para a estruturação, mas o prompt e o pós-processamento de produção são privados em `app/interviews/requirements.py` (TASK-043). Uma cópia no runner faria o gate MODEL-03 validar algo diferente da produção.
+- **Opções**: A) cópia no runner; B) expor função pública pura em `requirements.py` e ampliar o escopo da TASK-067; C) chamar `structure_requirements` com db falso.
+- **Jev (hm-engineer)**: cópia compromete a validade do gate 0.80; choice A 0.45 / ampliar 0.44 / db falso 0.11 (incerto, muda escopo).
+- **Decisão (humano)**: B. `tasks.md` atualizado pelo orquestrador a pedido do humano: TASK-067 inclui `backend/app/interviews/requirements.py` e expõe `structure_requirements_text(llm, text)`; `structure_requirements` passa a usá-la sem mudar comportamento. `check_plan.py` reexecutado (ondas inalteradas).
+- **Impacto**: CT-37 ganha função pública pura. **Requer atualização de plan**: CT-37 e seção de validação de modelo.

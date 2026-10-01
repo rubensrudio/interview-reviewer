@@ -1,6 +1,6 @@
 # Auditoria mecânica — initial_feature
 
-- **Data**: 2026-09-30
+- **Data**: 2026-10-01
 - **Fonte**: `check_plan.py` (itens mecânicos). Itens semânticos: autoverificação dos agentes; auditor LLM só com `--audit`.
 - **Veredito**: APROVADO
 - **Cobertura**: 140/140

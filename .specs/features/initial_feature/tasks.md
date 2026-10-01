@@ -1984,6 +1984,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 - **Depende de**: TASK-065, TASK-066, TASK-025, TASK-030, TASK-043, TASK-051
 - **Arquivos de produção**:
   - `backend/app/model_validation/runner.py`
+  - `backend/app/interviews/requirements.py`
 - **Arquivos de teste**:
   - `backend/tests/integration/test_validation_runner.py`
 - **Wiring permitido**:
@@ -1994,7 +1995,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
   - CT-56 (consome)
   - CT-54, CT-55, CT-21, CT-26, CT-45 (consome)
 - **Testes**: unit
-- **Descrição**: `python -m app.model_validation.runner --dataset validation/v1` roda extração, estruturação e avaliação de cada caso no modelo vigente e grava `validation_reports/<model_version_id>.json` (`ValidationReport`: versões do modelo, rubrica e dataset, data, métricas, `meets_targets`). A estruturação é chamada por uma função pura interna ao runner, sem banco de sessão.
+- **Descrição**: `python -m app.model_validation.runner --dataset validation/v1` roda extração, estruturação e avaliação de cada caso no modelo vigente e grava `validation_reports/<model_version_id>.json` (`ValidationReport`: versões do modelo, rubrica e dataset, data, métricas, `meets_targets`). A estruturação usa uma função pública pura `structure_requirements_text(llm, text)` exposta em `backend/app/interviews/requirements.py`, que o `structure_requirements` também passa a usar, sem mudar comportamento (LAC-43).
 - **Done when**:
   - [ ] Teste (FakeLLM + dataset de fixture): relatório gravado contém `model_version`, `rubric_version`, `dataset_version`, `generated_at` e as 5 métricas
   - [ ] Teste: `meets_targets` é False quando `approved_targets` é nulo
