@@ -421,3 +421,16 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Opções**: A) `/account` no topo só com `authGuard` (sem menu do Shell) + link "Delete my account" em `/accept-terms`; B) `termsGuard` por rota filha, exceto `/account`; C) dívida.
 - **Decisão (humano)**: A.
 - **Impacto**: TASK-095 ganha `accept-terms-page.html` (wiring, só o link) e `accept-terms-page.spec.ts`, e dois Done when. Página de conta sem o menu do Shell. **Requer atualização de plan** (mapa de rotas/guards).
+
+### LAC-52 — Confirmação da exclusão de conta com navegação por clique (TASK-095)
+- **Etapa**: /implement, onda 50, re-review após achado de QA TASK-095-1 (confirmação nunca visível porque a página navegava para /login no mesmo callback do 200)
+- **Opções**: A) após 200 a página fica em `/account` com a confirmação focada e link "Go to sign in" para `/login` (replaceUrl); B) navegar sozinha e mostrar a confirmação no login (fora do escopo); C) navegar após alguns segundos (contra WCAG 2.2.1).
+- **Jev (hm-reviewer)**: correção atende ao Done when original 0.45 (dúvida); atende ao DATA-06 no front 0.88.
+- **Decisão (humano)**: A.
+- **Impacto**: Done when da TASK-095 passa a ser "após 200 mostra a confirmação, `currentUser` fica nulo e o link leva a `/login`". **Requer atualização de spec/plan** (fluxo da tela de conta).
+
+### LAC-53 — QA FEATURE reprovado por MODEL-03 e fechamento das dívidas LAC-37/LAC-44
+- **Etapa**: /implement, Passo 6 (QA FEATURE)
+- **Problema**: em produção, `create_app` respeita o release gate do modelo (TASK-025), mas o worker (TASK-009) sobe e processa jobs com versão não aprovada, gravando relatórios imutáveis com ela (MODEL-03, P1). LAC-37 e LAC-44 estavam registradas como dívidas obrigatórias antes do PR final.
+- **Decisão (humano)**: criar TASK-097 (gate no worker), TASK-098 (heartbeat de lock, LAC-44) e TASK-099 (redação do access log, LAC-37); rodar as ondas novas, o gate final e o QA FEATURE de novo.
+- **Impacto**: +3 tasks. **Requer atualização de plan** (worker × release gate; DA de jobs com heartbeat; logging do access log).
