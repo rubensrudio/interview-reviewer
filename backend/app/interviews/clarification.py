@@ -11,15 +11,18 @@ deterministically: when it contains at least half of the distinct words of any r
 point of the session, it is replaced by a generic refusal.
 
 The candidate message (``clarification_request``) is flushed before the model is called. When
-the model is unavailable or keeps answering invalid output, ``CLARIFICATION_UNAVAILABLE`` (503)
-is raised and nothing else is written, so answering keeps working (INTV-92). Prompts, doubts
-and replies are never logged. Nothing here commits: the caller does.
+the model is still unavailable or invalid after ``llm_max_attempts`` attempts,
+``CLARIFICATION_UNAVAILABLE`` (503) is raised and nothing else is written, so answering keeps
+working (INTV-92). After the model call the session row is locked again and its status
+re-checked, so no reply is written to a session closed meanwhile. Prompts, doubts and replies
+are never logged. Nothing here commits: the caller does.
 """
 
 import re
+from datetime import timedelta
 
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -55,7 +58,6 @@ CLARIFICATION_REFUSAL = (
     "Please answer based on your own understanding of it."
 )
 
-_LLM_ATTEMPTS = 2
 _LEAK_RATIO = 0.5
 
 # NUL is dropped (PostgreSQL text cannot hold it); other C0/C1 controls and lone surrogates
@@ -164,7 +166,39 @@ def _ask_model(llm: LLMClient, user_prompt: str) -> str:
             raise LLMInvalidOutput("empty clarification reply")
         return reply
 
-    return run_with_attempts(attempt, _LLM_ATTEMPTS, (LLMInvalidOutput,))
+    return run_with_attempts(
+        attempt, get_settings().llm_max_attempts, (LLMInvalidOutput, LLMUnavailable)
+    )
+
+
+def _lock_session(db: Session, session: InterviewSession) -> None:
+    """Re-read the session row under ``FOR UPDATE`` (no-op if the caller already holds it)."""
+    db.execute(
+        select(InterviewSession)
+        .where(InterviewSession.id == session.id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    ).scalar_one()
+
+
+def _message(
+    session: InterviewSession,
+    question: Question,
+    role: MessageRole,
+    kind: MessageKind,
+    content: str,
+    order: int,
+) -> Message:
+    # now() is fixed for the whole transaction: each message gets one more microsecond so
+    # the request always sorts before the reply (views order by created_at, id).
+    return Message(
+        session_id=session.id,
+        role=role,
+        kind=kind,
+        question_id=question.id,
+        content=content,
+        created_at=func.now() + timedelta(microseconds=order),
+    )
 
 
 def request_clarification(
@@ -175,7 +209,9 @@ def request_clarification(
     Raises ``AppError`` ``SESSION_CLOSED`` (terminal session), ``INVALID_STATE`` (any other
     state than ``in_interview`` or no question left), ``VALIDATION_ERROR`` (empty or longer
     than ``max_answer_chars``) or ``CLARIFICATION_UNAVAILABLE`` (model unavailable; only the
-    candidate message was added). The caller commits.
+    candidate message was added). The status is checked again under ``FOR UPDATE`` after the
+    model call. The caller should pass a session locked by
+    ``get_owned_session(..., for_update=True)`` and commits.
     """
     _ensure_in_interview(session)
     doubt = _validated_text(text)
@@ -183,12 +219,8 @@ def request_clarification(
 
     touch_activity(session)
     db.add(
-        Message(
-            session_id=session.id,
-            role=MessageRole.CANDIDATE,
-            kind=MessageKind.CLARIFICATION_REQUEST,
-            question_id=question.id,
-            content=doubt,
+        _message(
+            session, question, MessageRole.CANDIDATE, MessageKind.CLARIFICATION_REQUEST, doubt, 1
         )
     )
     db.flush()
@@ -203,13 +235,18 @@ def request_clarification(
         )
         raise AppError.from_catalog(CLARIFICATION_UNAVAILABLE) from None
 
+    # The session may have been cancelled or expired while the model was answering.
+    _lock_session(db, session)
+    _ensure_in_interview(session)
+
     refused = _leaks_reference_point(reply, reference_points)
-    message = Message(
-        session_id=session.id,
-        role=MessageRole.ASSISTANT,
-        kind=MessageKind.CLARIFICATION_REPLY,
-        question_id=question.id,
-        content=CLARIFICATION_REFUSAL if refused else reply,
+    message = _message(
+        session,
+        question,
+        MessageRole.ASSISTANT,
+        MessageKind.CLARIFICATION_REPLY,
+        CLARIFICATION_REFUSAL if refused else reply,
+        2,
     )
     db.add(message)
     db.flush()

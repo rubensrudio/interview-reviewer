@@ -4,9 +4,11 @@ import uuid
 
 import pytest
 from fakes.fake_llm import FakeLLM
-from sqlalchemy import select
+from pydantic import BaseModel
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
+from app.config import get_settings
 from app.errors import (
     CLARIFICATION_UNAVAILABLE,
     INVALID_STATE,
@@ -19,6 +21,7 @@ from app.interviews.clarification import (
     CLARIFICATION_TASK,
     request_clarification,
 )
+from app.interviews.views import build_session_view
 from app.llm.client import LLMInvalidOutput, LLMUnavailable
 from app.models import User
 from app.models.assessment import Answer
@@ -92,9 +95,16 @@ def _interview(
 
 
 def _messages(db: Session, session: InterviewSession) -> list[Message]:
-    # Messages of one transaction share created_at: requests sort before replies.
-    rows = db.execute(select(Message).where(Message.session_id == session.id)).scalars().all()
-    return sorted(rows, key=lambda m: (m.created_at, m.kind == MessageKind.CLARIFICATION_REPLY))
+    # Same order as the session view (CT-40).
+    return list(
+        db.execute(
+            select(Message)
+            .where(Message.session_id == session.id)
+            .order_by(Message.created_at, Message.id)
+        )
+        .scalars()
+        .all()
+    )
 
 
 def _answers(db: Session, session: InterviewSession) -> int:
@@ -182,7 +192,8 @@ def test_intv08_reply_below_overlap_threshold_is_kept(db: Session) -> None:
 
 def test_intv92_llm_unavailable_raises_and_keeps_only_candidate_message(db: Session) -> None:
     session, current = _interview(db)
-    llm = FakeLLM({CLARIFICATION_TASK: [LLMUnavailable("down")]})
+    attempts = get_settings().llm_max_attempts
+    llm = FakeLLM({CLARIFICATION_TASK: [LLMUnavailable("down")] * attempts})
 
     with pytest.raises(AppError) as excinfo:
         request_clarification(db, llm, session, DOUBT)
@@ -210,15 +221,77 @@ def test_intv92_llm_unavailable_raises_and_keeps_only_candidate_message(db: Sess
     assert _answers(db, session) == 2
 
 
-def test_intv92_invalid_output_twice_raises_unavailable(db: Session) -> None:
+def test_intv92_failures_on_every_attempt_raise_unavailable(db: Session) -> None:
     session, _ = _interview(db)
-    llm = FakeLLM({CLARIFICATION_TASK: [LLMInvalidOutput("bad"), {"reply": "   "}]})
+    attempts = get_settings().llm_max_attempts
+    failures: list[object] = [LLMInvalidOutput("bad"), {"reply": "   "}, LLMUnavailable("down")]
+    llm = FakeLLM({CLARIFICATION_TASK: [failures[i % 3] for i in range(attempts)]})
 
     with pytest.raises(AppError) as excinfo:
         request_clarification(db, llm, session, DOUBT)
 
     assert excinfo.value.code == CLARIFICATION_UNAVAILABLE
+    assert len(llm.calls_for(CLARIFICATION_TASK)) == attempts
+
+
+def test_intv92_unavailable_then_success_retries(db: Session) -> None:
+    session, _ = _interview(db)
+    llm = FakeLLM({CLARIFICATION_TASK: [LLMUnavailable("down"), {"reply": "Threads only."}]})
+
+    reply = request_clarification(db, llm, session, DOUBT)
+
+    assert reply.content == "Threads only."
     assert len(llm.calls_for(CLARIFICATION_TASK)) == 2
+
+
+def test_intv08_view_shows_request_before_reply(db: Session) -> None:
+    for _ in range(5):
+        session, _ = _interview(db)
+        llm = FakeLLM({CLARIFICATION_TASK: [{"reply": "Either is fine."}]})
+
+        request_clarification(db, llm, session, DOUBT)
+
+        kinds = [m.kind for m in build_session_view(db, session).messages]
+        assert kinds == [MessageKind.CLARIFICATION_REQUEST, MessageKind.CLARIFICATION_REPLY]
+
+
+class _ClosingLLM:
+    """Answers like FakeLLM but cancels the session (as another request would) meanwhile."""
+
+    def __init__(self, db: Session, session_id: uuid.UUID, to: SessionStatus) -> None:
+        self._db = db
+        self._session_id = session_id
+        self._to = to
+        self._fake = FakeLLM({CLARIFICATION_TASK: [{"reply": "Either is fine."}]})
+
+    def complete_structured[T: BaseModel](
+        self, task: str, system: str, user: str, output_model: type[T]
+    ) -> T:
+        self._db.execute(
+            update(InterviewSession)
+            .where(InterviewSession.id == self._session_id)
+            .values(status=self._to)
+            .execution_options(synchronize_session=False)
+        )
+        return self._fake.complete_structured(task, system, user, output_model)
+
+
+@pytest.mark.parametrize(
+    ("to", "code"),
+    [(SessionStatus.CANCELLED, SESSION_CLOSED), (SessionStatus.EVALUATING, INVALID_STATE)],
+)
+def test_intv93_session_closed_during_llm_call_gets_no_reply(
+    db: Session, to: SessionStatus, code: str
+) -> None:
+    session, _ = _interview(db)
+    llm = _ClosingLLM(db, session.id, to)
+
+    with pytest.raises(AppError) as excinfo:
+        request_clarification(db, llm, session, DOUBT)
+
+    assert excinfo.value.code == code
+    assert session.status == to
+    assert [m.kind for m in _messages(db, session)] == [MessageKind.CLARIFICATION_REQUEST]
 
 
 @pytest.mark.parametrize(
