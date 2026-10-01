@@ -2892,6 +2892,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-098 — Renew job lock with a heartbeat for long jobs (LAC-44)
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `EVAL-93`, `KNOW-92`
 - **Tipo**: infra
