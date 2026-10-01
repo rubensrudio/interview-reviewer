@@ -1,10 +1,10 @@
 {
  "versao": 2,
  "feature": "initial_feature",
- "gerado_em": "2026-10-01T17:19:18",
+ "gerado_em": "2026-10-01T20:00:31",
  "hashes": {
   "plan": "d2490da6dbc9e167",
-  "tasks": "74a82b720a707a60"
+  "tasks": "a54e1ace9057e54f"
  },
  "comandos": [
   {
@@ -3640,6 +3640,93 @@
    ],
    "gate": null,
    "paralelo_seguro": true
+  },
+  "TASK-097": {
+   "titulo": "Enforce model release gate in the worker (MODEL-03)",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-009",
+    "TASK-025",
+    "TASK-095"
+   ],
+   "producao": [
+    "backend/app/jobs/worker.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_worker_release_gate.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-21",
+    "CT-7"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "MODEL-03"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-098": {
+   "titulo": "Renew job lock with a heartbeat for long jobs (LAC-44)",
+   "tipo": "infra",
+   "risco": "médio",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "integration",
+   "depende_de": [
+    "TASK-097"
+   ],
+   "producao": [
+    "backend/app/jobs/worker.py",
+    "backend/app/jobs/queue.py"
+   ],
+   "teste": [
+    "backend/tests/integration/test_worker_heartbeat.py"
+   ],
+   "wiring": [],
+   "contratos": [
+    "CT-6",
+    "CT-7"
+   ],
+   "ancora": [],
+   "requisitos": [
+    "EVAL-93",
+    "KNOW-92"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
+  },
+  "TASK-099": {
+   "titulo": "Redact OIDC query string from the access log (LAC-37)",
+   "tipo": "config",
+   "risco": "alto",
+   "perfil": "backend",
+   "agente": "hm-engineer",
+   "testes": "unit",
+   "depende_de": [
+    "TASK-095"
+   ],
+   "producao": [
+    "backend/app/logging_setup.py"
+   ],
+   "teste": [
+    "backend/tests/unit/test_logging_setup.py"
+   ],
+   "wiring": [],
+   "contratos": [],
+   "ancora": [
+    "AS-3"
+   ],
+   "requisitos": [
+    "AUTH-95"
+   ],
+   "gate": null,
+   "paralelo_seguro": true
   }
  },
  "ondas": [
@@ -4004,13 +4091,13 @@
    "risco_max": "médio",
    "gatilhos_previstos": {
     "G2": {
+     "CT-35": [
+      "TASK-042",
+      "TASK-049"
+     ],
      "CT-33": [
       "TASK-042",
       "TASK-046",
-      "TASK-049"
-     ],
-     "CT-35": [
-      "TASK-042",
       "TASK-049"
      ],
      "CT-34": [
@@ -4045,14 +4132,20 @@
    "risco_max": "médio",
    "gatilhos_previstos": {
     "G2": {
-     "CT-20": [
-      "TASK-043",
-      "TASK-048"
-     ],
      "CT-33": [
       "TASK-043",
       "TASK-044",
       "TASK-047",
+      "TASK-048"
+     ],
+     "CT-36": [
+      "TASK-043",
+      "TASK-044",
+      "TASK-047",
+      "TASK-048"
+     ],
+     "CT-20": [
+      "TASK-043",
       "TASK-048"
      ],
      "CT-19": [
@@ -4060,12 +4153,6 @@
       "TASK-048"
      ],
      "CT-35": [
-      "TASK-043",
-      "TASK-044",
-      "TASK-047",
-      "TASK-048"
-     ],
-     "CT-36": [
       "TASK-043",
       "TASK-044",
       "TASK-047",
@@ -4088,12 +4175,8 @@
     "TASK-071"
    ],
    "risco_max": "médio",
-   "gatilhos_previstos": {
-    "G3": [
-     "P1: Validação do modelo"
-    ]
-   },
-   "perfil_qa_previsto": "PADRAO"
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
   },
   {
    "n": 31,
@@ -4186,10 +4269,7 @@
       "TASK-076",
       "TASK-091"
      ]
-    },
-    "G3": [
-     "P1: LLM local e fontes técnicas rastreáveis"
-    ]
+    }
    },
    "perfil_qa_previsto": "PADRAO"
   },
@@ -4237,12 +4317,8 @@
     "TASK-081"
    ],
    "risco_max": "médio",
-   "gatilhos_previstos": {
-    "G3": [
-     "P1: Conta e acesso"
-    ]
-   },
-   "perfil_qa_previsto": "PADRAO"
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
   },
   {
    "n": 42,
@@ -4304,12 +4380,8 @@
     "TASK-092"
    ],
    "risco_max": "médio",
-   "gatilhos_previstos": {
-    "G3": [
-     "P1: Avaliação e relatório"
-    ]
-   },
-   "perfil_qa_previsto": "PADRAO"
+   "gatilhos_previstos": {},
+   "perfil_qa_previsto": null
   },
   {
    "n": 48,
@@ -4339,6 +4411,49 @@
    "gatilhos_previstos": {
     "G3": [
      "P1: Histórico e controle dos dados"
+    ]
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 51,
+   "tasks": [
+    "TASK-099"
+   ],
+   "risco_max": "alto",
+   "gatilhos_previstos": {
+    "G1": [
+     "TASK-099"
+    ],
+    "G3": [
+     "P1: Conta e acesso"
+    ]
+   },
+   "perfil_qa_previsto": "RIGOROSO"
+  },
+  {
+   "n": 52,
+   "tasks": [
+    "TASK-097"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G3": [
+     "P1: Validação do modelo"
+    ]
+   },
+   "perfil_qa_previsto": "PADRAO"
+  },
+  {
+   "n": 53,
+   "tasks": [
+    "TASK-098"
+   ],
+   "risco_max": "médio",
+   "gatilhos_previstos": {
+    "G3": [
+     "P1: Avaliação e relatório",
+     "P1: LLM local e fontes técnicas rastreáveis"
     ]
    },
    "perfil_qa_previsto": "PADRAO"
