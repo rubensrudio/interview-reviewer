@@ -63,6 +63,13 @@ export const routes: Routes = [
     path: '',
     loadComponent: () => import('./layout/shell').then((m) => m.Shell),
     canActivate: [authGuard, termsGuard],
-    children: [],
+    children: [
+      {
+        path: 'resumes',
+        title: 'Resumes',
+        loadComponent: () =>
+          import('./features/resumes/resume-list-page').then((m) => m.ResumeListPage),
+      },
+    ],
   },
 ];
