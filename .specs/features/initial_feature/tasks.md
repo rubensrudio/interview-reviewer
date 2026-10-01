@@ -977,6 +977,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-033 — Expose resume API routes
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-01`, `CV-02`, `CV-03`, `CV-04`, `CV-05`, `CV-07`, `CV-10`, `CV-11`, `CV-13`, `CV-90`, `CV-91`, `AUTH-16`
 - **Tipo**: crud-padrão
@@ -1178,6 +1179,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-040 — Create answers, evaluations and reports tables and migration 0006
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `INTV-06`, `INTV-09`, `EVAL-12`
 - **Tipo**: migration
@@ -1207,6 +1209,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-041 — Implement interview session state machine
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `INTV-11`, `INTV-12`, `INTV-13`, `INTV-93`, `EVAL-12`
 - **Tipo**: lógica-negócio
@@ -1537,6 +1540,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-052 — Generate reference answers for unsatisfactory items
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-06`, `EVAL-07`, `EVAL-15`
 - **Tipo**: lógica-negócio
