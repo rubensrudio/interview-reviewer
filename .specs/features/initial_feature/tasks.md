@@ -2510,6 +2510,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-085 — Build resume extraction review page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `CV-07`, `CV-10`
 - **Tipo**: ui-puro
