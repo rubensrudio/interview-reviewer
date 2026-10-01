@@ -1,0 +1,162 @@
+<a class="back" routerLink="/resumes">Back to resumes</a>
+
+@if (loading()) {
+  <h1>Resume</h1>
+  <p role="status">Loading resume…</p>
+} @else if (loadError(); as message) {
+  <h1>Resume</h1>
+  <p class="form-error" role="alert">{{ message }}</p>
+  <button type="button" class="secondary" (click)="retry()">Try again</button>
+} @else if (resume(); as current) {
+  <h1>{{ current.filename }}</h1>
+  <div class="meta">
+    <span>
+      Uploaded
+      <time [attr.datetime]="current.uploaded_at">{{ current.uploaded_at | date: 'medium' }}</time>
+    </span>
+    <span aria-live="polite" aria-atomic="true">
+      Status: <span class="status">{{ statusLabels[current.status] }}</span>
+    </span>
+  </div>
+
+  @if (failureMessage(); as failure) {
+    <p class="failure" role="alert">{{ failure }}</p>
+  } @else if (pending()) {
+    <p role="status">This resume is still being processed. The extraction will appear here.</p>
+  } @else if (isReady()) {
+    @if (actionError(); as message) {
+      <p class="form-error" role="alert">{{ message }}</p>
+    }
+
+    @for (section of sections; track section.kind) {
+      <section [attr.aria-labelledby]="'section-' + section.kind">
+        <div class="section-head">
+          <h2 [id]="'section-' + section.kind">{{ section.title }}</h2>
+          @if (!isAdding(section.kind)) {
+            <button
+              type="button"
+              class="secondary"
+              [disabled]="saving()"
+              (click)="startAdd(section.kind)"
+            >
+              {{ section.addLabel }}
+            </button>
+          }
+        </div>
+
+        @if (itemsByKind()[section.kind].length === 0 && !isAdding(section.kind)) {
+          <p>{{ section.emptyText }}</p>
+        }
+
+        <ul class="items">
+          @for (item of itemsByKind()[section.kind]; track item.id) {
+            <li class="item" data-testid="extraction-item">
+              @if (isEditing(item)) {
+                <ng-container
+                  *ngTemplateOutlet="itemFormTpl; context: { $implicit: 'Edit ' + section.title }"
+                />
+              } @else {
+                <div class="item-head">
+                  <h3>{{ heading(item) }}</h3>
+                  <span class="origin" [class]="'origin origin-' + item.origin">
+                    <span class="visually-hidden">Origin: </span>{{ originLabels[item.origin] }}
+                  </span>
+                </div>
+                @if (detailKeys(item).length > 0) {
+                  <dl>
+                    @for (key of detailKeys(item); track key) {
+                      <dt>{{ labelFor(key) }}</dt>
+                      <dd>{{ item.fields[key] }}</dd>
+                    }
+                  </dl>
+                }
+                @if (item.evidence.length > 0) {
+                  <div class="evidence">
+                    <span class="evidence-title">Evidence from your resume</span>
+                    @for (quote of item.evidence; track $index) {
+                      <blockquote>{{ quote }}</blockquote>
+                    }
+                  </div>
+                }
+                <div class="actions">
+                  <button
+                    type="button"
+                    class="secondary"
+                    [attr.aria-label]="'Edit ' + heading(item)"
+                    [disabled]="saving() || removingId() === item.id"
+                    (click)="startEdit(item)"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    class="danger"
+                    [attr.aria-label]="'Remove ' + heading(item)"
+                    [disabled]="saving() || removingId() === item.id"
+                    [attr.aria-busy]="removingId() === item.id"
+                    (click)="askRemove(item)"
+                  >
+                    Remove
+                  </button>
+                </div>
+              }
+            </li>
+          }
+        </ul>
+
+        @if (isAdding(section.kind)) {
+          <ng-container *ngTemplateOutlet="itemFormTpl; context: { $implicit: section.addLabel }" />
+        }
+      </section>
+    }
+  }
+}
+
+<ng-template #itemFormTpl let-formTitle>
+  <form #itemForm [attr.aria-label]="formTitle" novalidate (submit)="save($event)">
+    @for (key of draftKeys(); track key) {
+      <div class="field">
+        <label [for]="'field-' + key">{{ labelFor(key) }}</label>
+        @if (multilineFields.has(key)) {
+          <textarea
+            [id]="'field-' + key"
+            [value]="draft()[key] ?? ''"
+            [attr.aria-invalid]="formError() !== null"
+            [attr.aria-describedby]="formError() !== null ? 'item-form-error' : null"
+            (input)="setField(key, $event)"
+          ></textarea>
+        } @else {
+          <input
+            type="text"
+            [id]="'field-' + key"
+            [value]="draft()[key] ?? ''"
+            [attr.aria-invalid]="formError() !== null"
+            [attr.aria-describedby]="formError() !== null ? 'item-form-error' : null"
+            (input)="setField(key, $event)"
+          />
+        }
+      </div>
+    }
+    @if (formError(); as message) {
+      <p id="item-form-error" class="form-error" role="alert">{{ message }}</p>
+    }
+    <div class="actions">
+      <button type="submit" class="primary" [disabled]="saving()" [attr.aria-busy]="saving()">
+        Save
+      </button>
+      <button type="button" class="secondary" [disabled]="saving()" (click)="cancelEdit()">
+        Cancel
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+@if (pendingRemove()) {
+  <app-confirm-dialog
+    [title]="removeTitle"
+    [message]="removeMessage"
+    confirmLabel="Remove"
+    (confirmed)="confirmRemove()"
+    (cancelled)="cancelRemove()"
+  />
+}
