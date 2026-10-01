@@ -93,6 +93,7 @@ def register_periodic(name: str, every_seconds: int, fn: PeriodicFn) -> None:
 def _register_domain_handlers() -> None:
     """Register the domain job handlers in the default registry used by the worker."""
     # Imported here: the domain modules import the job queue, which this module also uses.
+    from app.evaluation.pipeline import EVALUATE_JOB_KIND, run_evaluation
     from app.interviews.expiration import (
         EXPIRE_PERIODIC_NAME,
         EXPIRE_PERIODIC_SECONDS,
@@ -103,6 +104,7 @@ def _register_domain_handlers() -> None:
 
     register(RESUME_PROCESS_JOB, process_resume)
     register(PREPARE_QUESTIONS_JOB, prepare_questions)
+    register(EVALUATE_JOB_KIND, run_evaluation)
     register_periodic(EXPIRE_PERIODIC_NAME, EXPIRE_PERIODIC_SECONDS, run_session_expiry)
 
 
