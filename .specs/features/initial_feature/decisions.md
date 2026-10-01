@@ -394,3 +394,10 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Opções**: A) rollback — nada gravado no `CLARIFICATION_UNAVAILABLE`; B) commit da mensagem do candidato mesmo com 503.
 - **Decisão (humano)**: A. Chat sem pergunta órfã; o front mostra o erro e o candidato reenvia.
 - **Impacto**: **Requer atualização de plan 8.1/INTV-92**: explicitar que o 503 não persiste a dúvida.
+
+### LAC-48 — Link da lista de currículos para o detalhe (TASK-084 × TASK-085)
+- **Etapa**: /implement, review da onda 44 (TASK-085)
+- **Problema**: `resume-list-page.html` (TASK-084) não linka `/resumes/:id` (TASK-085) e nenhuma task futura tinha a lista no escopo; a tela de detalhe (CV-07/CV-10) só abria por URL direta.
+- **Opções**: A) ampliar o escopo da TASK-087 com `resume-list-page.html`/`.spec.ts` (link em item `ready`); B) dívida para o relatório; C) task nova de fix.
+- **Decisão (humano)**: A.
+- **Impacto**: TASK-087 ganha `resume-list-page.html` como wiring (só o `routerLink`), `resume-list-page.spec.ts` nos testes e um Done when. check_plan APROVADO; ondas inalteradas.
