@@ -9,6 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { Subscription, timer } from 'rxjs';
 
 import { ApiError, NETWORK_ERROR } from '../../core/http/api-error';
@@ -88,7 +89,7 @@ function tooLargeMessage(limitBytes: number): string {
  */
 @Component({
   selector: 'app-resume-list-page',
-  imports: [DatePipe, ConfirmDialog],
+  imports: [DatePipe, RouterLink, ConfirmDialog],
   templateUrl: './resume-list-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `

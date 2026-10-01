@@ -43,7 +43,11 @@
       @for (resume of resumes(); track resume.id) {
         <li data-testid="resume-item">
           <div class="info">
-            <span class="name">{{ resume.filename }}</span>
+            @if (resume.status === 'ready') {
+              <a class="name" [routerLink]="['/resumes', resume.id]">{{ resume.filename }}</a>
+            } @else {
+              <span class="name">{{ resume.filename }}</span>
+            }
             <span>
               Uploaded
               <time [attr.datetime]="resume.uploaded_at">{{

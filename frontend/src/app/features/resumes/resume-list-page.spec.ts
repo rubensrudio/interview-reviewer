@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { Observable, Subject, of, throwError } from 'rxjs';
 
 import { ApiError } from '../../core/http/api-error';
@@ -77,7 +78,7 @@ describe('ResumeListPage', () => {
     api = new ResumeApiStub();
     await TestBed.configureTestingModule({
       imports: [ResumeListPage],
-      providers: [{ provide: ResumeApi, useValue: api }],
+      providers: [provideRouter([]), { provide: ResumeApi, useValue: api }],
     }).compileComponents();
   });
 
@@ -103,6 +104,23 @@ describe('ResumeListPage', () => {
     const time = rows()[0].querySelector('time');
     expect(time?.getAttribute('datetime')).toBe('2026-03-10T12:00:00Z');
     expect(time?.textContent?.trim()).not.toBe('');
+  });
+
+  it('links each ready version to its detail page (LAC-48)', async () => {
+    api.list.mockReturnValue(
+      of([
+        makeResume({ id: 'a', filename: 'backend.pdf', status: 'ready' }),
+        makeResume({ id: 'b', filename: 'frontend.pdf', status: 'processing' }),
+        makeResume({ id: 'c', filename: 'broken.pdf', status: 'failed' }),
+      ]),
+    );
+    await render();
+
+    const link = rows()[0].querySelector('a');
+    expect(link?.getAttribute('href')).toBe('/resumes/a');
+    expect(link?.textContent?.trim()).toBe('backend.pdf');
+    expect(rows()[1].querySelector('a')).toBeNull();
+    expect(rows()[2].querySelector('a')).toBeNull();
   });
 
   it('shows the empty state when there are no versions', async () => {
