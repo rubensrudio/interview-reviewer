@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-09-30T18:12:04 · integradora `feature/initial_feature-integration` · baseline `develop@70ca1e7` (2026-09-30)
+Atualizado em 2026-09-30T18:32:52 · integradora `feature/initial_feature-integration` · baseline `develop@46d1dcc` (2026-09-30)
 
 ## Baseline
 
@@ -32,7 +32,7 @@ Atualizado em 2026-09-30T18:12:04 · integradora `feature/initial_feature-integr
 | 10 | TASK-008, TASK-010, TASK-065, TASK-066 | ✅ | G5 | PADRAO: APROVADO |
 | 11 | TASK-012 | ✅ | G1, G5 | EXAUSTIVO: APROVADO |
 | 12 | TASK-013 | ✅ | G1 | EXAUSTIVO: APROVADO |
-| 13 | TASK-015 | — | — | — |
+| 13 | TASK-015 | ✅ | G1 | EXAUSTIVO: APROVADO |
 | 14 | TASK-016 | — | — | — |
 | 15 | TASK-017 | — | — | — |
 | 16 | TASK-018 | — | — | — |
@@ -82,6 +82,7 @@ Atualizado em 2026-09-30T18:12:04 · integradora `feature/initial_feature-integr
 | 5 | 8 | TASK-023 | `feature/initial_feature-phase-5` → `feature/initial_feature-phase-4` | https://github.com/rubensrudio/interview-reviewer/pull/5 |
 | 6 | 9, 10 | TASK-007, TASK-025, TASK-050, TASK-064, TASK-008, TASK-010, TASK-065, TASK-066 | `feature/initial_feature-phase-6` → `feature/initial_feature-phase-5` | https://github.com/rubensrudio/interview-reviewer/pull/6 |
 | 7 | 11 | TASK-012 | `feature/initial_feature-phase-7` → `feature/initial_feature-phase-6` | https://github.com/rubensrudio/interview-reviewer/pull/7 |
+| 8 | 12 | TASK-013 | `feature/initial_feature-phase-8` → `feature/initial_feature-phase-7` | https://github.com/rubensrudio/interview-reviewer/pull/8 |
 
 ## Tasks
 
@@ -101,7 +102,7 @@ Atualizado em 2026-09-30T18:12:04 · integradora `feature/initial_feature-integr
 | TASK-012 | ✅ APROVADA | crítico | 0/0/1 |  |
 | TASK-013 | ✅ APROVADA | crítico | 0/0/0 |  |
 | TASK-014 | ✅ APROVADA | alto | 0/0/0 |  |
-| TASK-015 |  PENDENTE | crítico | 0/0/0 |  |
+| TASK-015 | ✅ APROVADA | crítico | 0/0/0 |  |
 | TASK-016 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-017 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-018 |  PENDENTE | crítico | 0/0/0 |  |
@@ -185,8 +186,8 @@ Atualizado em 2026-09-30T18:12:04 · integradora `feature/initial_feature-integr
 
 ## Métricas
 
-- Aprovadas: 24/95 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 22/24
-- Ondas fechadas: 12 · QA semântico invocado em 8
+- Aprovadas: 25/95 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 23/25
+- Ondas fechadas: 13 · QA semântico invocado em 9
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 0

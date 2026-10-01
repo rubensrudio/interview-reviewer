@@ -430,6 +430,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-015 — Record terms and privacy consent
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-15`
 - **Tipo**: lógica-negócio
