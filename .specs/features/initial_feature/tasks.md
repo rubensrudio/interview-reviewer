@@ -2826,3 +2826,85 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
   - Não recalcular percentual, médias nem notas
 
 ---
+
+### TASK-097 — Enforce model release gate in the worker (MODEL-03)
+
+- **Requisito**: `MODEL-03`
+- **Tipo**: infra
+- **Risco**: médio
+- **Perfil**: backend
+- **Depende de**: TASK-025, TASK-009, TASK-095
+- **Arquivos de produção**:
+  - `backend/app/jobs/worker.py`
+- **Arquivos de teste**:
+  - `backend/tests/unit/test_worker_release_gate.py`
+- **Wiring permitido**: —
+- **Reusa**:
+  - `backend/app/llm/model_version.py` → `assert_model_release_allowed`
+- **Contrato**:
+  - CT-21 (consome)
+  - CT-7 (mantém)
+- **Testes**: unit
+- **Descrição**: Achado do QA FEATURE: com `app_env=production`, `create_app` recusa versão de modelo sem relatório aprovado, mas `python -m app.jobs.worker` sobe e processa jobs com ela, gravando relatórios imutáveis com essa versão. O `main()` do worker passa a chamar `assert_model_release_allowed(get_settings())` antes do loop quando `app_env == production`; `ModelNotApproved` encerra o processo com código de saída diferente de zero e um log sem segredo. Fora de produção nada muda.
+- **Done when**:
+  - [ ] Teste: `app_env=production` sem relatório aprovado faz o `main()` do worker falhar com `ModelNotApproved` (ou saída não zero) antes de consumir qualquer job
+  - [ ] Teste: `app_env=production` com relatório que atinge os alvos deixa o worker iniciar
+  - [ ] Teste: `app_env=development` sem relatório deixa o worker iniciar
+- **Não fazer**:
+  - Não alterar `assert_model_release_allowed` nem `create_app`
+
+---
+
+### TASK-098 — Renew job lock with a heartbeat for long jobs (LAC-44)
+
+- **Requisito**: `EVAL-93`, `KNOW-92`
+- **Tipo**: infra
+- **Risco**: médio
+- **Perfil**: backend
+- **Depende de**: TASK-097
+- **Arquivos de produção**:
+  - `backend/app/jobs/worker.py`
+  - `backend/app/jobs/queue.py`
+- **Arquivos de teste**:
+  - `backend/tests/integration/test_worker_heartbeat.py`
+- **Wiring permitido**: —
+- **Reusa**:
+  - `backend/app/jobs/queue.py` → `claim_next`, `mark_done`, `mark_failed`
+- **Contrato**:
+  - CT-6 (estende: renovação de `locked_at` com fencing)
+  - CT-7 (mantém)
+- **Testes**: integration
+- **Descrição**: Dívida obrigatória LAC-44. Avaliação e preparação de perguntas podem passar de `STALE_LOCK_TIMEOUT` (30 min); o reaper re-enfileira o job em execução e o worker original perde o fencing. Enquanto um handler roda, o worker renova `locked_at` do job em intervalos bem menores que `STALE_LOCK_TIMEOUT` (heartbeat), numa sessão de banco própria e com fencing (só renova se o job ainda pertence a esta execução). O heartbeat para quando o handler termina, com sucesso ou erro. Jobs realmente travados (processo morto) continuam sendo recuperados pelo reaper.
+- **Done when**:
+  - [ ] Teste: job cujo handler roda mais que `STALE_LOCK_TIMEOUT` (tempo encurtado no teste) não é re-enfileirado pelo reaper e termina `done`
+  - [ ] Teste: job de worker morto (sem heartbeat) continua sendo re-enfileirado pelo reaper
+  - [ ] Teste: heartbeat não renova lock de job que já mudou de dono (fencing)
+- **Não fazer**:
+  - Não mudar `STALE_LOCK_TIMEOUT` nem os handlers de domínio
+
+---
+
+### TASK-099 — Redact OIDC query string from the access log (LAC-37)
+
+- **Requisito**: `AUTH-95`
+- **Tipo**: config
+- **Risco**: alto
+- **Âncora de risco**: AS-3 (redação de logs — `backend/app/logging_setup.py`)
+- **Perfil**: backend
+- **Depende de**: TASK-095
+- **Arquivos de produção**:
+  - `backend/app/logging_setup.py`
+- **Arquivos de teste**:
+  - `backend/tests/unit/test_logging_setup.py`
+- **Wiring permitido**: —
+- **Reusa**:
+  - `backend/app/logging_setup.py` → `RedactionFilter`
+- **Contrato**: —
+- **Testes**: unit
+- **Descrição**: Dívida obrigatória LAC-37. O access log padrão do uvicorn (`uvicorn.access`) grava `GET /api/auth/google/callback?state=...&code=...` em texto puro, fora do filtro de redação. `configure_logging` passa a instalar no logger `uvicorn.access` um filtro que remove a query string (ou ao menos `code`, `state`, `token` e `error_description`) das linhas de acesso, para todas as rotas de `/api/auth/`. O path, o método e o status continuam no log.
+- **Done when**:
+  - [ ] Teste: registro do `uvicorn.access` com `/api/auth/google/callback?state=abc&code=xyz` sai sem `abc` e sem `xyz`, mantendo o path e o status
+  - [ ] Teste: registro de acesso a `/api/auth/verify-email?token=...` sai sem o token
+  - [ ] Teste: `configure_logging` chamado duas vezes não duplica o filtro
+- **Não fazer**:
+  - Não desligar o access log

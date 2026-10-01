@@ -30,34 +30,37 @@
 | 24 | TASK-051 | alto | G1 TASK-051 | RIGOROSO |
 | 25 | TASK-032, TASK-034, TASK-038, TASK-039 | médio | G2 CT-22 | PADRAO |
 | 26 | TASK-033, TASK-040, TASK-041, TASK-052 | médio | G2 CT-33 | PADRAO |
-| 27 | TASK-042, TASK-046, TASK-049, TASK-053 | médio | G2 CT-33,CT-35,CT-34 | PADRAO |
+| 27 | TASK-042, TASK-046, TASK-049, TASK-053 | médio | G2 CT-35,CT-33,CT-34 | PADRAO |
 | 28 | TASK-061 | crítico | G1 TASK-061 | EXAUSTIVO |
-| 29 | TASK-043, TASK-044, TASK-047, TASK-048 | médio | G2 CT-20,CT-33,CT-19,CT-35,CT-36,CT-6 | PADRAO |
-| 30 | TASK-045, TASK-055, TASK-067, TASK-071 | médio | G3 (1 história(s) P1) | PADRAO |
+| 29 | TASK-043, TASK-044, TASK-047, TASK-048 | médio | G2 CT-33,CT-36,CT-20,CT-19,CT-35,CT-6 | PADRAO |
+| 30 | TASK-045, TASK-055, TASK-067, TASK-071 | médio | — | — |
 | 31 | TASK-054, TASK-056, TASK-072, TASK-074 | médio | — | — |
 | 32 | TASK-062 | crítico | G1 TASK-062 | EXAUSTIVO |
 | 33 | TASK-063 | crítico | G1 TASK-063 | EXAUSTIVO |
 | 34 | TASK-057, TASK-073, TASK-083, TASK-086 | médio | G2 CT-57 | PADRAO |
 | 35 | TASK-058, TASK-075, TASK-088, TASK-089 | médio | G2 CT-61 | PADRAO |
-| 36 | TASK-059, TASK-068, TASK-076, TASK-091 | médio | G2 CT-57; G3 (1 história(s) P1) | PADRAO |
+| 36 | TASK-059, TASK-068, TASK-076, TASK-091 | médio | G2 CT-57 | PADRAO |
 | 37 | TASK-060, TASK-069, TASK-077 | médio | — | — |
 | 38 | TASK-078 | médio | — | — |
 | 39 | TASK-079 | médio | — | — |
 | 40 | TASK-080 | médio | — | — |
-| 41 | TASK-081 | médio | G3 (1 história(s) P1) | PADRAO |
+| 41 | TASK-081 | médio | — | — |
 | 42 | TASK-082 | médio | — | — |
 | 43 | TASK-084 | médio | — | — |
 | 44 | TASK-085 | médio | — | — |
 | 45 | TASK-087 | médio | G3 (1 história(s) P1) | PADRAO |
 | 46 | TASK-090 | médio | G3 (2 história(s) P1) | PADRAO |
-| 47 | TASK-092 | médio | G3 (1 história(s) P1) | PADRAO |
+| 47 | TASK-092 | médio | — | — |
 | 48 | TASK-093, TASK-096 | médio | — | — |
 | 49 | TASK-094 | médio | — | — |
 | 50 | TASK-095 | médio | G3 (1 história(s) P1) | PADRAO |
+| 51 | TASK-099 | alto | G1 TASK-099; G3 (1 história(s) P1) | RIGOROSO |
+| 52 | TASK-097 | médio | G3 (1 história(s) P1) | PADRAO |
+| 53 | TASK-098 | médio | G3 (2 história(s) P1) | PADRAO |
 
-PRs previstos (uma fase termina numa onda com QA semântico; a última, no QA FEATURE): fase 1: ondas 1, 2, 3 · fase 2: ondas 4, 5 · fase 3: ondas 6 · fase 4: ondas 7 · fase 5: ondas 8 · fase 6: ondas 9, 10, 11 · fase 7: ondas 12 · fase 8: ondas 13 · fase 9: ondas 14 · fase 10: ondas 15 · fase 11: ondas 16 · fase 12: ondas 17 · fase 13: ondas 18 · fase 14: ondas 19 · fase 15: ondas 20, 21 · fase 16: ondas 22 · fase 17: ondas 23 · fase 18: ondas 24 · fase 19: ondas 25 · fase 20: ondas 26 · fase 21: ondas 27 · fase 22: ondas 28 · fase 23: ondas 29 · fase 24: ondas 30 · fase 25: ondas 31, 32 · fase 26: ondas 33 · fase 27: ondas 34 · fase 28: ondas 35 · fase 29: ondas 36 · fase 30: ondas 37, 38, 39, 40, 41 · fase 31: ondas 42, 43, 44, 45 · fase 32: ondas 46 · fase 33: ondas 47 · fase 34: ondas 48, 49, 50
+PRs previstos (uma fase termina numa onda com QA semântico; a última, no QA FEATURE): fase 1: ondas 1, 2, 3 · fase 2: ondas 4, 5 · fase 3: ondas 6 · fase 4: ondas 7 · fase 5: ondas 8 · fase 6: ondas 9, 10, 11 · fase 7: ondas 12 · fase 8: ondas 13 · fase 9: ondas 14 · fase 10: ondas 15 · fase 11: ondas 16 · fase 12: ondas 17 · fase 13: ondas 18 · fase 14: ondas 19 · fase 15: ondas 20, 21 · fase 16: ondas 22 · fase 17: ondas 23 · fase 18: ondas 24 · fase 19: ondas 25 · fase 20: ondas 26 · fase 21: ondas 27 · fase 22: ondas 28 · fase 23: ondas 29 · fase 24: ondas 30, 31, 32 · fase 25: ondas 33 · fase 26: ondas 34 · fase 27: ondas 35 · fase 28: ondas 36 · fase 29: ondas 37, 38, 39, 40, 41, 42, 43, 44, 45 · fase 30: ondas 46 · fase 31: ondas 47, 48, 49, 50 · fase 32: ondas 51 · fase 33: ondas 52 · fase 34: ondas 53
 
-Caminho crítico: TASK-001 → TASK-002 → TASK-003 → TASK-004 → TASK-007 → TASK-010 → TASK-026 → TASK-035 → TASK-039 → TASK-041 → TASK-042 → TASK-047 → TASK-054 → TASK-058 → TASK-068 → TASK-069 (16 tasks)
+Caminho crítico: TASK-001 → TASK-002 → TASK-003 → TASK-004 → TASK-007 → TASK-010 → TASK-026 → TASK-035 → TASK-039 → TASK-041 → TASK-042 → TASK-044 → TASK-045 → TASK-056 → TASK-068 → TASK-069 (16 tasks)
 G4 (gate cego) e G5 (retry) só são conhecidos na execução.
 
 ## Cobertura de requisitos
@@ -159,7 +162,7 @@ G4 (gate cego) e G5 (retry) só são conhecidos na execução.
 | `KNOW-08` | TASK-035, TASK-053 | ✅ |
 | `MODEL-01` | TASK-064, TASK-065 | ✅ |
 | `MODEL-02` | TASK-066, TASK-067 | ✅ |
-| `MODEL-03` | TASK-025, TASK-067 | ✅ |
+| `MODEL-03` | TASK-025, TASK-067, TASK-097 | ✅ |
 | `MODEL-04` | TASK-025, TASK-067 | ✅ |
 | `MODEL-05` | TASK-066, TASK-067 | ✅ |
 | `OCR-01` | TASK-034 | ✅ |
@@ -175,7 +178,7 @@ G4 (gate cego) e G5 (retry) só são conhecidos na execução.
 | `AUTH-92` | TASK-014, TASK-016, TASK-019, TASK-075 | ✅ |
 | `AUTH-93` | TASK-020, TASK-022, TASK-076 | ✅ |
 | `AUTH-94` | TASK-012, TASK-016, TASK-018, TASK-019, TASK-077, TASK-079 | ✅ |
-| `AUTH-95` | TASK-006, TASK-019 | ✅ |
+| `AUTH-95` | TASK-006, TASK-019, TASK-099 | ✅ |
 | `CV-90` | TASK-028, TASK-029, TASK-033, TASK-084 | ✅ |
 | `CV-91` | TASK-029, TASK-033, TASK-084 | ✅ |
 | `CV-92` | TASK-028, TASK-031 | ✅ |
@@ -195,14 +198,14 @@ G4 (gate cego) e G5 (retry) só são conhecidos na execução.
 | `EVAL-90` | TASK-050, TASK-054, TASK-092 | ✅ |
 | `EVAL-91` | TASK-050, TASK-053, TASK-092 | ✅ |
 | `EVAL-92` | TASK-050 | ✅ |
-| `EVAL-93` | TASK-007, TASK-008, TASK-009, TASK-054, TASK-090 | ✅ |
+| `EVAL-93` | TASK-007, TASK-008, TASK-009, TASK-054, TASK-090, TASK-098 | ✅ |
 | `DATA-90` | TASK-061 | ✅ |
 | `DATA-91` | TASK-054, TASK-062 | ✅ |
 | `DATA-92` | TASK-055, TASK-093 | ✅ |
 | `DATA-93` | TASK-063 | ✅ |
 | `KNOW-90` | TASK-038, TASK-045 | ✅ |
 | `KNOW-91` | TASK-053 | ✅ |
-| `KNOW-92` | TASK-007, TASK-008, TASK-009, TASK-023, TASK-031, TASK-045, TASK-054 | ✅ |
+| `KNOW-92` | TASK-007, TASK-008, TASK-009, TASK-023, TASK-031, TASK-045, TASK-054, TASK-098 | ✅ |
 | `MODEL-90` | TASK-065, TASK-066, TASK-067 | ✅ |
 
 Cobertura: 140/140
@@ -307,6 +310,9 @@ Cobertura: 140/140
 | TASK-094 | TASK-073, TASK-091 | 49 | 34, 36 |
 | TASK-095 | TASK-072, TASK-073, TASK-074 | 50 | 31, 34, 31 |
 | TASK-096 | TASK-059, TASK-092 | 48 | 36, 47 |
+| TASK-097 | TASK-009, TASK-025, TASK-095 | 52 | 20, 9, 50 |
+| TASK-098 | TASK-097 | 53 | 52 |
+| TASK-099 | TASK-095 | 51 | 50 |
 
 ## Contratos (produtor × consumidores)
 
@@ -332,7 +338,7 @@ Cobertura: 140/140
 | CT-18 | TASK-021 | TASK-022 |
 | CT-19 | TASK-023 | TASK-030, TASK-043, TASK-045, TASK-048, TASK-051, TASK-052 |
 | CT-20 | TASK-024 | TASK-030, TASK-043, TASK-045, TASK-048, TASK-051 |
-| CT-21 | TASK-025 | TASK-053, TASK-054, TASK-067 |
+| CT-21 | TASK-025 | TASK-053, TASK-054, TASK-067, TASK-097 |
 | CT-22 | TASK-026 | TASK-029, TASK-030, TASK-031, TASK-032, TASK-039, TASK-052 |
 | CT-23 | TASK-027 | TASK-029, TASK-031, TASK-061, TASK-063 |
 | CT-24 | TASK-028 | TASK-029, TASK-031, TASK-043 |
@@ -478,3 +484,6 @@ Cobertura: 140/140
 | TASK-094 | 2 | 1 | unit | sim | hm-designer |
 | TASK-095 | 2 | 2 | unit | sim | hm-designer |
 | TASK-096 | 1 | 1 | unit | sim | hm-engineer |
+| TASK-097 | 1 | 1 | unit | sim | hm-engineer |
+| TASK-098 | 2 | 1 | integration | sim | hm-engineer |
+| TASK-099 | 1 | 1 | unit | sim | hm-engineer |
