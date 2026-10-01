@@ -87,6 +87,11 @@ export const routes: Routes = [
         title: 'Interview',
         loadComponent: () => import('./features/sessions/session-page').then((m) => m.SessionPage),
       },
+      {
+        path: 'sessions/:id/report',
+        title: 'Interview report',
+        loadComponent: () => import('./features/reports/report-page').then((m) => m.ReportPage),
+      },
     ],
   },
 ];
