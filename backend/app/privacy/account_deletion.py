@@ -25,9 +25,10 @@ account without a deletion request is never purged.
 
 Lock order is fixed: ``users`` row, then the ``login_throttles`` row, then ``jobs`` rows (login
 locks throttle rows but never the ``users`` row, so no lock cycle exists). Resume uploads lock
-the same ``users`` row before writing a file, so no file is written between steps 2 and 3. The inline job has a
-short grace period (``INLINE_PURGE_GRACE``) so the worker normally finds the work already done;
-if it runs concurrently it waits on the ``users`` lock and then finds nothing to do.
+the same ``users`` row before writing a file, so no file is written between steps 2 and 3. The
+inline job has a short grace period (``INLINE_PURGE_GRACE``) so the worker normally finds the
+work already done; if it runs concurrently it waits on the ``users`` lock and then finds nothing
+to do.
 
 Logs carry no personal data (no e-mail, no user id) and are emitted only after the commit.
 """
