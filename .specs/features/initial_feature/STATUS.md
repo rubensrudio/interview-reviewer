@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-09-30T15:30:14 · integradora `feature/initial_feature-integration` · baseline `develop@ed5f3b2` (2026-09-30)
+Atualizado em 2026-09-30T15:55:24 · integradora `feature/initial_feature-integration` · baseline `develop@d440909` (2026-09-30)
 
 ## Baseline
 
@@ -23,8 +23,8 @@ Atualizado em 2026-09-30T15:30:14 · integradora `feature/initial_feature-integr
 | 1 | TASK-001 | ✅ | — | NAO_INVOCADO |
 | 2 | TASK-002 | ✅ | — | NAO_INVOCADO |
 | 3 | TASK-011 | ✅ | G1 | EXAUSTIVO: APROVADO |
-| 4 | TASK-003, TASK-005, TASK-024, TASK-028 | — | — | — |
-| 5 | TASK-020 | — | — | — |
+| 4 | TASK-003, TASK-005, TASK-024, TASK-028 | ✅ | — | NAO_INVOCADO |
+| 5 | TASK-020 | ✅ | G1 | EXAUSTIVO: APROVADO |
 | 6 | TASK-004, TASK-006, TASK-027, TASK-036 | — | — | — |
 | 7 | TASK-014 | — | — | — |
 | 8 | TASK-023 | — | — | — |
@@ -71,15 +71,21 @@ Atualizado em 2026-09-30T15:30:14 · integradora `feature/initial_feature-integr
 | 49 | TASK-094 | — | — | — |
 | 50 | TASK-095 | — | — | — |
 
+## Fases (PRs)
+
+| Fase | Ondas | Tasks | Branch → base | PR |
+|---|---|---|---|---|
+| 1 | 1, 2, 3 | TASK-001, TASK-002, TASK-011 | `feature/initial_feature-phase-1` → `develop` | https://github.com/rubensrudio/interview-reviewer/pull/1 |
+
 ## Tasks
 
 | Task | Status | Risco | Rodadas rev/gate/qa | Nota |
 |---|---|---|---|---|
 | TASK-001 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-002 | ✅ APROVADA | médio | 0/0/0 |  |
-| TASK-003 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-003 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-004 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-005 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-005 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-006 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-007 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-008 |  PENDENTE | médio | 0/0/0 |  |
@@ -94,15 +100,15 @@ Atualizado em 2026-09-30T15:30:14 · integradora `feature/initial_feature-integr
 | TASK-017 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-018 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-019 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-020 |  PENDENTE | crítico | 0/0/0 |  |
+| TASK-020 | ✅ APROVADA | crítico | 0/0/0 |  |
 | TASK-021 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-022 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-023 |  PENDENTE | alto | 0/0/0 |  |
-| TASK-024 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-024 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-025 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-026 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-027 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-028 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-028 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-029 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-030 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-031 |  PENDENTE | alto | 0/0/0 |  |
@@ -173,8 +179,8 @@ Atualizado em 2026-09-30T15:30:14 · integradora `feature/initial_feature-integr
 
 ## Métricas
 
-- Aprovadas: 3/95 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 3/3
-- Ondas fechadas: 3 · QA semântico invocado em 1
+- Aprovadas: 8/95 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 8/8
+- Ondas fechadas: 5 · QA semântico invocado em 2
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 0

@@ -64,6 +64,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-003 — Add typed application settings
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-01`, `CV-04`, `INTV-05`, `INTV-13`, `KNOW-01`
 - **Tipo**: config
@@ -127,6 +128,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-005 — Add error catalog and JSON error envelope
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-05`, `AUTH-16`
 - **Tipo**: lógica-negócio
@@ -569,6 +571,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-020 — Implement Google OIDC client
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-93`, `AUTH-10`
 - **Tipo**: integração-externa
@@ -689,6 +692,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-024 — Add untrusted-content prompt framing
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-94`, `PLAN-93`, `EVAL-16`, `KNOW-07`
 - **Tipo**: lógica-negócio
@@ -802,6 +806,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-028 — Implement PDF text extraction and language check
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-02`, `CV-06`, `CV-14`, `CV-90`, `CV-92`
 - **Tipo**: lógica-negócio
