@@ -491,6 +491,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-017 — Implement local login, logout and login throttling
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-04`, `AUTH-05`, `AUTH-06`, `AUTH-90`
 - **Tipo**: lógica-negócio

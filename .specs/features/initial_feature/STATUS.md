@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-09-30T18:46:08 · integradora `feature/initial_feature-integration` · baseline `develop@46d1dcc` (2026-09-30)
+Atualizado em 2026-09-30T18:58:17 · integradora `feature/initial_feature-integration` · baseline `develop@46d1dcc` (2026-09-30)
 
 ## Baseline
 
@@ -34,7 +34,7 @@ Atualizado em 2026-09-30T18:46:08 · integradora `feature/initial_feature-integr
 | 12 | TASK-013 | ✅ | G1 | EXAUSTIVO: APROVADO |
 | 13 | TASK-015 | ✅ | G1 | EXAUSTIVO: APROVADO |
 | 14 | TASK-016 | ✅ | G1, G5 | EXAUSTIVO: APROVADO |
-| 15 | TASK-017 | — | — | — |
+| 15 | TASK-017 | ✅ | G1 | EXAUSTIVO: APROVADO |
 | 16 | TASK-018 | — | — | — |
 | 17 | TASK-019 | — | — | — |
 | 18 | TASK-021 | — | — | — |
@@ -84,6 +84,7 @@ Atualizado em 2026-09-30T18:46:08 · integradora `feature/initial_feature-integr
 | 7 | 11 | TASK-012 | `feature/initial_feature-phase-7` → `feature/initial_feature-phase-6` | https://github.com/rubensrudio/interview-reviewer/pull/7 |
 | 8 | 12 | TASK-013 | `feature/initial_feature-phase-8` → `feature/initial_feature-phase-7` | https://github.com/rubensrudio/interview-reviewer/pull/8 |
 | 9 | 13 | TASK-015 | `feature/initial_feature-phase-9` → `feature/initial_feature-phase-8` | https://github.com/rubensrudio/interview-reviewer/pull/9 |
+| 10 | 14 | TASK-016 | `feature/initial_feature-phase-10` → `feature/initial_feature-phase-9` | https://github.com/rubensrudio/interview-reviewer/pull/10 |
 
 ## Tasks
 
@@ -105,7 +106,7 @@ Atualizado em 2026-09-30T18:46:08 · integradora `feature/initial_feature-integr
 | TASK-014 | ✅ APROVADA | alto | 0/0/0 |  |
 | TASK-015 | ✅ APROVADA | crítico | 0/0/0 |  |
 | TASK-016 | ✅ APROVADA | crítico | 0/0/1 |  |
-| TASK-017 |  PENDENTE | crítico | 0/0/0 |  |
+| TASK-017 | ✅ APROVADA | crítico | 0/0/0 |  |
 | TASK-018 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-019 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-020 | ✅ APROVADA | crítico | 0/0/0 |  |
@@ -187,8 +188,8 @@ Atualizado em 2026-09-30T18:46:08 · integradora `feature/initial_feature-integr
 
 ## Métricas
 
-- Aprovadas: 26/95 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 23/26
-- Ondas fechadas: 14 · QA semântico invocado em 10
+- Aprovadas: 27/95 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 24/27
+- Ondas fechadas: 15 · QA semântico invocado em 11
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 0
