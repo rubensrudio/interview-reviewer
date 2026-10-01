@@ -552,3 +552,55 @@ def test_plan_10_confirm_plan_rejects_proposal_out_of_sync_with_items(db: Sessio
     assert session.status == SessionStatus.AWAITING_CONFIRMATION
     assert session.planned_count is None
     assert _prepare_jobs(db, session) == []
+
+
+# --- Regression: reviewer blocker on TASK-044 (lone surrogates) ------------------------------
+
+
+def test_plan_05_lone_surrogate_in_name_and_terms_is_storable(db: Session) -> None:
+    session = _session(db, [_item("a", "Go")])
+    submitted = RequirementItemInput.model_validate(
+        {
+            "name": "Py\ud800thon",
+            "classification": "required",
+            "original_terms": ["Py\udfffthon", "\ud800"],
+        }
+    )
+
+    replace_requirement_list(db, session, [submitted])
+    db.flush()
+    db.refresh(session)
+
+    stored = _stored(session)
+    assert stored[0].name == "Py thon"
+    assert stored[0].original_terms == ["Py thon"]
+
+
+def test_plan_05_lone_surrogate_in_json_body_is_rejected() -> None:
+    with pytest.raises(ValidationError):
+        RequirementItemInput.model_validate_json(
+            '{"name": "Py\\ud800thon", "classification": "required"}'
+        )
+
+
+def test_plan_11_merge_name_with_lone_surrogate_is_storable(db: Session) -> None:
+    session = _session(db, [_item("a", "Docker"), _item("b", "Podman")])
+    merged = merge_items(_stored(session), ["a", "b"], "Con\ud800tainers")
+
+    assert merged[0].name == "Con tainers"
+    replace_requirement_list(
+        db, session, [RequirementItemInput.model_validate(item.model_dump()) for item in merged]
+    )
+    db.flush()
+    db.refresh(session)
+    assert _stored(session)[0].name == "Con tainers"
+
+
+def test_plan_11_merge_name_only_lone_surrogate_is_validation_error() -> None:
+    items = [
+        RequirementItem.model_validate(_item("a", "Docker")),
+        RequirementItem.model_validate(_item("b", "Podman")),
+    ]
+    with pytest.raises(AppError) as exc_info:
+        merge_items(items, ["a", "b"], "\udc00")
+    assert exc_info.value.code == VALIDATION_ERROR

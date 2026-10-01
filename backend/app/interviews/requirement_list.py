@@ -76,10 +76,10 @@ NAME_MAX_LENGTH = 255
 ID_MAX_LENGTH = 64
 
 # NUL cannot be stored in PostgreSQL text/JSONB and is dropped; other control characters
-# (C0, DEL, C1) become spaces, as in the other interview inputs. Names are single-line, so
-# whitespace runs collapse to one space.
+# (C0, DEL, C1) and lone surrogates (not encodable as UTF-8) become spaces, as in the other
+# interview inputs. Names are single-line, so whitespace runs collapse to one space.
 _NUL_RE = re.compile("\x00")
-_CONTROL_RE = re.compile("[\x01-\x1f\x7f-\x9f]")
+_CONTROL_RE = re.compile("[\x01-\x1f\x7f-\x9f\ud800-\udfff]")
 
 
 def _clean_text(value: object) -> object:
