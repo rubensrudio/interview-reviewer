@@ -1,0 +1,29 @@
+# Approved knowledge sources (KNOW-03, KNOW-04).
+# Only these URLs may be fetched. Every URL must be https and belong to `domain`.
+# `skill_terms` are the only terms allowed in collection requests: never add
+# user data (resume, name, e-mail, job requirements or answers).
+sources:
+  - id: python-docs
+    domain: docs.python.org
+    urls:
+      - https://docs.python.org/3/tutorial/
+      - https://docs.python.org/3/library/asyncio.html
+    skill_terms:
+      - python
+      - asyncio
+  - id: mdn
+    domain: developer.mozilla.org
+    urls:
+      - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide
+      - https://developer.mozilla.org/en-US/docs/Web/HTTP
+    skill_terms:
+      - javascript
+      - http
+  - id: kubernetes-docs
+    domain: kubernetes.io
+    urls:
+      - https://kubernetes.io/docs/concepts/overview/
+      - https://kubernetes.io/docs/concepts/workloads/pods/
+    skill_terms:
+      - kubernetes
+      - containers

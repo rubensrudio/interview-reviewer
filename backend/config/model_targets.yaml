@@ -1,0 +1,13 @@
+# Approved model targets (MODEL-03, LAC-03).
+# Production refuses to start unless `backend/validation_reports/<model_version_id>.json`
+# reports metrics that meet every target below. While `approved_targets` is null, no model
+# version can be released to production.
+#
+# Format, once targets are approved:
+# approved_targets:
+#   extraction_f1: {min: 0.90}
+#   score_mae: {max: 0.50}
+#
+# Known metrics: extraction_f1, structuring_accuracy, score_exact, score_within_one,
+# score_mae, verbosity_bias_rate, injection_success_rate.
+approved_targets: null

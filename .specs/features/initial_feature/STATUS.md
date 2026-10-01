@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-09-30T15:30:14 · integradora `feature/initial_feature-integration` · baseline `develop@ed5f3b2` (2026-09-30)
+Atualizado em 2026-10-01T09:04:39 · integradora `feature/initial_feature-integration` · baseline `develop@f6aa73c` (2026-10-01)
 
 ## Baseline
 
@@ -8,7 +8,7 @@ Atualizado em 2026-09-30T15:30:14 · integradora `feature/initial_feature-integr
 |---|---|
 | lint@backend | 0 erro(s) |
 | typecheck@backend | 0 erro(s) |
-| test@backend | 1 testes, 0 falhando |
+| test@backend | 13 testes, 0 falhando |
 | build@backend | ok |
 | lint@frontend | 0 erro(s) |
 | typecheck@frontend | 0 erro(s) |
@@ -23,33 +23,33 @@ Atualizado em 2026-09-30T15:30:14 · integradora `feature/initial_feature-integr
 | 1 | TASK-001 | ✅ | — | NAO_INVOCADO |
 | 2 | TASK-002 | ✅ | — | NAO_INVOCADO |
 | 3 | TASK-011 | ✅ | G1 | EXAUSTIVO: APROVADO |
-| 4 | TASK-003, TASK-005, TASK-024, TASK-028 | — | — | — |
-| 5 | TASK-020 | — | — | — |
-| 6 | TASK-004, TASK-006, TASK-027, TASK-036 | — | — | — |
-| 7 | TASK-014 | — | — | — |
-| 8 | TASK-023 | — | — | — |
-| 9 | TASK-007, TASK-025, TASK-050, TASK-064 | — | — | — |
-| 10 | TASK-008, TASK-010, TASK-065, TASK-066 | — | — | — |
-| 11 | TASK-012 | — | — | — |
-| 12 | TASK-013 | — | — | — |
-| 13 | TASK-015 | — | — | — |
-| 14 | TASK-016 | — | — | — |
-| 15 | TASK-017 | — | — | — |
-| 16 | TASK-018 | — | — | — |
-| 17 | TASK-019 | — | — | — |
-| 18 | TASK-021 | — | — | — |
-| 19 | TASK-022 | — | — | — |
-| 20 | TASK-009, TASK-026 | — | — | — |
-| 21 | TASK-029, TASK-030, TASK-035, TASK-070 | — | — | — |
-| 22 | TASK-031 | — | — | — |
-| 23 | TASK-037 | — | — | — |
-| 24 | TASK-051 | — | — | — |
-| 25 | TASK-032, TASK-034, TASK-038, TASK-039 | — | — | — |
-| 26 | TASK-033, TASK-040, TASK-041, TASK-052 | — | — | — |
-| 27 | TASK-042, TASK-046, TASK-049, TASK-053 | — | — | — |
-| 28 | TASK-061 | — | — | — |
-| 29 | TASK-043, TASK-044, TASK-047, TASK-048 | — | — | — |
-| 30 | TASK-045, TASK-055, TASK-067, TASK-071 | — | — | — |
+| 4 | TASK-003, TASK-005, TASK-024, TASK-028 | ✅ | — | NAO_INVOCADO |
+| 5 | TASK-020 | ✅ | G1 | EXAUSTIVO: APROVADO |
+| 6 | TASK-004, TASK-006, TASK-027, TASK-036 | ✅ | G2 | PADRAO: APROVADO |
+| 7 | TASK-014 | ✅ | G1 | RIGOROSO: APROVADO |
+| 8 | TASK-023 | ✅ | G1 | RIGOROSO: APROVADO |
+| 9 | TASK-007, TASK-025, TASK-050, TASK-064 | ✅ | — | NAO_INVOCADO |
+| 10 | TASK-008, TASK-010, TASK-065, TASK-066 | ✅ | G5 | PADRAO: APROVADO |
+| 11 | TASK-012 | ✅ | G1, G5 | EXAUSTIVO: APROVADO |
+| 12 | TASK-013 | ✅ | G1 | EXAUSTIVO: APROVADO |
+| 13 | TASK-015 | ✅ | G1 | EXAUSTIVO: APROVADO |
+| 14 | TASK-016 | ✅ | G1, G5 | EXAUSTIVO: APROVADO |
+| 15 | TASK-017 | ✅ | G1 | EXAUSTIVO: APROVADO |
+| 16 | TASK-018 | ✅ | G1, G5 | EXAUSTIVO: APROVADO |
+| 17 | TASK-019 | ✅ | G1, G5 | EXAUSTIVO: APROVADO |
+| 18 | TASK-021 | ✅ | G1, G5 | EXAUSTIVO: APROVADO |
+| 19 | TASK-022 | ✅ | G1 | EXAUSTIVO: APROVADO |
+| 20 | TASK-009, TASK-026 | ✅ | — | NAO_INVOCADO |
+| 21 | TASK-029, TASK-030, TASK-035, TASK-070 | ✅ | G2 | PADRAO: APROVADO |
+| 22 | TASK-031 | ✅ | G1, G5 | RIGOROSO: APROVADO |
+| 23 | TASK-037 | ✅ | G1, G5 | RIGOROSO: APROVADO |
+| 24 | TASK-051 | ✅ | G1, G5 | RIGOROSO: APROVADO |
+| 25 | TASK-032, TASK-034, TASK-038, TASK-039 | ✅ | G2, G5 | PADRAO: APROVADO |
+| 26 | TASK-033, TASK-040, TASK-041, TASK-052 | ✅ | G2, G5 | PADRAO: APROVADO |
+| 27 | TASK-042, TASK-046, TASK-049, TASK-053 | ✅ | G2 | PADRAO: APROVADO |
+| 28 | TASK-061 | ✅ | G1 | EXAUSTIVO: APROVADO |
+| 29 | TASK-043, TASK-044, TASK-047, TASK-048 | ✅ | G2, G5 | PADRAO: APROVADO |
+| 30 | TASK-045, TASK-055, TASK-067, TASK-071 | ✅ | G3 | PADRAO: APROVADO |
 | 31 | TASK-054, TASK-056, TASK-072, TASK-074 | — | — | — |
 | 32 | TASK-062 | — | — | — |
 | 33 | TASK-063 | — | — | — |
@@ -71,81 +71,110 @@ Atualizado em 2026-09-30T15:30:14 · integradora `feature/initial_feature-integr
 | 49 | TASK-094 | — | — | — |
 | 50 | TASK-095 | — | — | — |
 
+## Fases (PRs)
+
+| Fase | Ondas | Tasks | Branch → base | PR |
+|---|---|---|---|---|
+| 1 | 1, 2, 3 | TASK-001, TASK-002, TASK-011 | `feature/initial_feature-phase-1` → `develop` | https://github.com/rubensrudio/interview-reviewer/pull/1 |
+| 2 | 4, 5 | TASK-003, TASK-005, TASK-024, TASK-028, TASK-020 | `feature/initial_feature-phase-2` → `feature/initial_feature-phase-1` | https://github.com/rubensrudio/interview-reviewer/pull/2 |
+| 3 | 6 | TASK-004, TASK-006, TASK-027, TASK-036 | `feature/initial_feature-phase-3` → `feature/initial_feature-phase-2` | https://github.com/rubensrudio/interview-reviewer/pull/3 |
+| 4 | 7 | TASK-014 | `feature/initial_feature-phase-4` → `feature/initial_feature-phase-3` | https://github.com/rubensrudio/interview-reviewer/pull/4 |
+| 5 | 8 | TASK-023 | `feature/initial_feature-phase-5` → `feature/initial_feature-phase-4` | https://github.com/rubensrudio/interview-reviewer/pull/5 |
+| 6 | 9, 10 | TASK-007, TASK-025, TASK-050, TASK-064, TASK-008, TASK-010, TASK-065, TASK-066 | `feature/initial_feature-phase-6` → `feature/initial_feature-phase-5` | https://github.com/rubensrudio/interview-reviewer/pull/6 |
+| 7 | 11 | TASK-012 | `feature/initial_feature-phase-7` → `feature/initial_feature-phase-6` | https://github.com/rubensrudio/interview-reviewer/pull/7 |
+| 8 | 12 | TASK-013 | `feature/initial_feature-phase-8` → `feature/initial_feature-phase-7` | https://github.com/rubensrudio/interview-reviewer/pull/8 |
+| 9 | 13 | TASK-015 | `feature/initial_feature-phase-9` → `feature/initial_feature-phase-8` | https://github.com/rubensrudio/interview-reviewer/pull/9 |
+| 10 | 14 | TASK-016 | `feature/initial_feature-phase-10` → `feature/initial_feature-phase-9` | https://github.com/rubensrudio/interview-reviewer/pull/10 |
+| 11 | 15 | TASK-017 | `feature/initial_feature-phase-11` → `feature/initial_feature-phase-10` | https://github.com/rubensrudio/interview-reviewer/pull/11 |
+| 12 | 16 | TASK-018 | `feature/initial_feature-phase-12` → `feature/initial_feature-phase-11` | https://github.com/rubensrudio/interview-reviewer/pull/12 |
+| 13 | 17 | TASK-019 | `feature/initial_feature-phase-13` → `feature/initial_feature-phase-12` | https://github.com/rubensrudio/interview-reviewer/pull/13 |
+| 14 | 18 | TASK-021 | `feature/initial_feature-phase-14` → `feature/initial_feature-phase-13` | https://github.com/rubensrudio/interview-reviewer/pull/14 |
+| 15 | 19 | TASK-022 | `feature/initial_feature-phase-15` → `feature/initial_feature-phase-14` | https://github.com/rubensrudio/interview-reviewer/pull/15 |
+| 16 | 20, 21 | TASK-009, TASK-026, TASK-029, TASK-030, TASK-035, TASK-070 | `feature/initial_feature-phase-16` → `feature/initial_feature-phase-15` | https://github.com/rubensrudio/interview-reviewer/pull/16 |
+| 17 | 22 | TASK-031 | `feature/initial_feature-phase-17` → `feature/initial_feature-phase-16` | https://github.com/rubensrudio/interview-reviewer/pull/17 |
+| 18 | 23 | TASK-037 | `feature/initial_feature-phase-18` → `feature/initial_feature-phase-17` | https://github.com/rubensrudio/interview-reviewer/pull/18 |
+| 19 | 24 | TASK-051 | `feature/initial_feature-phase-19` → `feature/initial_feature-phase-18` | https://github.com/rubensrudio/interview-reviewer/pull/19 |
+| 20 | 25 | TASK-032, TASK-034, TASK-038, TASK-039 | `feature/initial_feature-phase-20` → `feature/initial_feature-phase-19` | https://github.com/rubensrudio/interview-reviewer/pull/20 |
+| 21 | 26 | TASK-033, TASK-040, TASK-041, TASK-052 | `feature/initial_feature-phase-21` → `feature/initial_feature-phase-20` | https://github.com/rubensrudio/interview-reviewer/pull/21 |
+| 22 | 27 | TASK-042, TASK-046, TASK-049, TASK-053 | `feature/initial_feature-phase-22` → `feature/initial_feature-phase-21` | https://github.com/rubensrudio/interview-reviewer/pull/22 |
+| 23 | 28 | TASK-061 | `feature/initial_feature-phase-23` → `feature/initial_feature-phase-22` | https://github.com/rubensrudio/interview-reviewer/pull/23 |
+| 24 | 29 | TASK-043, TASK-044, TASK-047, TASK-048 | `feature/initial_feature-phase-24` → `feature/initial_feature-phase-23` | https://github.com/rubensrudio/interview-reviewer/pull/24 |
+
 ## Tasks
 
 | Task | Status | Risco | Rodadas rev/gate/qa | Nota |
 |---|---|---|---|---|
 | TASK-001 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-002 | ✅ APROVADA | médio | 0/0/0 |  |
-| TASK-003 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-004 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-005 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-006 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-007 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-008 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-009 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-010 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-003 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-004 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-005 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-006 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-007 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-008 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-009 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-010 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-011 | ✅ APROVADA | crítico | 0/0/0 |  |
-| TASK-012 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-013 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-014 |  PENDENTE | alto | 0/0/0 |  |
-| TASK-015 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-016 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-017 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-018 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-019 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-020 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-021 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-022 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-023 |  PENDENTE | alto | 0/0/0 |  |
-| TASK-024 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-025 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-026 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-027 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-028 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-029 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-030 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-031 |  PENDENTE | alto | 0/0/0 |  |
-| TASK-032 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-033 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-034 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-035 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-036 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-037 |  PENDENTE | alto | 0/0/0 |  |
-| TASK-038 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-039 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-040 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-041 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-042 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-043 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-044 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-045 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-046 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-047 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-048 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-049 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-050 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-051 |  PENDENTE | alto | 0/0/0 |  |
-| TASK-052 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-053 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-012 | ✅ APROVADA | crítico | 0/0/1 |  |
+| TASK-013 | ✅ APROVADA | crítico | 0/0/0 |  |
+| TASK-014 | ✅ APROVADA | alto | 0/0/0 |  |
+| TASK-015 | ✅ APROVADA | crítico | 0/0/0 |  |
+| TASK-016 | ✅ APROVADA | crítico | 0/0/1 |  |
+| TASK-017 | ✅ APROVADA | crítico | 0/0/0 |  |
+| TASK-018 | ✅ APROVADA | crítico | 0/0/1 |  |
+| TASK-019 | ✅ APROVADA | crítico | 1/0/0 |  |
+| TASK-020 | ✅ APROVADA | crítico | 0/0/0 |  |
+| TASK-021 | ✅ APROVADA | crítico | 1/0/0 |  |
+| TASK-022 | ✅ APROVADA | crítico | 0/0/0 |  |
+| TASK-023 | ✅ APROVADA | alto | 0/0/0 |  |
+| TASK-024 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-025 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-026 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-027 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-028 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-029 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-030 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-031 | ✅ APROVADA | alto | 0/0/1 |  |
+| TASK-032 | ✅ APROVADA | médio | 1/0/0 |  |
+| TASK-033 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-034 | ✅ APROVADA | médio | 1/0/1 |  |
+| TASK-035 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-036 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-037 | ✅ APROVADA | alto | 0/0/1 |  |
+| TASK-038 | ✅ APROVADA | médio | 0/0/1 |  |
+| TASK-039 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-040 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-041 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-042 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-043 | ✅ APROVADA | médio | 1/0/0 |  |
+| TASK-044 | ✅ APROVADA | médio | 1/0/1 |  |
+| TASK-045 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-046 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-047 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-048 | ✅ APROVADA | médio | 1/0/0 |  |
+| TASK-049 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-050 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-051 | ✅ APROVADA | alto | 1/0/0 |  |
+| TASK-052 | ✅ APROVADA | médio | 1/0/0 |  |
+| TASK-053 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-054 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-055 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-055 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-056 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-057 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-058 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-059 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-060 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-061 |  PENDENTE | crítico | 0/0/0 |  |
+| TASK-061 | ✅ APROVADA | crítico | 0/0/0 |  |
 | TASK-062 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-063 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-064 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-065 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-066 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-067 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-064 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-065 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-066 | ✅ APROVADA | médio | 1/0/0 |  |
+| TASK-067 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-068 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-069 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-070 |  PENDENTE | médio | 0/0/0 |  |
-| TASK-071 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-070 | ✅ APROVADA | médio | 0/0/0 |  |
+| TASK-071 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-072 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-073 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-074 |  PENDENTE | médio | 0/0/0 |  |
@@ -173,8 +202,8 @@ Atualizado em 2026-09-30T15:30:14 · integradora `feature/initial_feature-integr
 
 ## Métricas
 
-- Aprovadas: 3/95 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 3/3
-- Ondas fechadas: 3 · QA semântico invocado em 1
+- Aprovadas: 61/95 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 45/61
+- Ondas fechadas: 30 · QA semântico invocado em 25
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 0

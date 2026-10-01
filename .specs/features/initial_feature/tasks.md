@@ -64,6 +64,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-003 — Add typed application settings
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-01`, `CV-04`, `INTV-05`, `INTV-13`, `KNOW-01`
 - **Tipo**: config
@@ -92,6 +93,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-004 — Set up database session and Alembic
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `DATA-05`, `DATA-06`
 - **Tipo**: infra
@@ -127,6 +129,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-005 — Add error catalog and JSON error envelope
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-05`, `AUTH-16`
 - **Tipo**: lógica-negócio
@@ -153,6 +156,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-006 — Add redacting structured logging and metrics events
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-95`
 - **Tipo**: infra
@@ -184,6 +188,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-007 — Create job table and migration 0001
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-93`, `KNOW-92`
 - **Tipo**: migration
@@ -212,6 +217,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-008 — Implement Postgres job queue
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-93`, `KNOW-92`
 - **Tipo**: lógica-negócio
@@ -241,6 +247,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-009 — Add worker loop and job handler registry
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-93`, `KNOW-92`
 - **Tipo**: infra
@@ -272,6 +279,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-010 — Create account tables and migration 0002
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-91`, `AUTH-15`, `DATA-07`
 - **Tipo**: migration
@@ -329,6 +337,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-012 — Implement secret tokens and one-time links
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-03`, `AUTH-08`, `AUTH-94`
 - **Tipo**: lógica-negócio
@@ -358,6 +367,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-013 — Implement authenticated sessions and current-user dependency
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-06`, `AUTH-17`, `AUTH-16`
 - **Tipo**: lógica-negócio
@@ -390,6 +400,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-014 — Implement SMTP email sender and templates
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-92`, `AUTH-09`
 - **Tipo**: integração-externa
@@ -420,6 +431,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-015 — Record terms and privacy consent
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-15`
 - **Tipo**: lógica-negócio
@@ -447,6 +459,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-016 — Implement local registration and e-mail verification
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-01`, `AUTH-02`, `AUTH-03`, `AUTH-91`, `AUTH-92`, `AUTH-94`, `DATA-07`
 - **Tipo**: lógica-negócio
@@ -479,6 +492,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-017 — Implement local login, logout and login throttling
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-04`, `AUTH-05`, `AUTH-06`, `AUTH-90`
 - **Tipo**: lógica-negócio
@@ -510,6 +524,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-018 — Implement password reset flow
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-07`, `AUTH-08`, `AUTH-09`, `AUTH-94`
 - **Tipo**: lógica-negócio
@@ -540,6 +555,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-019 — Expose local authentication API routes
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-01`, `AUTH-02`, `AUTH-03`, `AUTH-04`, `AUTH-05`, `AUTH-06`, `AUTH-07`, `AUTH-08`, `AUTH-14`, `AUTH-17`, `AUTH-90`, `AUTH-92`, `AUTH-94`, `AUTH-95`
 - **Tipo**: crud-padrão
@@ -569,6 +585,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-020 — Implement Google OIDC client
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-93`, `AUTH-10`
 - **Tipo**: integração-externa
@@ -599,6 +616,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-021 — Resolve Google sign-in and account linking
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-10`, `AUTH-11`, `AUTH-12`, `AUTH-13`
 - **Tipo**: lógica-negócio
@@ -628,6 +646,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-022 — Expose Google sign-in and terms acceptance routes
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-10`, `AUTH-11`, `AUTH-12`, `AUTH-13`, `AUTH-15`, `AUTH-93`
 - **Tipo**: crud-padrão
@@ -657,6 +676,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-023 — Implement private LLM client with host allowlist
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-01`, `KNOW-92`
 - **Tipo**: integração-externa
@@ -689,6 +709,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-024 — Add untrusted-content prompt framing
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-94`, `PLAN-93`, `EVAL-16`, `KNOW-07`
 - **Tipo**: lógica-negócio
@@ -713,6 +734,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-025 — Add model version identification and release gate
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `MODEL-03`, `MODEL-04`
 - **Tipo**: infra
@@ -745,6 +767,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-026 — Create resume table and migration 0003
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-01`, `CV-05`, `CV-10`
 - **Tipo**: migration
@@ -774,6 +797,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-027 — Implement private resume file storage
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-01`, `DATA-04`
 - **Tipo**: lógica-negócio
@@ -802,6 +826,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-028 — Implement PDF text extraction and language check
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-02`, `CV-06`, `CV-14`, `CV-90`, `CV-92`
 - **Tipo**: lógica-negócio
@@ -829,6 +854,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-029 — Implement resume upload and listing service
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-01`, `CV-02`, `CV-03`, `CV-04`, `CV-11`, `CV-13`, `CV-90`, `CV-91`, `CV-95`
 - **Tipo**: lógica-negócio
@@ -859,6 +885,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-030 — Implement LLM resume extraction with evidence filter
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-07`, `CV-08`, `CV-09`, `CV-94`
 - **Tipo**: lógica-negócio
@@ -888,6 +915,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-031 — Implement asynchronous resume processing job
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-05`, `CV-06`, `CV-07`, `CV-09`, `CV-14`, `CV-92`, `CV-93`, `CV-96`, `KNOW-92`
 - **Tipo**: lógica-negócio
@@ -921,6 +949,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-032 — Implement resume extraction editing
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-10`
 - **Tipo**: lógica-negócio
@@ -948,6 +977,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-033 — Expose resume API routes
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-01`, `CV-02`, `CV-03`, `CV-04`, `CV-05`, `CV-07`, `CV-10`, `CV-11`, `CV-13`, `CV-90`, `CV-91`, `AUTH-16`
 - **Tipo**: crud-padrão
@@ -975,6 +1005,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-034 — Add optional OCR fallback for scanned resumes
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `OCR-01`, `OCR-02`
 - **Tipo**: lógica-negócio
@@ -1002,6 +1033,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-035 — Create knowledge base table and migration 0004
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-03`, `KNOW-08`
 - **Tipo**: migration
@@ -1030,6 +1062,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-036 — Load approved knowledge sources registry
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-03`, `KNOW-04`
 - **Tipo**: config
@@ -1058,6 +1091,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-037 — Implement knowledge base collector CLI
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-03`, `KNOW-04`, `KNOW-07`
 - **Tipo**: infra
@@ -1087,6 +1121,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-038 — Implement knowledge retrieval by skill
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-05`, `KNOW-06`, `KNOW-90`
 - **Tipo**: lógica-negócio
@@ -1114,6 +1149,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-039 — Create interview session tables and migration 0005
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `PLAN-01`, `PLAN-02`, `PLAN-10`, `CV-12`
 - **Tipo**: migration
@@ -1143,6 +1179,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-040 — Create answers, evaluations and reports tables and migration 0006
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `INTV-06`, `INTV-09`, `EVAL-12`
 - **Tipo**: migration
@@ -1172,6 +1209,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-041 — Implement interview session state machine
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `INTV-11`, `INTV-12`, `INTV-13`, `INTV-93`, `EVAL-12`
 - **Tipo**: lógica-negócio
@@ -1199,6 +1237,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-042 — Implement interview session lifecycle service
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `PLAN-01`, `PLAN-02`, `CV-11`, `CV-12`, `INTV-12`, `LANG-01`, `LANG-02`, `DATA-01`
 - **Tipo**: lógica-negócio
@@ -1229,6 +1268,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-043 — Implement job requirements structuring
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `PLAN-03`, `PLAN-04`, `PLAN-06`, `PLAN-11`, `PLAN-15`, `PLAN-90`, `PLAN-93`, `PLAN-94`
 - **Tipo**: lógica-negócio
@@ -1261,6 +1301,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-044 — Implement requirement list editing and plan confirmation
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `PLAN-04`, `PLAN-05`, `PLAN-07`, `PLAN-08`, `PLAN-09`, `PLAN-10`, `PLAN-11`, `PLAN-91`, `LANG-02`
 - **Tipo**: lógica-negócio
@@ -1292,6 +1333,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-045 — Implement interview question generation job
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `PLAN-12`, `PLAN-13`, `PLAN-14`, `PLAN-92`, `KNOW-05`, `KNOW-06`, `KNOW-90`, `KNOW-92`
 - **Tipo**: lógica-negócio
@@ -1323,6 +1365,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-046 — Build safe interview session view
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `INTV-01`, `INTV-10`, `INTV-14`
 - **Tipo**: lógica-negócio
@@ -1350,6 +1393,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-047 — Implement idempotent answer submission
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `INTV-03`, `INTV-04`, `INTV-05`, `INTV-06`, `INTV-07`, `INTV-09`, `INTV-11`, `INTV-90`, `INTV-91`, `INTV-93`
 - **Tipo**: lógica-negócio
@@ -1382,6 +1426,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-048 — Implement clarification requests
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `INTV-08`, `INTV-92`, `INTV-93`
 - **Tipo**: lógica-negócio
@@ -1411,6 +1456,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-049 — Expire inactive interview sessions
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `INTV-13`
 - **Tipo**: lógica-negócio
@@ -1439,6 +1485,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-050 — Implement deterministic adherence scoring
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-03`, `EVAL-04`, `EVAL-05`, `EVAL-90`, `EVAL-91`, `EVAL-92`
 - **Tipo**: lógica-negócio
@@ -1467,6 +1514,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-051 — Implement LLM answer evaluator
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-01`, `EVAL-02`, `EVAL-09`, `EVAL-10`, `EVAL-16`, `INTV-07`
 - **Tipo**: lógica-negócio
@@ -1500,6 +1548,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-052 — Generate reference answers for unsatisfactory items
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-06`, `EVAL-07`, `EVAL-15`
 - **Tipo**: lógica-negócio
@@ -1529,6 +1578,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-053 — Build immutable report content
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-05`, `EVAL-08`, `EVAL-11`, `EVAL-15`, `EVAL-91`, `KNOW-08`, `KNOW-91`, `PLAN-06`
 - **Tipo**: lógica-negócio
@@ -1590,6 +1640,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-055 — Expose interview session API routes
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `PLAN-01`, `PLAN-02`, `INTV-10`, `INTV-12`, `DATA-01`, `DATA-92`, `LANG-01`, `AUTH-16`
 - **Tipo**: crud-padrão
@@ -1755,6 +1806,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-061 — Delete resume versions with minimal snapshot
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-03`, `DATA-04`, `DATA-90`, `CV-96`
 - **Tipo**: crud-padrão
@@ -1845,6 +1897,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-064 — Implement validation dataset checker
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `MODEL-01`, `DATA-09`
 - **Tipo**: lógica-negócio
@@ -1871,6 +1924,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-065 — Author versioned validation dataset v1
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `MODEL-01`, `DATA-09`, `MODEL-90`
 - **Tipo**: config
@@ -1897,6 +1951,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-066 — Implement model validation metrics
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `MODEL-02`, `MODEL-05`, `MODEL-90`
 - **Tipo**: lógica-negócio
@@ -1923,6 +1978,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-067 — Implement model validation runner and report
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `MODEL-02`, `MODEL-03`, `MODEL-04`, `MODEL-05`, `MODEL-90`
 - **Tipo**: infra
@@ -2008,6 +2064,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-070 — Scaffold Angular frontend workspace
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-17`
 - **Tipo**: infra
@@ -2053,6 +2110,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-071 — Add API error model and auth redirect interceptor
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-17`
 - **Tipo**: lógica-negócio
