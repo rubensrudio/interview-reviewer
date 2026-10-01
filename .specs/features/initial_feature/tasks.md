@@ -2745,6 +2745,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-093 — Build interview history page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-01`, `DATA-05`, `DATA-92`, `CMP-01`
 - **Tipo**: ui-puro
@@ -2773,6 +2774,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-094 — Build session comparison page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `CMP-01`, `CMP-02`
 - **Tipo**: ui-puro
@@ -2799,6 +2801,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-095 — Build account page with account deletion
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-06`
 - **Tipo**: ui-puro
@@ -2810,16 +2813,51 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
   - `frontend/src/app/features/account/account-page.html`
 - **Arquivos de teste**:
   - `frontend/src/app/features/account/account-page.spec.ts`
+  - `frontend/src/app/features/auth/accept-terms-page.spec.ts`
 - **Wiring permitido**:
-  - `frontend/src/app/app.routes.ts` (apenas adicionar a rota da página)
+  - `frontend/src/app/app.routes.ts` (apenas adicionar a rota da página; LAC-51: `/account` no nível de topo só com `authGuard`, fora do Shell)
+  - `frontend/src/app/features/auth/accept-terms-page.html` (apenas o link "Delete my account" para `/account`, LAC-51)
 - **Reusa**: — (greenfield; usar só os contratos CT-n listados)
 - **Contrato**: CT-58, CT-59 (consome)
 - **Testes**: unit
-- **Descrição**: Mostra e-mail e método de login; "Delete account" abre `ConfirmDialog` com "This will permanently delete your account and all your data now. Backup copies expire within 30 days."; após sucesso mostra a confirmação e navega para `/login`.
+- **Descrição**: Mostra e-mail e método de login; "Delete account" abre `ConfirmDialog` com "This will permanently delete your account and all your data now. Backup copies expire within 30 days."; após sucesso mostra a confirmação e navega para `/login`. A rota `/account` fica fora do Shell, só com `authGuard`, para que quem tem termos pendentes consiga excluir a conta (LAC-45/LAC-51); `/accept-terms` ganha o link "Delete my account" para `/account`.
 - **Done when**:
   - [ ] Teste: `deleteAccount` só é chamado após confirmar
   - [ ] Teste: após 200 navega para `/login` e `currentUser` fica nulo
+  - [ ] Teste: a rota `account` não tem `termsGuard` (só `authGuard`) (LAC-51)
+  - [ ] Teste: `/accept-terms` mostra link para `/account` (LAC-51)
 - **Não fazer**:
   - Não oferecer desativação temporária (LAC-12=A)
+
+---
+
+### TASK-096 — Align report PDF with the report page (LAC-50)
+- **Status**: ✅ APROVADA em 2026-10-01
+
+- **Requisito**: `EXPT-01`
+- **Tipo**: crud-padrão
+- **Risco**: médio
+- **Perfil**: backend
+- **Depende de**: TASK-059, TASK-092
+- **Arquivos de produção**:
+  - `backend/app/reports/pdf_export.py`
+- **Arquivos de teste**:
+  - `backend/tests/unit/test_pdf_export.py`
+- **Wiring permitido**: —
+- **Reusa**: `render_report_pdf` (TASK-059)
+- **Contrato**:
+  - CT-49 — `render_report_pdf(content: ReportContent) -> bytes` (mantém a assinatura)
+- **Testes**: unit
+- **Descrição**: O PDF passa a ter o mesmo conteúdo e os mesmos rótulos da página de relatório (`frontend/src/app/features/reports/report-page.html`, TASK-092), na mesma ordem. Acrescentar a seção de pontos satisfatórios e a lista global de fontes (`sources_used`, com título, URL, data de coleta e trecho). Mostrar o trecho (`excerpt`) das fontes, inclusive nas fontes da referência. Mostrar "No verified source" também no item da seção de perguntas. Usar os mesmos títulos de seção da tela ("Unsatisfactory items", "Not evaluated in this session", sufixos "(desirable)"/"(non-technical)") e os mesmos textos de vazio ("No unsatisfactory items.", "No satisfactory items."), o mesmo rótulo de evidência e a nota no mesmo formato da tela. Datas (`completed_at`, `collected_at`) no formato longo em inglês da tela (ex.: "October 1, 2026"). O percentual aparece uma vez, como na tela. Versões de modelo e rubrica podem continuar no rodapé (metadado do arquivo). Só formatação: nenhum valor é recalculado (DATA-02).
+- **Done when**:
+  - [ ] Teste: texto extraído (pypdf) contém o título da seção de satisfatórios e o texto de um item satisfatório da fixture
+  - [ ] Teste: texto extraído contém o título, a URL e o trecho de uma fonte de `sources_used`
+  - [ ] Teste: texto extraído usa "Unsatisfactory items" e "Not evaluated in this session" e não contém "Items to improve"
+  - [ ] Teste: fixture sem insatisfatórios gera "No unsatisfactory items."
+  - [ ] Teste: `completed_at` aparece no formato longo (ex.: "October 1, 2026") e não em ISO
+  - [ ] Teste: as seções aparecem na mesma ordem da página de relatório
+- **Não fazer**:
+  - Não mudar a rota nem `backend/app/api/reports.py`
+  - Não recalcular percentual, médias nem notas
 
 ---

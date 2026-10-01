@@ -1,0 +1,101 @@
+<h1 id="history-title">History</h1>
+
+<section aria-labelledby="history-title" [attr.aria-busy]="loading()">
+  @if (deleteError(); as message) {
+    <p class="form-error" role="alert">{{ message }}</p>
+  }
+
+  @if (loading()) {
+    <p role="status">Loading interviews…</p>
+  } @else if (loadError(); as message) {
+    <p class="form-error" role="alert">{{ message }}</p>
+    <button type="button" class="secondary" (click)="retry()">Try again</button>
+  } @else if (isEmpty()) {
+    <p>{{ emptyMessage }}</p>
+    <p><a routerLink="/sessions/new">Start an interview</a></p>
+  } @else {
+    @if (hasCompleted()) {
+      <div class="toolbar">
+        <p id="compare-hint" class="hint">Select two completed interviews to compare them.</p>
+        <button
+          type="button"
+          class="primary"
+          aria-describedby="compare-hint"
+          [disabled]="!canCompare()"
+          (click)="compare()"
+        >
+          Compare
+        </button>
+      </div>
+    }
+
+    <ul class="sessions">
+      @for (session of sessions(); track session.id) {
+        <li class="session" data-testid="session-item">
+          @if (session.status === 'completed') {
+            <label class="select">
+              <input
+                type="checkbox"
+                [checked]="isSelected(session.id)"
+                (change)="toggleSelection(session)"
+              />
+              <span class="visually-hidden"
+                >Select interview from {{ session.created_at | date: 'medium' }} for
+                comparison</span
+              >
+            </label>
+          }
+          <div class="info">
+            <span>
+              <time [attr.datetime]="session.created_at">{{
+                session.created_at | date: 'medium'
+              }}</time>
+            </span>
+            <span class="name" [class.deleted]="session.resume_name === null">{{
+              resumeLabel(session)
+            }}</span>
+            @if (session.required_skills.length > 0) {
+              <ul class="skills" aria-label="Required skills">
+                @for (skill of session.required_skills; track $index) {
+                  <li>{{ skill }}</li>
+                }
+              </ul>
+            }
+            <span class="status" [class]="'status-' + session.status">{{
+              statusLabels[session.status]
+            }}</span>
+          </div>
+          <div class="actions">
+            @if (session.status === 'completed') {
+              <a [routerLink]="['/sessions', session.id, 'report']">
+                View report<span class="visually-hidden">
+                  from {{ session.created_at | date: 'medium' }}</span
+                >
+              </a>
+            }
+            <button
+              type="button"
+              class="danger"
+              [attr.aria-label]="'Delete interview from ' + (session.created_at | date: 'medium')"
+              [disabled]="deletingId() === session.id"
+              [attr.aria-busy]="deletingId() === session.id"
+              (click)="askDelete(session)"
+            >
+              Delete
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>
+
+@if (pendingDelete()) {
+  <app-confirm-dialog
+    title="Delete this interview?"
+    [message]="deleteMessage"
+    confirmLabel="Delete"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  />
+}

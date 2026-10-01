@@ -99,6 +99,13 @@ describe('AcceptTermsPage', () => {
     expect(root.querySelector('a[href="/privacy"]')).not.toBeNull();
   });
 
+  it('links to /account so the user can delete the account without accepting (LAC-51)', async () => {
+    await setup();
+
+    const link = root.querySelector<HTMLAnchorElement>('a[href="/account"]');
+    expect(link?.textContent?.trim()).toBe('Delete my account');
+  });
+
   it('keeps the button disabled until the checkbox is ticked', async () => {
     await setup();
 

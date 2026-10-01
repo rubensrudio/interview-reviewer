@@ -30,9 +30,9 @@
 | 24 | TASK-051 | alto | G1 TASK-051 | RIGOROSO |
 | 25 | TASK-032, TASK-034, TASK-038, TASK-039 | médio | G2 CT-22 | PADRAO |
 | 26 | TASK-033, TASK-040, TASK-041, TASK-052 | médio | G2 CT-33 | PADRAO |
-| 27 | TASK-042, TASK-046, TASK-049, TASK-053 | médio | G2 CT-35,CT-33,CT-34 | PADRAO |
+| 27 | TASK-042, TASK-046, TASK-049, TASK-053 | médio | G2 CT-33,CT-35,CT-34 | PADRAO |
 | 28 | TASK-061 | crítico | G1 TASK-061 | EXAUSTIVO |
-| 29 | TASK-043, TASK-044, TASK-047, TASK-048 | médio | G2 CT-35,CT-19,CT-33,CT-20,CT-36,CT-6 | PADRAO |
+| 29 | TASK-043, TASK-044, TASK-047, TASK-048 | médio | G2 CT-20,CT-33,CT-19,CT-35,CT-36,CT-6 | PADRAO |
 | 30 | TASK-045, TASK-055, TASK-067, TASK-071 | médio | G3 (1 história(s) P1) | PADRAO |
 | 31 | TASK-054, TASK-056, TASK-072, TASK-074 | médio | — | — |
 | 32 | TASK-062 | crítico | G1 TASK-062 | EXAUSTIVO |
@@ -51,7 +51,7 @@
 | 45 | TASK-087 | médio | G3 (1 história(s) P1) | PADRAO |
 | 46 | TASK-090 | médio | G3 (2 história(s) P1) | PADRAO |
 | 47 | TASK-092 | médio | G3 (1 história(s) P1) | PADRAO |
-| 48 | TASK-093 | médio | — | — |
+| 48 | TASK-093, TASK-096 | médio | — | — |
 | 49 | TASK-094 | médio | — | — |
 | 50 | TASK-095 | médio | G3 (1 história(s) P1) | PADRAO |
 
@@ -164,7 +164,7 @@ G4 (gate cego) e G5 (retry) só são conhecidos na execução.
 | `MODEL-05` | TASK-066, TASK-067 | ✅ |
 | `OCR-01` | TASK-034 | ✅ |
 | `OCR-02` | TASK-034 | ✅ |
-| `EXPT-01` | TASK-059, TASK-091, TASK-092 | ✅ |
+| `EXPT-01` | TASK-059, TASK-091, TASK-092, TASK-096 | ✅ |
 | `EXPT-02` | TASK-059, TASK-092 | ✅ |
 | `LANG-01` | TASK-042, TASK-055, TASK-087 | ✅ |
 | `LANG-02` | TASK-042, TASK-044, TASK-087 | ✅ |
@@ -306,6 +306,7 @@ Cobertura: 140/140
 | TASK-093 | TASK-073, TASK-074, TASK-086 | 48 | 34, 31, 34 |
 | TASK-094 | TASK-073, TASK-091 | 49 | 34, 36 |
 | TASK-095 | TASK-072, TASK-073, TASK-074 | 50 | 31, 34, 31 |
+| TASK-096 | TASK-059, TASK-092 | 48 | 36, 47 |
 
 ## Contratos (produtor × consumidores)
 
@@ -475,4 +476,5 @@ Cobertura: 140/140
 | TASK-092 | 2 | 1 | unit | sim | hm-designer |
 | TASK-093 | 2 | 1 | unit | sim | hm-designer |
 | TASK-094 | 2 | 1 | unit | sim | hm-designer |
-| TASK-095 | 2 | 1 | unit | sim | hm-designer |
+| TASK-095 | 2 | 2 | unit | sim | hm-designer |
+| TASK-096 | 1 | 1 | unit | sim | hm-engineer |
