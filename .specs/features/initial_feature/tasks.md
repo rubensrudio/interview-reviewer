@@ -2480,6 +2480,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-084 — Build resume list page with upload and deletion
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `CV-01`, `CV-02`, `CV-03`, `CV-04`, `CV-05`, `CV-06`, `CV-13`, `CV-14`, `CV-90`, `CV-91`, `CV-93`, `DATA-03`
 - **Tipo**: ui-puro
