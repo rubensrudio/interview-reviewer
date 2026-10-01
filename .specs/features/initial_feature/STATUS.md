@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-10-01T20:11:44 · integradora `feature/initial_feature-integration` · baseline `develop@1e139fc` (2026-10-01)
+Atualizado em 2026-10-01T20:21:59 · integradora `feature/initial_feature-integration` · baseline `develop@1e139fc` (2026-10-01)
 
 ## Baseline
 
@@ -71,7 +71,7 @@ Atualizado em 2026-10-01T20:11:44 · integradora `feature/initial_feature-integr
 | 49 | TASK-094 | ✅ | — | NAO_INVOCADO |
 | 50 | TASK-095 | ✅ | G3, G5 | PADRAO: APROVADO |
 | 51 | TASK-099 | ✅ | G1, G3 | RIGOROSO: APROVADO |
-| 52 | TASK-097 | — | — | — |
+| 52 | TASK-097 | ✅ | G3 | PADRAO: APROVADO |
 | 53 | TASK-098 | — | — | — |
 
 ## Fases (PRs)
@@ -113,6 +113,7 @@ Atualizado em 2026-10-01T20:11:44 · integradora `feature/initial_feature-integr
 | 33 | 46 | TASK-090 | `feature/initial_feature-phase-33` → `feature/initial_feature-phase-32` | https://github.com/rubensrudio/interview-reviewer/pull/33 |
 | 34 | 47 | TASK-092 | `feature/initial_feature-phase-34` → `feature/initial_feature-phase-33` | https://github.com/rubensrudio/interview-reviewer/pull/34 |
 | 35 | 48, 49, 50 | TASK-093, TASK-096, TASK-094, TASK-095 | `feature/initial_feature-phase-35` → `feature/initial_feature-phase-34` | https://github.com/rubensrudio/interview-reviewer/pull/35 |
+| 36 | 51 | TASK-099 | `feature/initial_feature-phase-36` → `feature/initial_feature-phase-35` | https://github.com/rubensrudio/interview-reviewer/pull/36 |
 
 ## Tasks
 
@@ -214,15 +215,15 @@ Atualizado em 2026-10-01T20:11:44 · integradora `feature/initial_feature-integr
 | TASK-094 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-095 | ✅ APROVADA | médio | 0/0/1 |  |
 | TASK-096 | ✅ APROVADA | médio | 0/0/0 |  |
-| TASK-097 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-097 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-098 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-099 | ✅ APROVADA | alto | 0/0/0 |  |
 
 ## Métricas
 
-- Aprovadas: 97/99 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 77/97
-- Ondas fechadas: 51 · QA semântico invocado em 36
+- Aprovadas: 98/99 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 78/98
+- Ondas fechadas: 52 · QA semântico invocado em 37
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 2
 - Gate final: ✅ em 2026-10-01T19:12 (HEAD 5e2bbdb)

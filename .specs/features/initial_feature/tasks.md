@@ -2863,6 +2863,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-097 — Enforce model release gate in the worker (MODEL-03)
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `MODEL-03`
 - **Tipo**: infra
