@@ -1,0 +1,46 @@
+@if (linkInvalid()) {
+  <section aria-labelledby="link-title">
+    <h1 id="link-title" #heading tabindex="-1">Request a new link</h1>
+    <p class="form-error" role="alert">{{ linkInvalidMessage }}</p>
+    <p><a routerLink="/login">Back to sign in</a></p>
+  </section>
+} @else {
+  <section aria-labelledby="link-title" aria-describedby="link-intro">
+    <h1 id="link-title" #heading tabindex="-1">Link your Google account</h1>
+    <p id="link-intro">{{ introMessage }}</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="link-password">Password</label>
+        <input
+          id="link-password"
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+          required
+          [attr.maxlength]="maxLength"
+          [attr.aria-invalid]="showPasswordError()"
+          [attr.aria-describedby]="showPasswordError() ? 'link-password-error' : null"
+        />
+        @if (showPasswordError()) {
+          <p id="link-password-error" class="field-error" role="alert">
+            @if (form.controls.password.hasError('maxlength')) {
+              Use at most {{ maxLength }} characters.
+            } @else {
+              Enter your password.
+            }
+          </p>
+        }
+      </div>
+
+      <button type="submit" class="primary" [disabled]="saving()" [attr.aria-busy]="saving()">
+        Link account
+      </button>
+    </form>
+
+    @if (errorMessage(); as failed) {
+      <p class="form-error" role="alert">{{ failed }}</p>
+    }
+    <p><a routerLink="/login">Back to sign in</a></p>
+  </section>
+}
