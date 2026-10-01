@@ -2920,6 +2920,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-099 — Redact OIDC query string from the access log (LAC-37)
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-95`
 - **Tipo**: config
