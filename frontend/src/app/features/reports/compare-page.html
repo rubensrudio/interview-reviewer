@@ -1,0 +1,85 @@
+<h1 id="compare-title">Compare interviews</h1>
+
+@if (missingIds()) {
+  <p>{{ selectTwoMessage }}</p>
+  <div class="actions">
+    <a routerLink="/history">Go to history</a>
+  </div>
+} @else if (loading()) {
+  <p role="status">Loading comparison…</p>
+} @else if (loadError(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+  <div class="actions">
+    <button type="button" class="secondary" (click)="reload()">Try again</button>
+    <a routerLink="/history">Go to history</a>
+  </div>
+} @else if (comparison(); as current) {
+  @if (!current.comparable) {
+    <div class="warning" role="note" data-testid="not-comparable">
+      <p id="not-comparable-title">{{ notComparableMessage }}</p>
+      <ul aria-labelledby="not-comparable-title">
+        @for (difference of current.differences; track $index) {
+          <li>{{ differenceLabel(difference) }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <section aria-labelledby="compare-overview-title">
+    <h2 id="compare-overview-title">Adherence</h2>
+    <ul class="sides">
+      <li class="side">
+        <h3>Interview A</h3>
+        <p>
+          <span class="percentage">{{ current.a.percentage }}%</span>
+        </p>
+        <p class="meta">
+          Model {{ current.a.model_version }} · Rubric {{ current.a.rubric_version }}
+        </p>
+        <a [routerLink]="['/sessions', current.a.session_id, 'report']"
+          >View report<span class="visually-hidden"> of interview A</span></a
+        >
+      </li>
+      <li class="side">
+        <h3>Interview B</h3>
+        <p>
+          <span class="percentage">{{ current.b.percentage }}%</span>
+        </p>
+        <p class="meta">
+          Model {{ current.b.model_version }} · Rubric {{ current.b.rubric_version }}
+        </p>
+        <a [routerLink]="['/sessions', current.b.session_id, 'report']"
+          >View report<span class="visually-hidden"> of interview B</span></a
+        >
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="compare-skills-title">
+    <h2 id="compare-skills-title">Average score by skill in common</h2>
+    @if (current.common_skills.length > 0) {
+      <div class="table-wrap">
+        <table data-testid="skills-table" aria-labelledby="compare-skills-title">
+          <thead>
+            <tr>
+              <th scope="col">Skill</th>
+              <th scope="col">Interview A</th>
+              <th scope="col">Interview B</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (skill of current.common_skills; track $index) {
+              <tr>
+                <th scope="row">{{ skill.skill }}</th>
+                <td>{{ skill.a_average }}</td>
+                <td>{{ skill.b_average }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p>These interviews have no skills in common.</p>
+    }
+  </section>
+}
