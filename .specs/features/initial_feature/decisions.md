@@ -374,3 +374,17 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 
 ### Registro — Limite de body de 128 KiB nas rotas de requisitos (TASK-056)
 - Hardening fora do plan: `RequirementsBodyRoute` com 128 KiB (o texto de 20.000 chars não cabe em 16 KiB). Excesso → 422 VALIDATION_ERROR. **Requer atualização de plan 8.1** para os consumidores do front.
+
+### LAC-45 — Exclusão de conta permitida com termos pendentes (TASK-063, LGPD)
+- **Etapa**: /implement, onda 33, TASK-063 (DELETE /api/account)
+- **Opções**: A) `CurrentUserPendingTerms` — exclusão permitida mesmo sem aceite da versão vigente; B) `CurrentUser` — exige aceite antes de excluir.
+- **Decisão (humano)**: A. Direito de eliminação (LGPD) não fica condicionado a aceitar termos novos. Sessão e CSRF continuam exigidos.
+- **Impacto**: **Requer atualização de plan 8.1** (DELETE /api/account acessível com termos pendentes).
+
+### LAC-46 — Apagar o contador de throttle da conta na exclusão (TASK-063, LGPD)
+- **Etapa**: /implement, review da onda 33
+- **Problema**: `login_throttles` guarda linha `account:<HMAC(IR_THROTTLE_SECRET, email_normalized)>` sem prazo; pseudônimo revertível pelo controlador; lock vigente seria herdado por novo cadastro com o mesmo e-mail (DATA-07).
+- **Opções**: A) apagar a linha `account:` no passo 3 da purga (mesma transação), mantendo `ip:`; B) manter como contador de segurança.
+- **Jev (hm-reviewer)**: resíduo é dado pessoal 0.50 (dúvida).
+- **Decisão (humano)**: A.
+- **Impacto**: CT-53 passa a remover o throttle da conta. Comentário "sha256" em `models/account.py` está desatualizado (é HMAC). **Requer atualização de plan**: DATA-06/CT-53.
