@@ -523,6 +523,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-018 — Implement password reset flow
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-07`, `AUTH-08`, `AUTH-09`, `AUTH-94`
 - **Tipo**: lógica-negócio
