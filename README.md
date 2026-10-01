@@ -107,6 +107,26 @@ Tooling configured in `backend/pyproject.toml`:
 - `mypy` in strict mode for the `app` package.
 - `pytest` writes a JUnit report to `backend/reports/junit.xml` on every run.
 
+## Running the worker
+
+Background jobs (resume processing, question preparation, evaluation, account purge) and
+periodic functions run in a separate worker process that uses the same database as the API.
+Run it inside `backend/`:
+
+```bash
+uv run python -m app.jobs.worker
+```
+
+- The worker polls the `jobs` table (`SELECT ... FOR UPDATE SKIP LOCKED`); several workers can
+  run side by side, and each job runs in its own transaction.
+- A handler that raises `RetryableJobError` is retried with exponential backoff (`2^attempts`
+  seconds) up to `max_attempts`; any other exception marks the job `failed` with the exception
+  class name as the error code.
+- At startup and every 60 seconds the worker requeues jobs left `running` for more than
+  30 minutes (for example, after a worker crash), or marks them `failed` when they already used
+  all attempts.
+- Stop it with `Ctrl+C` or `SIGTERM`; the current job finishes before the process exits.
+
 ## Configuration
 
 The backend reads its settings from environment variables prefixed with `IR_`. Defaults target
@@ -265,3 +285,24 @@ The backend needs outbound HTTPS access to `accounts.google.com`, `oauth2.google
 and `www.googleapis.com`. A cancelled sign-in, an invalid `state`, an `id_token` that fails
 validation (signature, `iss`, `aud`, `exp`, `nonce`) or an e-mail that Google has not
 verified all end with the `GOOGLE_AUTH_FAILED` error and no account is created or linked.
+
+## Frontend
+
+Angular 21 single-page app in `frontend/`: standalone components, zoneless change detection,
+signals and plain SCSS (no UI component library).
+
+- Development server: `npx ng serve --proxy-config proxy.conf.json` serves the app on
+  <http://localhost:4200> and proxies `/api` to the backend on `http://localhost:8000`
+  (`proxy.conf.json`), so the browser only talks to one origin.
+- Unit tests run on Vitest through the `@angular/build:unit-test` builder. Its runner config
+  is `vitest-base.config.ts`, which writes a JUnit report to `frontend/reports/junit.xml`.
+  Run a single spec with `npx ng test --watch=false --include=src/app/app.spec.ts`.
+- Lint uses angular-eslint (`eslint.config.js`) over `src/**/*.ts` and `src/**/*.html`.
+- End-to-end tests use Playwright (`playwright.config.ts`, specs in `frontend/e2e/`). Install
+  the browser once with `npx playwright install chromium`. `npx playwright test` starts
+  `ng serve` automatically (or reuses one already running) and writes a JUnit report to
+  `frontend/reports/e2e-junit.xml`; `npx playwright test --list` lists specs without running
+  them. Regression specs live in `frontend/e2e/regressao/` and mock the backend with
+  `page.route`, so they do not need the API running.
+
+`frontend/reports/` and `frontend/test-results/` are git-ignored.

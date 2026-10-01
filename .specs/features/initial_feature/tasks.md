@@ -247,6 +247,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-009 — Add worker loop and job handler registry
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `EVAL-93`, `KNOW-92`
 - **Tipo**: infra
@@ -766,6 +767,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-026 — Create resume table and migration 0003
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-01`, `CV-05`, `CV-10`
 - **Tipo**: migration
@@ -852,6 +854,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-029 — Implement resume upload and listing service
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-01`, `CV-02`, `CV-03`, `CV-04`, `CV-11`, `CV-13`, `CV-90`, `CV-91`, `CV-95`
 - **Tipo**: lógica-negócio
@@ -882,6 +885,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-030 — Implement LLM resume extraction with evidence filter
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `CV-07`, `CV-08`, `CV-09`, `CV-94`
 - **Tipo**: lógica-negócio
@@ -1025,6 +1029,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-035 — Create knowledge base table and migration 0004
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `KNOW-03`, `KNOW-08`
 - **Tipo**: migration
@@ -2035,6 +2040,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-070 — Scaffold Angular frontend workspace
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-17`
 - **Tipo**: infra
