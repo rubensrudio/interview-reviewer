@@ -374,3 +374,9 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 
 ### Registro — Limite de body de 128 KiB nas rotas de requisitos (TASK-056)
 - Hardening fora do plan: `RequirementsBodyRoute` com 128 KiB (o texto de 20.000 chars não cabe em 16 KiB). Excesso → 422 VALIDATION_ERROR. **Requer atualização de plan 8.1** para os consumidores do front.
+
+### LAC-45 — Exclusão de conta permitida com termos pendentes (TASK-063, LGPD)
+- **Etapa**: /implement, onda 33, TASK-063 (DELETE /api/account)
+- **Opções**: A) `CurrentUserPendingTerms` — exclusão permitida mesmo sem aceite da versão vigente; B) `CurrentUser` — exige aceite antes de excluir.
+- **Decisão (humano)**: A. Direito de eliminação (LGPD) não fica condicionado a aceitar termos novos. Sessão e CSRF continuam exigidos.
+- **Impacto**: **Requer atualização de plan 8.1** (DELETE /api/account acessível com termos pendentes).
