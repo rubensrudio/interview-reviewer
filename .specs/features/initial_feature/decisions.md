@@ -289,3 +289,24 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-reviewer)**: viola contrato da rota? 0.34 (não).
 - **Decisão (humano)**: A — risco aceito. Vazamento só ocorre durante indisponibilidade de SMTP.
 - **Impacto**: sem mudança de código. **Requer atualização de spec**: registrar o trade-off AUTH-02 × AUTH-92.
+
+### LAC-34 — Vincular Google a conta local não verificada marca o e-mail como verificado (TASK-021, implementação)
+- **Etapa**: /implement, onda 18, TASK-021 (`complete_link`)
+- **Opções**: A) gravar `email_verified_at` ao vincular (Google atestou `email_verified=True` e a senha foi provada); B) manter nulo.
+- **Jev (hm-engineer)**: implícito na task 0.31; muda dado 0.87.
+- **Decisão (humano)**: A.
+- **Impacto**: evita conta vinculada travada por verificação pendente. **Requer atualização de spec/plan**: AUTH-10/LAC-15 e CT-18.
+
+### LAC-35 — Login Google com sub vinculado e aceite desatualizado devolve `needs_terms` (TASK-021, implementação)
+- **Etapa**: /implement, onda 18, TASK-021 (`resolve_google_login`)
+- **Opções**: A) se `has_current_consent` for falso, devolver `needs_terms` (TASK-022 redireciona para /accept-terms); B) manter `signed_in` literal da task (403 TERMS_REQUIRED depois).
+- **Jev (hm-engineer)**: consistente 0.51 (dúvida); muda contrato 0.12.
+- **Decisão (humano)**: A.
+- **Impacto**: fluxo de aceite igual ao primeiro login. **Requer atualização de spec/plan**: CT-18 (semântica de `needs_terms`).
+
+### LAC-36 — Token `google_link` sobrevive a senha errada em `complete_link` (TASK-021, implementação)
+- **Etapa**: /implement, onda 18, review da TASK-021
+- **Opções**: A) manter o token reutilizável após senha errada, limitado pelo throttle por conta (compartilhado com login local) e pelo TTL; B) consumir o token em qualquer tentativa.
+- **Jev (hm-reviewer)**: token reutilizável é vulnerabilidade explorável? 0.36 (dúvida).
+- **Decisão (humano)**: A.
+- **Impacto**: sem mudança de código. **Requer atualização de spec**: AUTH-12 / LAC-15 devem explicitar que o link de vínculo sobrevive a senha errada até o TTL.
