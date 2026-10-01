@@ -1,0 +1,39 @@
+<section aria-labelledby="terms-title" aria-describedby="terms-intro">
+  <h1 id="terms-title">Accept the Terms of Use</h1>
+  <p id="terms-intro">
+    Before you continue, please review and accept the Terms of Use and the Privacy Policy.
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="consent">
+      <input id="accept-terms" type="checkbox" formControlName="accept" />
+      <label for="accept-terms">
+        I accept the <a routerLink="/terms">Terms of Use</a> and the
+        <a routerLink="/privacy">Privacy Policy</a>.
+      </label>
+    </div>
+
+    <button
+      type="submit"
+      class="primary"
+      [disabled]="saving() || signingOut() || !accepted()"
+      [attr.aria-busy]="saving()"
+    >
+      Continue
+    </button>
+  </form>
+
+  @if (errorMessage(); as failed) {
+    <p class="form-error" role="alert">{{ failed }}</p>
+  }
+
+  <button
+    type="button"
+    class="secondary"
+    [disabled]="saving() || signingOut()"
+    [attr.aria-busy]="signingOut()"
+    (click)="signOut()"
+  >
+    Sign out
+  </button>
+</section>

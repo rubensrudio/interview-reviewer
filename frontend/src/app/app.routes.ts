@@ -42,6 +42,13 @@ export const routes: Routes = [
     canActivate: [guestGuard],
   },
   {
+    // Signed-in only: termsGuard sends users here, so it must not run termsGuard itself.
+    path: 'accept-terms',
+    title: 'Accept the Terms of Use',
+    loadComponent: () => import('./features/auth/accept-terms-page').then((m) => m.AcceptTermsPage),
+    canActivate: [authGuard],
+  },
+  {
     path: '',
     loadComponent: () => import('./layout/shell').then((m) => m.Shell),
     canActivate: [authGuard, termsGuard],
