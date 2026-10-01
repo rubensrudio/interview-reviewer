@@ -1,5 +1,7 @@
 # Interview Reviewer
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 ## Overview
 
 Interview Reviewer lets a candidate upload a resume, run a mock technical interview and receive
@@ -423,3 +425,9 @@ signals and plain SCSS (no UI component library).
   `page.route`, so they do not need the API running.
 
 `frontend/reports/` and `frontend/test-results/` are git-ignored.
+
+## License
+
+Licensed under the **MIT License** — see [`LICENSE`](LICENSE).
+
+Copyright © 2026 Rubens Rudio.
