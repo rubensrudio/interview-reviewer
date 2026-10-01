@@ -101,9 +101,7 @@ _NUL_RE = re.compile("\x00")
 _CONTROL_RE = re.compile("[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f\ud800-\udfff]")
 _COMPOSITE_RE = re.compile(r"\s*/\s*|\s+and\s+", re.IGNORECASE)
 # Names written with "/" or "and" that denote a single concept, not independent skills.
-_SINGLE_CONCEPTS = frozenset(
-    {"ci/cd", "tcp/ip", "pl/sql", "ui/ux", "i/o", "a/b testing", "r&d", "m&a"}
-)
+_SINGLE_CONCEPTS = frozenset({"ci/cd", "tcp/ip", "pl/sql", "ui/ux", "i/o", "a/b testing"})
 _LEVEL_ALIASES: dict[str, ExpectedLevel] = {
     "junior": ExpectedLevel.JUNIOR,
     "mid-level": ExpectedLevel.MID_LEVEL,
@@ -364,6 +362,8 @@ def structure_requirements(
     session.requirements_text = clean_text
     session.requirement_items = [item.model_dump(mode="json") for item in items]
     session.non_technical = non_technical
+    # A proposal built from the previous list no longer matches it (PLAN-09, PLAN-10).
+    session.proposal = None
     touch_activity(session)
 
     chat = _Chat(db, session)

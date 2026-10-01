@@ -258,6 +258,22 @@ def test_plan_03_resend_in_awaiting_confirmation_replaces_the_list(db: Session) 
     assert session.non_technical == ["English"]
 
 
+def test_plan_10_resend_clears_a_previous_plan_proposal(db: Session) -> None:
+    session = _open_session(db)
+    llm = FakeLLM({REQUIREMENTS_TASK: [_answer([_item("Python")]), _answer([_item("Java")])]})
+    structure_requirements(db, llm, session, ENGLISH_TEXT)
+    session.proposal = {"planned_count": 1, "skills": ["Python"]}
+    db.flush()
+
+    structure_requirements(db, llm, session, ENGLISH_TEXT + "\nJava is required too.")
+
+    db.refresh(session)
+    assert session.status is SessionStatus.AWAITING_CONFIRMATION
+    assert session.proposal is None
+    assert session.planned_count is None
+    assert list(_items_by_name(session)) == ["Java"]
+
+
 def test_plan_03_prompt_frames_the_text_as_untrusted(db: Session) -> None:
     session = _open_session(db)
     llm = FakeLLM({REQUIREMENTS_TASK: [_answer([_item("Python")])]})
