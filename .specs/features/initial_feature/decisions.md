@@ -401,3 +401,9 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Opções**: A) ampliar o escopo da TASK-087 com `resume-list-page.html`/`.spec.ts` (link em item `ready`); B) dívida para o relatório; C) task nova de fix.
 - **Decisão (humano)**: A.
 - **Impacto**: TASK-087 ganha `resume-list-page.html` (só o `routerLink`) e `resume-list-page.ts` (só `RouterLink` em `imports`, exigido pelo compilador) como wiring, `resume-list-page.spec.ts` nos testes e um Done when. check_plan APROVADO; ondas inalteradas.
+
+### LAC-49 — Rota de frontend da página de relatório (TASK-090 × TASK-092/TASK-093)
+- **Etapa**: /implement, review da onda 46 (TASK-090)
+- **Problema**: plan e tasks definem só a API `GET /api/sessions/{id}/report`; nenhuma rota de frontend para a página de relatório. A TASK-090 linka "View report" e a TASK-093 (histórico) também abre o relatório.
+- **Decisão (orquestrador, sem impacto de contrato/modelo/permissão)**: rota `/sessions/:id/report`, filha do Shell, espelhando a API. TASK-092 registra essa rota; TASK-093 linka para ela.
+- **Impacto**: **Requer atualização de plan** (mapa de rotas do frontend).
