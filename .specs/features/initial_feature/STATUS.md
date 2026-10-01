@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-10-01T09:14:50 · integradora `feature/initial_feature-integration` · baseline `develop@f6aa73c` (2026-10-01)
+Atualizado em 2026-10-01T10:29:31 · integradora `feature/initial_feature-integration` · baseline `develop@9e69643` (2026-10-01)
 
 ## Baseline
 
@@ -51,7 +51,7 @@ Atualizado em 2026-10-01T09:14:50 · integradora `feature/initial_feature-integr
 | 29 | TASK-043, TASK-044, TASK-047, TASK-048 | ✅ | G2, G5 | PADRAO: APROVADO |
 | 30 | TASK-045, TASK-055, TASK-067, TASK-071 | ✅ | G3 | PADRAO: APROVADO |
 | 31 | TASK-054, TASK-056, TASK-072, TASK-074 | ✅ | — | NAO_INVOCADO |
-| 32 | TASK-062 | — | — | — |
+| 32 | TASK-062 | ✅ | G1 | EXAUSTIVO: APROVADO |
 | 33 | TASK-063 | — | — | — |
 | 34 | TASK-057, TASK-073, TASK-083, TASK-086 | — | — | — |
 | 35 | TASK-058, TASK-075, TASK-088, TASK-089 | — | — | — |
@@ -166,7 +166,7 @@ Atualizado em 2026-10-01T09:14:50 · integradora `feature/initial_feature-integr
 | TASK-059 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-060 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-061 | ✅ APROVADA | crítico | 0/0/0 |  |
-| TASK-062 |  PENDENTE | crítico | 0/0/0 |  |
+| TASK-062 | ✅ APROVADA | crítico | 0/0/0 |  |
 | TASK-063 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-064 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-065 | ✅ APROVADA | médio | 0/0/0 |  |
@@ -203,8 +203,8 @@ Atualizado em 2026-10-01T09:14:50 · integradora `feature/initial_feature-integr
 
 ## Métricas
 
-- Aprovadas: 65/95 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 49/65
-- Ondas fechadas: 31 · QA semântico invocado em 25
+- Aprovadas: 66/95 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 50/66
+- Ondas fechadas: 32 · QA semântico invocado em 26
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 0

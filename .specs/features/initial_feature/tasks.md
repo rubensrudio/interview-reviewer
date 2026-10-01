@@ -1839,6 +1839,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-062 — Delete interview sessions
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-05`, `DATA-91`
 - **Tipo**: crud-padrão
