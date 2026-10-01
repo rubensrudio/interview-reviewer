@@ -31,6 +31,7 @@ from typing import cast
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.config import get_settings
 from app.db import get_sessionmaker
 from app.jobs.queue import ERROR_CODE_MAX_LENGTH, claim_next, mark_done, mark_failed
 from app.jobs.registry import (
@@ -43,6 +44,7 @@ from app.jobs.registry import (
     register,
     register_periodic,
 )
+from app.llm.model_version import ModelNotApproved, assert_model_release_allowed
 from app.logging_setup import configure_logging
 from app.models.job import Job, JobStatus
 from app.observability import log_event, timed
@@ -64,6 +66,8 @@ REAPER_INTERVAL_SECONDS = 60
 POLL_INTERVAL_SECONDS = 1.0
 UNKNOWN_KIND_ERROR = "UnknownJobKind"
 STALE_LOCK_ERROR = "StaleJobLock"
+PRODUCTION = "production"
+RELEASE_REFUSED_EXIT_CODE = 1
 
 # Modules whose import registers domain handlers and periodic functions. Each owning task
 # adds its module here; nothing domain-specific is registered by the worker itself.
@@ -264,6 +268,15 @@ def _load_handler_modules(modules: tuple[str, ...] = HANDLER_MODULES) -> None:
 
 def main() -> None:
     configure_logging()
+    # MODEL-03: like create_app, refuse to start in production without an approved model
+    # version, before any job is claimed. The gate itself logs the refusal reason.
+    settings = get_settings()
+    if settings.app_env == PRODUCTION:
+        try:
+            assert_model_release_allowed(settings)
+        except ModelNotApproved:
+            log_event("worker.release_refused")
+            raise SystemExit(RELEASE_REFUSED_EXIT_CODE) from None
     _load_handler_modules()
     stop = threading.Event()
 
