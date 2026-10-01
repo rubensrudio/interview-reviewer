@@ -30,9 +30,9 @@
 | 24 | TASK-051 | alto | G1 TASK-051 | RIGOROSO |
 | 25 | TASK-032, TASK-034, TASK-038, TASK-039 | médio | G2 CT-22 | PADRAO |
 | 26 | TASK-033, TASK-040, TASK-041, TASK-052 | médio | G2 CT-33 | PADRAO |
-| 27 | TASK-042, TASK-046, TASK-049, TASK-053 | médio | G2 CT-33,CT-35,CT-34 | PADRAO |
+| 27 | TASK-042, TASK-046, TASK-049, TASK-053 | médio | G2 CT-35,CT-33,CT-34 | PADRAO |
 | 28 | TASK-061 | crítico | G1 TASK-061 | EXAUSTIVO |
-| 29 | TASK-043, TASK-044, TASK-047, TASK-048 | médio | G2 CT-19,CT-36,CT-20,CT-33,CT-35,CT-6 | PADRAO |
+| 29 | TASK-043, TASK-044, TASK-047, TASK-048 | médio | G2 CT-35,CT-19,CT-33,CT-20,CT-36,CT-6 | PADRAO |
 | 30 | TASK-045, TASK-055, TASK-067, TASK-071 | médio | G3 (1 história(s) P1) | PADRAO |
 | 31 | TASK-054, TASK-056, TASK-072, TASK-074 | médio | — | — |
 | 32 | TASK-062 | crítico | G1 TASK-062 | EXAUSTIVO |
@@ -57,7 +57,7 @@
 
 PRs previstos (uma fase termina numa onda com QA semântico; a última, no QA FEATURE): fase 1: ondas 1, 2, 3 · fase 2: ondas 4, 5 · fase 3: ondas 6 · fase 4: ondas 7 · fase 5: ondas 8 · fase 6: ondas 9, 10, 11 · fase 7: ondas 12 · fase 8: ondas 13 · fase 9: ondas 14 · fase 10: ondas 15 · fase 11: ondas 16 · fase 12: ondas 17 · fase 13: ondas 18 · fase 14: ondas 19 · fase 15: ondas 20, 21 · fase 16: ondas 22 · fase 17: ondas 23 · fase 18: ondas 24 · fase 19: ondas 25 · fase 20: ondas 26 · fase 21: ondas 27 · fase 22: ondas 28 · fase 23: ondas 29 · fase 24: ondas 30 · fase 25: ondas 31, 32 · fase 26: ondas 33 · fase 27: ondas 34 · fase 28: ondas 35 · fase 29: ondas 36 · fase 30: ondas 37, 38, 39, 40, 41 · fase 31: ondas 42, 43, 44, 45 · fase 32: ondas 46 · fase 33: ondas 47 · fase 34: ondas 48, 49, 50
 
-Caminho crítico: TASK-001 → TASK-002 → TASK-003 → TASK-004 → TASK-007 → TASK-010 → TASK-026 → TASK-035 → TASK-039 → TASK-041 → TASK-042 → TASK-044 → TASK-045 → TASK-056 → TASK-068 → TASK-069 (16 tasks)
+Caminho crítico: TASK-001 → TASK-002 → TASK-003 → TASK-004 → TASK-007 → TASK-010 → TASK-026 → TASK-035 → TASK-039 → TASK-041 → TASK-042 → TASK-047 → TASK-054 → TASK-058 → TASK-068 → TASK-069 (16 tasks)
 G4 (gate cego) e G5 (retry) só são conhecidos na execução.
 
 ## Cobertura de requisitos

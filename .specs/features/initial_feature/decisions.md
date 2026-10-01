@@ -400,4 +400,4 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Problema**: `resume-list-page.html` (TASK-084) não linka `/resumes/:id` (TASK-085) e nenhuma task futura tinha a lista no escopo; a tela de detalhe (CV-07/CV-10) só abria por URL direta.
 - **Opções**: A) ampliar o escopo da TASK-087 com `resume-list-page.html`/`.spec.ts` (link em item `ready`); B) dívida para o relatório; C) task nova de fix.
 - **Decisão (humano)**: A.
-- **Impacto**: TASK-087 ganha `resume-list-page.html` como wiring (só o `routerLink`), `resume-list-page.spec.ts` nos testes e um Done when. check_plan APROVADO; ondas inalteradas.
+- **Impacto**: TASK-087 ganha `resume-list-page.html` (só o `routerLink`) e `resume-list-page.ts` (só `RouterLink` em `imports`, exigido pelo compilador) como wiring, `resume-list-page.spec.ts` nos testes e um Done when. check_plan APROVADO; ondas inalteradas.

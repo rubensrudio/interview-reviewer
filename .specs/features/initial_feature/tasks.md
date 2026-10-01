@@ -2580,6 +2580,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 - **Wiring permitido**:
   - `frontend/src/app/app.routes.ts` (apenas adicionar a rota da página)
   - `frontend/src/app/features/resumes/resume-list-page.html` (apenas o `routerLink` de item `ready` para `/resumes/{id}`, LAC-48)
+  - `frontend/src/app/features/resumes/resume-list-page.ts` (apenas adicionar `RouterLink` em `imports`, LAC-48)
 - **Reusa**: — (greenfield; usar só os contratos CT-n listados)
 - **Contrato**: CT-61, CT-60 (consome)
 - **Testes**: unit
