@@ -16,7 +16,7 @@ import { ApiError, NETWORK_ERROR } from '../../core/http/api-error';
 import { ConfirmDialog } from '../../shared/confirm-dialog';
 import { InterviewPanel } from './interview-panel';
 import { RequirementDraft, RequirementListEditor } from './requirement-list-editor';
-import { MessageKind, SessionApi, SessionMessage, SessionStatus, SessionView } from './session-api';
+import { SessionApi, SessionMessage, SessionStatus, SessionView } from './session-api';
 
 /** Interval between reloads while the backend works on the session (same as the resume pages). */
 const POLL_INTERVAL_MS = 3000;
@@ -76,10 +76,23 @@ const TERMINAL_STATUSES: ReadonlySet<SessionStatus> = new Set([
   'expired',
 ]);
 
-const CLARIFICATION_KINDS: ReadonlySet<MessageKind> = new Set([
-  'clarification_request',
-  'clarification_reply',
-]);
+/**
+ * True for the clarification exchange of the interview step (INTV-08): the candidate's question
+ * and the assistant's reply. An assistant `clarification_request` is the requirements step asking
+ * the candidate about an ambiguous item (PLAN-04) and belongs to the requirements chat.
+ */
+function isInterviewClarification(message: SessionMessage): boolean {
+  return (
+    (message.kind === 'clarification_request' && message.role === 'candidate') ||
+    message.kind === 'clarification_reply'
+  );
+}
+
+/** Request of the requirement list editor; they run one at a time, in order. */
+type EditorAction =
+  | { readonly kind: 'list'; readonly items: RequirementDraft[] }
+  | { readonly kind: 'confirmList' }
+  | { readonly kind: 'confirmPlan' };
 
 /** Catalog text for `err`, with `{placeholders}` filled from `details` (numbers only). */
 function errorText(err: ApiError): string {
@@ -273,6 +286,12 @@ function errorText(err: ApiError): string {
       outline: 3px solid #1d4ed8;
       outline-offset: 2px;
     }
+    fieldset.editor {
+      min-width: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
     .cancel-area {
       margin-top: 2rem;
       padding-top: 1rem;
@@ -289,7 +308,9 @@ function errorText(err: ApiError): string {
 export class SessionPage implements OnInit {
   private readonly api = inject(SessionApi);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly sessionId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
+  private readonly route = inject(ActivatedRoute);
+  /** Id of the session on screen; follows the route so `/sessions/a` → `/sessions/b` reloads. */
+  private sessionId = '';
 
   protected readonly view = signal<SessionView | null>(null);
   protected readonly loading = signal(true);
@@ -308,6 +329,11 @@ export class SessionPage implements OnInit {
    * confirmation buttons whenever any of its inputs changes (CT-62).
    */
   protected readonly editorError = signal<ApiError | null>(null);
+  /**
+   * True while an editor request is in flight. The editor is disabled meanwhile, so the next
+   * edit is built on the list returned by the server and no edit is lost (PLAN-05).
+   */
+  protected readonly editorBusy = signal(false);
 
   protected readonly statusLabels = STATUS_LABELS;
   protected readonly preparationFailedMessage = PREPARATION_FAILED_MESSAGE;
@@ -324,24 +350,29 @@ export class SessionPage implements OnInit {
   });
   protected readonly requirementItems = computed(() => this.view()?.requirements?.items ?? []);
   protected readonly nonTechnical = computed(() => this.view()?.requirements?.non_technical ?? []);
-  /** Requirements chat: every message except interview clarifications. */
+  /** Requirements chat (PLAN-04): every message except the interview clarifications. */
   protected readonly chatMessages = computed(() =>
-    (this.view()?.messages ?? []).filter((m) => !CLARIFICATION_KINDS.has(m.kind)),
+    (this.view()?.messages ?? []).filter((m) => !isInterviewClarification(m)),
   );
   /** Clarification exchange of the interview step (INTV-08). */
   protected readonly clarifications = computed(() =>
-    (this.view()?.messages ?? []).filter((m) => CLARIFICATION_KINDS.has(m.kind)),
+    (this.view()?.messages ?? []).filter(isInterviewClarification),
   );
 
   private loadSub: Subscription | null = null;
   private pollSub: Subscription | null = null;
+  /** Action requests of the current session; dropped when the route moves to another one. */
+  private requests = new Subscription();
+  private editorQueue: EditorAction[] = [];
 
   ngOnInit(): void {
-    this.destroyRef.onDestroy(() => {
-      this.loadSub?.unsubscribe();
-      this.pollSub?.unsubscribe();
+    this.destroyRef.onDestroy(() => this.stopRequests());
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const id = params.get('id') ?? '';
+      if (id !== this.sessionId) {
+        this.open(id);
+      }
     });
-    this.load();
   }
 
   protected reload(): void {
@@ -377,10 +408,8 @@ export class SessionPage implements OnInit {
     }
     this.sending.set(true);
     this.requirementsError.set(null);
-    this.api
-      .sendRequirements(this.sessionId, text)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
+    this.track(
+      this.api.sendRequirements(this.sessionId, text).subscribe({
         next: (view) => {
           this.sending.set(false);
           this.requirementsDraft.set('');
@@ -391,27 +420,28 @@ export class SessionPage implements OnInit {
           this.requirementsError.set(errorText(err));
           this.reloadIfInvalidState(err);
         },
-      });
+      }),
+    );
   }
 
   protected onListChanged(items: RequirementDraft[]): void {
-    this.runEditorAction(this.api.replaceRequirementList(this.sessionId, items));
+    this.enqueueEditorAction({ kind: 'list', items });
   }
 
   protected onConfirmList(): void {
-    this.runEditorAction(this.api.confirmList(this.sessionId));
+    this.enqueueEditorAction({ kind: 'confirmList' });
   }
 
   protected onConfirmPlan(): void {
-    this.runEditorAction(this.api.confirmPlan(this.sessionId));
+    this.enqueueEditorAction({ kind: 'confirmPlan' });
   }
 
   protected retryPreparation(): void {
-    this.runAction(this.api.retryPreparation(this.sessionId));
+    this.runAction(() => this.api.retryPreparation(this.sessionId));
   }
 
   protected retryEvaluation(): void {
-    this.runAction(this.api.retryEvaluation(this.sessionId));
+    this.runAction(() => this.api.retryEvaluation(this.sessionId));
   }
 
   protected askCancel(): void {
@@ -425,40 +455,118 @@ export class SessionPage implements OnInit {
 
   protected confirmCancel(): void {
     this.confirmingCancel.set(false);
-    this.runAction(this.api.cancel(this.sessionId));
+    this.runAction(() => this.api.cancel(this.sessionId));
   }
 
-  private runAction(request: Observable<SessionView>): void {
+  /** Shows the session `id` from scratch, dropping everything of the previous one. */
+  private open(id: string): void {
+    this.stopRequests();
+    this.sessionId = id;
+    this.view.set(null);
+    this.loading.set(true);
+    this.loadError.set(null);
+    this.actionError.set(null);
+    this.acting.set(false);
+    this.confirmingCancel.set(false);
+    this.requirementsDraft.set('');
+    this.requirementsError.set(null);
+    this.sending.set(false);
+    this.editorError.set(null);
+    this.editorBusy.set(false);
+    this.load();
+  }
+
+  private stopRequests(): void {
+    this.loadSub?.unsubscribe();
+    this.loadSub = null;
+    this.pollSub?.unsubscribe();
+    this.pollSub = null;
+    this.requests.unsubscribe();
+    this.requests = new Subscription();
+    this.editorQueue = [];
+  }
+
+  private track(subscription: Subscription): void {
+    this.requests.add(subscription);
+  }
+
+  private runAction(request: () => Observable<SessionView>): void {
     if (this.acting()) {
       return;
     }
     this.acting.set(true);
     this.actionError.set(null);
-    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (view) => {
-        this.acting.set(false);
-        this.applyView(view);
-      },
-      error: (err: ApiError) => {
-        this.acting.set(false);
-        this.actionError.set(errorText(err));
-        this.reloadIfInvalidState(err);
-      },
-    });
+    this.track(
+      request().subscribe({
+        next: (view) => {
+          this.acting.set(false);
+          this.applyView(view);
+        },
+        error: (err: ApiError) => {
+          this.acting.set(false);
+          this.actionError.set(errorText(err));
+          this.reloadIfInvalidState(err);
+        },
+      }),
+    );
   }
 
-  private runEditorAction(request: Observable<SessionView>): void {
-    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (view) => {
-        this.editorError.set(null);
-        this.applyView(view);
-      },
-      error: (err: ApiError) => {
-        // New object with the catalog text, so the editor never shows a raw server message.
-        this.editorError.set({ ...err, message: errorText(err) });
-        this.reloadIfInvalidState(err);
-      },
-    });
+  /**
+   * Queues an editor request. Consecutive list edits collapse into the latest one; the queue
+   * runs one request at a time, so responses can never be applied out of order.
+   */
+  private enqueueEditorAction(action: EditorAction): void {
+    const last = this.editorQueue.at(-1);
+    if (action.kind === 'list' && last?.kind === 'list') {
+      this.editorQueue[this.editorQueue.length - 1] = action;
+    } else {
+      this.editorQueue.push(action);
+    }
+    if (!this.editorBusy()) {
+      this.runNextEditorAction();
+    }
+  }
+
+  private runNextEditorAction(): void {
+    const action = this.editorQueue.shift();
+    if (!action) {
+      this.editorBusy.set(false);
+      return;
+    }
+    this.editorBusy.set(true);
+    this.track(
+      this.editorRequest(action).subscribe({
+        next: (view) => {
+          if (this.editorQueue.length > 0) {
+            // A newer request is waiting: this view is already outdated.
+            this.runNextEditorAction();
+            return;
+          }
+          this.editorBusy.set(false);
+          this.editorError.set(null);
+          this.applyView(view);
+        },
+        error: (err: ApiError) => {
+          // Later requests were built on a state the server rejected: drop them.
+          this.editorQueue = [];
+          this.editorBusy.set(false);
+          // New object with the catalog text, so the editor never shows a raw server message.
+          this.editorError.set({ ...err, message: errorText(err) });
+          this.reloadIfInvalidState(err);
+        },
+      }),
+    );
+  }
+
+  private editorRequest(action: EditorAction): Observable<SessionView> {
+    switch (action.kind) {
+      case 'list':
+        return this.api.replaceRequirementList(this.sessionId, action.items);
+      case 'confirmList':
+        return this.api.confirmList(this.sessionId);
+      case 'confirmPlan':
+        return this.api.confirmPlan(this.sessionId);
+    }
   }
 
   private reloadIfInvalidState(err: ApiError): void {

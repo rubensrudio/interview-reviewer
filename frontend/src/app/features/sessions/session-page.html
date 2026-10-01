@@ -48,15 +48,17 @@
     }
     @case ('awaiting_confirmation') {
       <ng-container *ngTemplateOutlet="chatTpl" />
-      <app-requirement-list-editor
-        [items]="requirementItems()"
-        [nonTechnical]="nonTechnical()"
-        [proposal]="current.proposal"
-        [error]="editorError()"
-        (changed)="onListChanged($event)"
-        (confirmList)="onConfirmList()"
-        (confirmPlan)="onConfirmPlan()"
-      />
+      <fieldset class="editor" [disabled]="editorBusy()" [attr.aria-busy]="editorBusy()">
+        <app-requirement-list-editor
+          [items]="requirementItems()"
+          [nonTechnical]="nonTechnical()"
+          [proposal]="current.proposal"
+          [error]="editorError()"
+          (changed)="onListChanged($event)"
+          (confirmList)="onConfirmList()"
+          (confirmPlan)="onConfirmPlan()"
+        />
+      </fieldset>
     }
     @case ('preparing_questions') {
       <p class="notice" role="status">Preparing your questions. This page updates automatically.</p>
@@ -77,19 +79,7 @@
     }
     @case ('in_interview') {
       <app-interview-panel [view]="current" (viewChange)="applyView($event)" />
-      @if (clarifications().length > 0) {
-        <section aria-labelledby="session-clarifications-title">
-          <h2 id="session-clarifications-title">Clarifications</h2>
-          <ol class="chat" role="log" aria-labelledby="session-clarifications-title">
-            @for (message of clarifications(); track message.id) {
-              <li [class]="message.role">
-                <span class="author">{{ authorLabel(message) }}</span
-                >{{ message.content }}
-              </li>
-            }
-          </ol>
-        </section>
-      }
+      <ng-container *ngTemplateOutlet="clarificationsTpl" />
     }
     @case ('evaluating') {
       <p class="notice" role="status">{{ evaluatingMessage }}</p>
@@ -119,6 +109,7 @@
     @default {
       <p class="notice">{{ closedMessage }}</p>
       <ng-container *ngTemplateOutlet="chatTpl" />
+      <ng-container *ngTemplateOutlet="clarificationsTpl" />
       @if (current.answered.length > 0) {
         <section aria-labelledby="session-answered-title">
           <h2 id="session-answered-title">Your answers</h2>
@@ -144,6 +135,22 @@
     </div>
   }
 }
+
+<ng-template #clarificationsTpl>
+  @if (clarifications().length > 0) {
+    <section aria-labelledby="session-clarifications-title">
+      <h2 id="session-clarifications-title">Clarifications</h2>
+      <ol class="chat" role="log" aria-labelledby="session-clarifications-title">
+        @for (message of clarifications(); track message.id) {
+          <li [class]="message.role">
+            <span class="author">{{ authorLabel(message) }}</span
+            >{{ message.content }}
+          </li>
+        }
+      </ol>
+    </section>
+  }
+</ng-template>
 
 <ng-template #chatTpl>
   @if (chatMessages().length > 0) {

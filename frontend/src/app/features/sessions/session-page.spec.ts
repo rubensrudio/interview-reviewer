@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { Observable, of, throwError } from 'rxjs';
+import { ActivatedRoute, ParamMap, convertToParamMap, provideRouter } from '@angular/router';
+import { BehaviorSubject, Observable, Subject, of, throwError } from 'rxjs';
 
 import { ApiError } from '../../core/http/api-error';
 import {
@@ -96,6 +96,7 @@ class SessionApiStub {
 describe('SessionPage', () => {
   let fixture: ComponentFixture<SessionPage>;
   let api: SessionApiStub;
+  let params: BehaviorSubject<ParamMap>;
   let root: HTMLElement;
 
   const text = (): string => root.textContent ?? '';
@@ -142,6 +143,7 @@ describe('SessionPage', () => {
 
   beforeEach(async () => {
     api = new SessionApiStub();
+    params = new BehaviorSubject(convertToParamMap({ id: 's-1' }));
     await TestBed.configureTestingModule({
       imports: [SessionPage],
       providers: [
@@ -149,7 +151,7 @@ describe('SessionPage', () => {
         { provide: SessionApi, useValue: api },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap({ id: 's-1' }) } },
+          useValue: { paramMap: params.asObservable() },
         },
       ],
     }).compileComponents();
@@ -223,6 +225,37 @@ describe('SessionPage', () => {
     });
   });
 
+  it('loads the new session when the route id changes', async () => {
+    await render();
+    api.get.mockReturnValue(of(makeSession({ id: 's-2', status: 'evaluation_failed' })));
+    params.next(convertToParamMap({ id: 's-2' }));
+    await settle();
+
+    expect(api.get).toHaveBeenLastCalledWith('s-2');
+    expect(text()).toContain(EVALUATION_FAILED);
+    api.retryEvaluation.mockReturnValue(of(makeSession({ id: 's-2', status: 'evaluating' })));
+    buttonByText('Try again').click();
+    expect(api.retryEvaluation).toHaveBeenCalledWith('s-2');
+  });
+
+  it('ignores a pending response of the previous session', async () => {
+    const pending = new Subject<SessionView>();
+    api.sendRequirements.mockReturnValue(pending);
+    await render();
+    type(fieldByLabel('Job requirements'), 'Python');
+    await settle();
+    buttonByText('Send').click();
+    await settle();
+
+    api.get.mockReturnValue(of(makeSession({ id: 's-2', status: 'evaluation_failed' })));
+    params.next(convertToParamMap({ id: 's-2' }));
+    await settle();
+    pending.next(makeSession({ status: 'awaiting_confirmation' }));
+    await settle();
+
+    expect(text()).toContain(EVALUATION_FAILED);
+  });
+
   describe('awaiting confirmation', () => {
     const awaiting = (): SessionView =>
       makeSession({
@@ -287,6 +320,81 @@ describe('SessionPage', () => {
       expect(first?.code).toBe('NO_REQUIRED_SKILLS');
       expect(second).not.toBe(first);
       expect(text()).toContain('Define at least one required technical skill to continue.');
+    });
+
+    it('shows the requirements clarification question in the chat (PLAN-04)', async () => {
+      api.get.mockReturnValue(
+        of({
+          ...awaiting(),
+          messages: [
+            makeMessage(),
+            makeMessage({ id: 'm-2', kind: 'clarification_request', content: 'Which cloud?' }),
+          ],
+        }),
+      );
+      await render();
+
+      const chat = root.querySelector('[role="log"][aria-labelledby="session-chat-title"]');
+      expect(chat?.textContent).toContain('Which cloud?');
+      expect(root.querySelector('#session-clarifications-title')).toBeNull();
+    });
+
+    it('sends one editor request at a time, each on the last list returned (PLAN-05)', async () => {
+      api.get.mockReturnValue(of(awaiting()));
+      const first = new Subject<SessionView>();
+      const second = new Subject<SessionView>();
+      api.replaceRequirementList.mockReturnValueOnce(first).mockReturnValueOnce(second);
+      await render();
+
+      const page = fixture.componentInstance as unknown as {
+        onListChanged(items: RequirementItem[]): void;
+      };
+      const firstList = [makeItem({ classification: 'nice_to_have' })];
+      const staleList = [makeItem({ level: 'expert' })];
+      const latestList = [makeItem({ level: 'junior' })];
+      page.onListChanged(firstList);
+      await settle();
+      expect(root.querySelector<HTMLFieldSetElement>('fieldset')?.disabled).toBe(true);
+
+      page.onListChanged(staleList);
+      page.onListChanged(latestList);
+      expect(api.replaceRequirementList).toHaveBeenCalledTimes(1);
+
+      first.next({ ...awaiting(), requirements: { items: firstList, non_technical: [] } });
+      first.complete();
+      await settle();
+      expect(api.replaceRequirementList).toHaveBeenCalledTimes(2);
+      expect(api.replaceRequirementList).toHaveBeenLastCalledWith('s-1', latestList);
+      expect(root.querySelector<HTMLFieldSetElement>('fieldset')?.disabled).toBe(true);
+
+      second.next({ ...awaiting(), requirements: { items: latestList, non_technical: [] } });
+      second.complete();
+      await settle();
+      expect(root.querySelector<HTMLFieldSetElement>('fieldset')?.disabled).toBe(false);
+      const level = root.querySelector<HTMLSelectElement>(
+        'select[aria-label="Expected level of Python"]',
+      );
+      expect(level?.value).toBe('junior');
+    });
+
+    it('drops queued editor requests after a failure', async () => {
+      api.get.mockReturnValue(of(awaiting()));
+      const first = new Subject<SessionView>();
+      api.replaceRequirementList.mockReturnValueOnce(first);
+      await render();
+
+      const page = fixture.componentInstance as unknown as {
+        onListChanged(items: RequirementItem[]): void;
+        onConfirmList(): void;
+      };
+      page.onListChanged([makeItem()]);
+      page.onConfirmList();
+      first.error(apiError('VALIDATION_ERROR'));
+      await settle();
+
+      expect(api.confirmList).not.toHaveBeenCalled();
+      expect(text()).toContain('Please check the highlighted fields.');
+      expect(root.querySelector<HTMLFieldSetElement>('fieldset')?.disabled).toBe(false);
     });
 
     it('never forwards a raw server message to the editor', async () => {
@@ -386,6 +494,7 @@ describe('SessionPage', () => {
         current_question: { id: 'q-1', position: 1, skill: 'Python', text: 'What is a GIL?' },
         messages: [
           makeMessage({ id: 'm-0', kind: 'requirements', role: 'candidate', content: 'Old JD' }),
+          makeMessage({ id: 'm-00', kind: 'clarification_request', content: 'Which cloud?' }),
           makeMessage({
             id: 'm-1',
             kind: 'clarification_request',
@@ -404,6 +513,7 @@ describe('SessionPage', () => {
       expect(text()).toContain('Which Python version?');
       expect(text()).toContain('Any recent one.');
       expect(text()).not.toContain('Old JD');
+      expect(text()).not.toContain('Which cloud?');
     });
 
     it('applies the view emitted by the panel', async () => {
