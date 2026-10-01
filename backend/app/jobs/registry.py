@@ -100,11 +100,13 @@ def _register_domain_handlers() -> None:
         run_session_expiry,
     )
     from app.interviews.question_generation import PREPARE_QUESTIONS_JOB, prepare_questions
+    from app.privacy.account_deletion import ACCOUNT_PURGE_JOB, purge_account
     from app.resumes.processing import RESUME_PROCESS_JOB, process_resume
 
     register(RESUME_PROCESS_JOB, process_resume)
     register(PREPARE_QUESTIONS_JOB, prepare_questions)
     register(EVALUATE_JOB_KIND, run_evaluation)
+    register(ACCOUNT_PURGE_JOB, purge_account)
     register_periodic(EXPIRE_PERIODIC_NAME, EXPIRE_PERIODIC_SECONDS, run_session_expiry)
 
 
