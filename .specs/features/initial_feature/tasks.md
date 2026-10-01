@@ -2399,6 +2399,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-081 — Build terms acceptance page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-10`, `AUTH-15`
 - **Tipo**: ui-puro
