@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-10-01T13:57:20 · integradora `feature/initial_feature-integration` · baseline `develop@c9a0570` (2026-10-01)
+Atualizado em 2026-10-01T14:42:12 · integradora `feature/initial_feature-integration` · baseline `develop@076add1` (2026-10-01)
 
 ## Baseline
 
@@ -8,11 +8,11 @@ Atualizado em 2026-10-01T13:57:20 · integradora `feature/initial_feature-integr
 |---|---|
 | lint@backend | 0 erro(s) |
 | typecheck@backend | 0 erro(s) |
-| test@backend | 13 testes, 0 falhando |
+| test@backend | 1492 testes, 0 falhando |
 | build@backend | ok |
 | lint@frontend | 0 erro(s) |
 | typecheck@frontend | 0 erro(s) |
-| test@frontend | 2 testes, 0 falhando |
+| test@frontend | 21 testes, 0 falhando |
 | e2e@frontend | sem regressões e2e ainda |
 | build@frontend | ok |
 
@@ -64,7 +64,7 @@ Atualizado em 2026-10-01T13:57:20 · integradora `feature/initial_feature-integr
 | 42 | TASK-082 | ✅ | — | NAO_INVOCADO |
 | 43 | TASK-084 | ✅ | — | NAO_INVOCADO |
 | 44 | TASK-085 | ✅ | — | NAO_INVOCADO |
-| 45 | TASK-087 | — | — | — |
+| 45 | TASK-087 | ✅ | G3 | PADRAO: APROVADO |
 | 46 | TASK-090 | — | — | — |
 | 47 | TASK-092 | — | — | — |
 | 48 | TASK-093 | — | — | — |
@@ -197,7 +197,7 @@ Atualizado em 2026-10-01T13:57:20 · integradora `feature/initial_feature-integr
 | TASK-084 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-085 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-086 | ✅ APROVADA | médio | 0/0/0 |  |
-| TASK-087 |  PENDENTE | médio | 0/0/0 |  |
+| TASK-087 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-088 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-089 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-090 |  PENDENTE | médio | 0/0/0 |  |
@@ -209,8 +209,8 @@ Atualizado em 2026-10-01T13:57:20 · integradora `feature/initial_feature-integr
 
 ## Métricas
 
-- Aprovadas: 89/95 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 71/89
-- Ondas fechadas: 44 · QA semântico invocado em 31
+- Aprovadas: 90/95 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 72/90
+- Ondas fechadas: 45 · QA semântico invocado em 32
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 0

@@ -2565,6 +2565,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-087 — Build new interview page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `CV-11`, `PLAN-01`, `PLAN-02`, `LANG-01`, `LANG-02`
 - **Tipo**: ui-puro
