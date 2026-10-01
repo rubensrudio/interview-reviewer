@@ -2745,6 +2745,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-093 — Build interview history page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-01`, `DATA-05`, `DATA-92`, `CMP-01`
 - **Tipo**: ui-puro
@@ -2825,6 +2826,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-096 — Align report PDF with the report page (LAC-50)
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `EXPT-01`
 - **Tipo**: crud-padrão
