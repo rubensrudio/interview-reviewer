@@ -42,6 +42,17 @@ export const routes: Routes = [
     canActivate: [guestGuard],
   },
   {
+    // Public on purpose (DATA-08): readable with or without a session, so no guard.
+    path: 'privacy',
+    title: 'Privacy Policy',
+    loadComponent: () => import('./features/legal/privacy-page').then((m) => m.PrivacyPage),
+  },
+  {
+    path: 'terms',
+    title: 'Terms of Use',
+    loadComponent: () => import('./features/legal/terms-page').then((m) => m.TermsPage),
+  },
+  {
     // Signed-in only: termsGuard sends users here, so it must not run termsGuard itself.
     path: 'accept-terms',
     title: 'Accept the Terms of Use',
@@ -52,6 +63,25 @@ export const routes: Routes = [
     path: '',
     loadComponent: () => import('./layout/shell').then((m) => m.Shell),
     canActivate: [authGuard, termsGuard],
-    children: [],
+    children: [
+      {
+        path: 'resumes',
+        title: 'Resumes',
+        loadComponent: () =>
+          import('./features/resumes/resume-list-page').then((m) => m.ResumeListPage),
+      },
+      {
+        path: 'resumes/:id',
+        title: 'Resume',
+        loadComponent: () =>
+          import('./features/resumes/resume-detail-page').then((m) => m.ResumeDetailPage),
+      },
+      {
+        path: 'sessions/new',
+        title: 'New interview',
+        loadComponent: () =>
+          import('./features/sessions/new-session-page').then((m) => m.NewSessionPage),
+      },
+    ],
   },
 ];

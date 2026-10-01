@@ -1,0 +1,91 @@
+<h1 id="resumes-title">Resumes</h1>
+
+<section aria-labelledby="upload-title">
+  <h2 id="upload-title">Upload a resume</h2>
+  <div class="upload">
+    <label for="resume-file">Choose a PDF file</label>
+    <input
+      id="resume-file"
+      type="file"
+      accept="application/pdf,.pdf"
+      aria-describedby="resume-file-hint"
+      [attr.aria-invalid]="uploadError() !== null"
+      [attr.aria-busy]="uploading()"
+      [disabled]="uploading()"
+      (change)="onFileSelected($event)"
+    />
+    <p id="resume-file-hint" class="hint">Text-based PDF in English.</p>
+    @if (uploading()) {
+      <p role="status">Uploading…</p>
+    }
+    @if (uploadError(); as message) {
+      <p class="form-error" role="alert">{{ message }}</p>
+    }
+  </div>
+</section>
+
+<section aria-labelledby="list-title" [attr.aria-busy]="loading()">
+  <h2 id="list-title">Your resumes</h2>
+
+  @if (deleteError(); as message) {
+    <p class="form-error" role="alert">{{ message }}</p>
+  }
+
+  @if (loading()) {
+    <p role="status">Loading resumes…</p>
+  } @else if (loadError(); as message) {
+    <p class="form-error" role="alert">{{ message }}</p>
+    <button type="button" class="secondary" (click)="retry()">Try again</button>
+  } @else if (isEmpty()) {
+    <p>No resumes yet. Upload a PDF to get started.</p>
+  } @else {
+    <ul>
+      @for (resume of resumes(); track resume.id) {
+        <li data-testid="resume-item">
+          <div class="info">
+            @if (resume.status === 'ready') {
+              <a class="name" [routerLink]="['/resumes', resume.id]">{{ resume.filename }}</a>
+            } @else {
+              <span class="name">{{ resume.filename }}</span>
+            }
+            <span>
+              Uploaded
+              <time [attr.datetime]="resume.uploaded_at">{{
+                resume.uploaded_at | date: 'medium'
+              }}</time>
+            </span>
+            <div aria-live="polite" aria-atomic="true">
+              <span class="status" [class]="'status-' + resume.status">
+                <span class="visually-hidden">{{ resume.filename }}: </span
+                >{{ statusLabels[resume.status] }}
+              </span>
+              @if (failureMessage(resume); as failure) {
+                <p class="failure">{{ failure }}</p>
+              }
+            </div>
+          </div>
+          <button
+            type="button"
+            class="danger"
+            [attr.aria-label]="'Delete ' + resume.filename"
+            [disabled]="deletingId() === resume.id"
+            [attr.aria-busy]="deletingId() === resume.id"
+            (click)="askDelete(resume)"
+          >
+            Delete
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</section>
+
+@if (pendingDelete()) {
+  <app-confirm-dialog
+    title="Delete this resume?"
+    [message]="deleteMessage"
+    confirmLabel="Delete"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  />
+}

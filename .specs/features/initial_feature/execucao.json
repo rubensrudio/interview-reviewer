@@ -1,10 +1,10 @@
 {
  "versao": 2,
  "feature": "initial_feature",
- "gerado_em": "2026-10-01T08:49:32",
+ "gerado_em": "2026-10-01T14:18:24",
  "hashes": {
   "plan": "d2490da6dbc9e167",
-  "tasks": "f3e078d0a7b8dc7e"
+  "tasks": "1824664a02b30e1d"
  },
  "comandos": [
   {
@@ -3292,10 +3292,14 @@
     "frontend/src/app/features/sessions/new-session-page.html"
    ],
    "teste": [
-    "frontend/src/app/features/sessions/new-session-page.spec.ts"
+    "frontend/src/app/features/sessions/new-session-page.spec.ts",
+    "frontend/src/app/features/resumes/resume-list-page.spec.ts"
    ],
    "wiring": [
-    "frontend/src/app/app.routes.ts"
+    "frontend/src/app/app.routes.ts",
+    "frontend/src/app/features/resumes/resume-list-page.html",
+    "/resumes/{id}",
+    "frontend/src/app/features/resumes/resume-list-page.ts"
    ],
    "contratos": [
     "CT-60",
@@ -4017,7 +4021,7 @@
       "TASK-047",
       "TASK-048"
      ],
-     "CT-20": [
+     "CT-19": [
       "TASK-043",
       "TASK-048"
      ],
@@ -4027,14 +4031,14 @@
       "TASK-047",
       "TASK-048"
      ],
+     "CT-20": [
+      "TASK-043",
+      "TASK-048"
+     ],
      "CT-36": [
       "TASK-043",
       "TASK-044",
       "TASK-047",
-      "TASK-048"
-     ],
-     "CT-19": [
-      "TASK-043",
       "TASK-048"
      ],
      "CT-6": [

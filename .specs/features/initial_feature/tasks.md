@@ -2426,6 +2426,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-082 — Build privacy policy and terms pages
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-08`
 - **Tipo**: ui-puro
@@ -2479,6 +2480,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-084 — Build resume list page with upload and deletion
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `CV-01`, `CV-02`, `CV-03`, `CV-04`, `CV-05`, `CV-06`, `CV-13`, `CV-14`, `CV-90`, `CV-91`, `CV-93`, `DATA-03`
 - **Tipo**: ui-puro
@@ -2508,6 +2510,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-085 — Build resume extraction review page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `CV-07`, `CV-10`
 - **Tipo**: ui-puro
@@ -2562,6 +2565,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-087 — Build new interview page
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `CV-11`, `PLAN-01`, `PLAN-02`, `LANG-01`, `LANG-02`
 - **Tipo**: ui-puro
@@ -2573,16 +2577,20 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
   - `frontend/src/app/features/sessions/new-session-page.html`
 - **Arquivos de teste**:
   - `frontend/src/app/features/sessions/new-session-page.spec.ts`
+  - `frontend/src/app/features/resumes/resume-list-page.spec.ts`
 - **Wiring permitido**:
   - `frontend/src/app/app.routes.ts` (apenas adicionar a rota da página)
+  - `frontend/src/app/features/resumes/resume-list-page.html` (apenas o `routerLink` de item `ready` para `/resumes/{id}`, LAC-48)
+  - `frontend/src/app/features/resumes/resume-list-page.ts` (apenas adicionar `RouterLink` em `imports`, LAC-48)
 - **Reusa**: — (greenfield; usar só os contratos CT-n listados)
 - **Contrato**: CT-61, CT-60 (consome)
 - **Testes**: unit
-- **Descrição**: Seleção de currículo (só `ready`), idioma (de `options`) e nível opcional. 409 `SESSION_IN_PROGRESS` abre diálogo "You already have an interview in progress..." com Resume (navega) e Cancel (cancela e tenta de novo).
+- **Descrição**: Seleção de currículo (só `ready`), idioma (de `options`) e nível opcional. 409 `SESSION_IN_PROGRESS` abre diálogo "You already have an interview in progress..." com Resume (navega) e Cancel (cancela e tenta de novo). Na lista de currículos (TASK-084), cada item `ready` passa a linkar para `/resumes/{id}` (TASK-085) via `routerLink`; na lista, só esse link muda (LAC-48).
 - **Done when**:
   - [ ] Teste: o select de currículo lista só itens devolvidos por `list("ready")`
   - [ ] Teste: 409 `SESSION_IN_PROGRESS` mostra o diálogo com os botões Resume e Cancel
   - [ ] Teste: sucesso navega para `/sessions/{id}`
+  - [ ] Teste: na lista de currículos, item `ready` tem link para `/resumes/{id}` (LAC-48)
 - **Não fazer**:
   - Não filtrar status no cliente como regra (usa o filtro do backend)
 
