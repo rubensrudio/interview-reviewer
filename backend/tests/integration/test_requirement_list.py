@@ -467,3 +467,88 @@ def test_lang_02_without_interview_level_keeps_items_without_level(db: Session) 
     confirm_requirement_list(db, session)
     confirm_plan(db, session)
     assert _stored(session)[0].level is None
+
+
+# --- Regression: QA finding TASK-044-1 (NUL and control characters) --------------------------
+
+
+def test_plan_05_nul_in_name_and_terms_is_removed_before_storing(db: Session) -> None:
+    session = _session(db, [_item("a", "Go")])
+    submitted = RequirementItemInput.model_validate(
+        {
+            "name": "Py\x00thon",
+            "classification": "required",
+            "original_terms": ["Py\x00thon", "Py\x00\x00thon 3"],
+        }
+    )
+
+    replace_requirement_list(db, session, [submitted])
+    db.flush()
+    db.refresh(session)
+
+    stored = _stored(session)
+    assert stored[0].name == "Python"
+    assert stored[0].original_terms == ["Python", "Python 3"]
+
+
+def test_plan_05_control_characters_become_spaces(db: Session) -> None:
+    session = _session(db, [_item("a", "Go")])
+    submitted = RequirementItemInput.model_validate(
+        {
+            "id": "a\x00",
+            "name": "Spring\x07\tBoot\x1b",
+            "classification": "required",
+            "original_terms": ["Spring\nBoot", "\x9f"],
+        }
+    )
+
+    replace_requirement_list(db, session, [submitted])
+    db.flush()
+    db.refresh(session)
+
+    stored = _stored(session)
+    assert stored[0].id == "a"
+    assert stored[0].name == "Spring Boot"
+    assert stored[0].original_terms == ["Spring Boot"]
+
+
+def test_plan_05_name_made_only_of_nul_is_rejected() -> None:
+    with pytest.raises(ValidationError):
+        RequirementItemInput.model_validate({"name": "\x00\x00", "classification": "required"})
+
+
+def test_plan_11_merge_name_with_nul_is_cleaned_and_storable(db: Session) -> None:
+    session = _session(db, [_item("a", "Docker"), _item("b", "Podman")])
+    merged = merge_items(_stored(session), ["a", "b"], "Con\x00tainers\x01")
+
+    assert merged[0].name == "Containers"
+    replace_requirement_list(
+        db, session, [RequirementItemInput.model_validate(item.model_dump()) for item in merged]
+    )
+    db.flush()
+    db.refresh(session)
+    assert _stored(session)[0].name == "Containers"
+
+
+def test_plan_11_merge_name_only_nul_is_validation_error() -> None:
+    items = [
+        RequirementItem.model_validate(_item("a", "Docker")),
+        RequirementItem.model_validate(_item("b", "Podman")),
+    ]
+    with pytest.raises(AppError) as exc_info:
+        merge_items(items, ["a", "b"], "\x00")
+    assert exc_info.value.code == VALIDATION_ERROR
+
+
+def test_plan_10_confirm_plan_rejects_proposal_out_of_sync_with_items(db: Session) -> None:
+    session = _session(db, _required(2))
+    confirm_requirement_list(db, session)
+    session.requirement_items = _required(3)
+
+    with pytest.raises(AppError) as exc_info:
+        confirm_plan(db, session)
+
+    assert exc_info.value.code == INVALID_STATE
+    assert session.status == SessionStatus.AWAITING_CONFIRMATION
+    assert session.planned_count is None
+    assert _prepare_jobs(db, session) == []

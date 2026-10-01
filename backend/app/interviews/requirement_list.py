@@ -18,11 +18,19 @@ None of these functions commit (CT-2). Callers pass a session locked with
 ``get_owned_session(..., for_update=True)`` and commit afterwards.
 """
 
+import re
 import uuid
 from dataclasses import dataclass, field
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
+from pydantic import (
+    BaseModel,
+    BeforeValidator,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    field_validator,
+)
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -67,8 +75,24 @@ MAX_TERMS_PER_ITEM = 50
 NAME_MAX_LENGTH = 255
 ID_MAX_LENGTH = 64
 
+# NUL cannot be stored in PostgreSQL text/JSONB and is dropped; other control characters
+# (C0, DEL, C1) become spaces, as in the other interview inputs. Names are single-line, so
+# whitespace runs collapse to one space.
+_NUL_RE = re.compile("\x00")
+_CONTROL_RE = re.compile("[\x01-\x1f\x7f-\x9f]")
+
+
+def _clean_text(value: object) -> object:
+    """Sanitize a candidate-provided name; non-strings are left for pydantic to reject."""
+    if not isinstance(value, str):
+        return value
+    return " ".join(_CONTROL_RE.sub(" ", _NUL_RE.sub("", value)).split())
+
+
 _Text = Annotated[
-    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=NAME_MAX_LENGTH)
+    str,
+    BeforeValidator(_clean_text),
+    StringConstraints(min_length=1, max_length=NAME_MAX_LENGTH),
 ]
 
 
@@ -84,7 +108,9 @@ class RequirementItemInput(BaseModel):
 
     id: (
         Annotated[
-            str, StringConstraints(strip_whitespace=True, min_length=1, max_length=ID_MAX_LENGTH)
+            str,
+            BeforeValidator(_clean_text),
+            StringConstraints(min_length=1, max_length=ID_MAX_LENGTH),
         ]
         | None
     ) = None
@@ -92,6 +118,15 @@ class RequirementItemInput(BaseModel):
     original_terms: list[_Text] = Field(default_factory=list, max_length=MAX_TERMS_PER_ITEM)
     classification: Literal["required", "nice_to_have"]
     level: ExpectedLevel | None = None
+
+    @field_validator("original_terms", mode="before")
+    @classmethod
+    def _drop_blank_terms(cls, terms: object) -> object:
+        # A term left empty after sanitizing is dropped instead of rejecting the item.
+        if not isinstance(terms, list):
+            return terms
+        cleaned = [_clean_text(term) for term in terms]
+        return [term for term in cleaned if term != ""]
 
     @field_validator("original_terms")
     @classmethod
@@ -279,7 +314,8 @@ def confirm_requirement_list(db: Session, session: InterviewSession) -> PlanProp
 def confirm_plan(db: Session, session: InterviewSession) -> None:
     """Fix the plan and queue question preparation (PLAN-10).
 
-    Requires ``awaiting_confirmation`` with a stored proposal (``INVALID_STATE`` otherwise).
+    Requires ``awaiting_confirmation`` with a stored proposal whose skills still match the
+    current list (``INVALID_STATE`` otherwise, so a stale proposal is never fixed).
     Applies ``interview_level`` to items without level (LANG-02), fixes ``planned_count``,
     moves to ``preparing_questions`` and enqueues ``session.prepare_questions``.
     """
@@ -289,6 +325,9 @@ def confirm_plan(db: Session, session: InterviewSession) -> None:
     items = _load_items(session)
     _raise_first(confirmation_errors(items, get_settings().max_required_skills))
     proposal = PlanProposal.model_validate(session.proposal)
+    skills = _required_skills(items)
+    if skills != proposal.skills or len(skills) != proposal.planned_count:
+        raise AppError.from_catalog(INVALID_STATE)
 
     if session.interview_level is not None:
         level = session.interview_level
@@ -319,8 +358,8 @@ def merge_items(items: list[RequirementItem], ids: list[str], name: str) -> list
     by_id = {item.id: item for item in items}
     if len(selected_ids) < 2 or any(item_id not in by_id for item_id in selected_ids):
         raise _validation_error(["ids"], "invalid")
-    merged_name = " ".join(name.split())
-    if not merged_name or len(merged_name) > NAME_MAX_LENGTH:
+    merged_name = _clean_text(name)
+    if not isinstance(merged_name, str) or not merged_name or len(merged_name) > NAME_MAX_LENGTH:
         raise _validation_error(["name"], "invalid")
 
     selected_set = set(selected_ids)
