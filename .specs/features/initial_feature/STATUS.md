@@ -1,6 +1,6 @@
 # STATUS — initial_feature
 
-Atualizado em 2026-09-30T16:18:04 · integradora `feature/initial_feature-integration` · baseline `develop@18fd167` (2026-09-30)
+Atualizado em 2026-09-30T16:24:50 · integradora `feature/initial_feature-integration` · baseline `develop@18fd167` (2026-09-30)
 
 ## Baseline
 
@@ -27,7 +27,7 @@ Atualizado em 2026-09-30T16:18:04 · integradora `feature/initial_feature-integr
 | 5 | TASK-020 | ✅ | G1 | EXAUSTIVO: APROVADO |
 | 6 | TASK-004, TASK-006, TASK-027, TASK-036 | ✅ | G2 | PADRAO: APROVADO |
 | 7 | TASK-014 | ✅ | G1 | RIGOROSO: APROVADO |
-| 8 | TASK-023 | — | — | — |
+| 8 | TASK-023 | ✅ | G1 | RIGOROSO: APROVADO |
 | 9 | TASK-007, TASK-025, TASK-050, TASK-064 | — | — | — |
 | 10 | TASK-008, TASK-010, TASK-065, TASK-066 | — | — | — |
 | 11 | TASK-012 | — | — | — |
@@ -78,6 +78,7 @@ Atualizado em 2026-09-30T16:18:04 · integradora `feature/initial_feature-integr
 | 1 | 1, 2, 3 | TASK-001, TASK-002, TASK-011 | `feature/initial_feature-phase-1` → `develop` | https://github.com/rubensrudio/interview-reviewer/pull/1 |
 | 2 | 4, 5 | TASK-003, TASK-005, TASK-024, TASK-028, TASK-020 | `feature/initial_feature-phase-2` → `feature/initial_feature-phase-1` | https://github.com/rubensrudio/interview-reviewer/pull/2 |
 | 3 | 6 | TASK-004, TASK-006, TASK-027, TASK-036 | `feature/initial_feature-phase-3` → `feature/initial_feature-phase-2` | https://github.com/rubensrudio/interview-reviewer/pull/3 |
+| 4 | 7 | TASK-014 | `feature/initial_feature-phase-4` → `feature/initial_feature-phase-3` | https://github.com/rubensrudio/interview-reviewer/pull/4 |
 
 ## Tasks
 
@@ -105,7 +106,7 @@ Atualizado em 2026-09-30T16:18:04 · integradora `feature/initial_feature-integr
 | TASK-020 | ✅ APROVADA | crítico | 0/0/0 |  |
 | TASK-021 |  PENDENTE | crítico | 0/0/0 |  |
 | TASK-022 |  PENDENTE | crítico | 0/0/0 |  |
-| TASK-023 |  PENDENTE | alto | 0/0/0 |  |
+| TASK-023 | ✅ APROVADA | alto | 0/0/0 |  |
 | TASK-024 | ✅ APROVADA | médio | 0/0/0 |  |
 | TASK-025 |  PENDENTE | médio | 0/0/0 |  |
 | TASK-026 |  PENDENTE | médio | 0/0/0 |  |
@@ -181,8 +182,8 @@ Atualizado em 2026-09-30T16:18:04 · integradora `feature/initial_feature-integr
 
 ## Métricas
 
-- Aprovadas: 13/95 · bloqueadas: 0
-- Aprovadas em 1ª rodada: 13/13
-- Ondas fechadas: 7 · QA semântico invocado em 4
+- Aprovadas: 14/95 · bloqueadas: 0
+- Aprovadas em 1ª rodada: 14/14
+- Ondas fechadas: 8 · QA semântico invocado em 5
 - Regressões capturadas pelo gate mecânico: 0
 - Testes e2e de regressão criados a partir de achados do QA: 0
