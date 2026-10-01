@@ -30,9 +30,9 @@
 | 24 | TASK-051 | alto | G1 TASK-051 | RIGOROSO |
 | 25 | TASK-032, TASK-034, TASK-038, TASK-039 | médio | G2 CT-22 | PADRAO |
 | 26 | TASK-033, TASK-040, TASK-041, TASK-052 | médio | G2 CT-33 | PADRAO |
-| 27 | TASK-042, TASK-046, TASK-049, TASK-053 | médio | G2 CT-33,CT-35,CT-34 | PADRAO |
+| 27 | TASK-042, TASK-046, TASK-049, TASK-053 | médio | G2 CT-35,CT-33,CT-34 | PADRAO |
 | 28 | TASK-061 | crítico | G1 TASK-061 | EXAUSTIVO |
-| 29 | TASK-043, TASK-044, TASK-047, TASK-048 | médio | G2 CT-36,CT-33,CT-19,CT-20,CT-35,CT-6 | PADRAO |
+| 29 | TASK-043, TASK-044, TASK-047, TASK-048 | médio | G2 CT-35,CT-20,CT-33,CT-36,CT-19,CT-6 | PADRAO |
 | 30 | TASK-045, TASK-055, TASK-067, TASK-071 | médio | G3 (1 história(s) P1) | PADRAO |
 | 31 | TASK-054, TASK-056, TASK-072, TASK-074 | médio | — | — |
 | 32 | TASK-062 | crítico | G1 TASK-062 | EXAUSTIVO |
@@ -447,7 +447,7 @@ Cobertura: 140/140
 | TASK-064 | 1 | 1 | unit | sim | hm-engineer |
 | TASK-065 | 2 | 1 | unit | sim | hm-engineer |
 | TASK-066 | 1 | 1 | unit | sim | hm-engineer |
-| TASK-067 | 1 | 1 | unit | sim | hm-engineer |
+| TASK-067 | 2 | 1 | unit | sim | hm-engineer |
 | TASK-068 | 2 | 1 | unit | não | hm-engineer |
 | TASK-069 | 2 | 0 | none | sim | hm-engineer |
 | TASK-070 | 2 | 1 | unit | sim | hm-designer |

@@ -1,10 +1,10 @@
 {
  "versao": 2,
  "feature": "initial_feature",
- "gerado_em": "2026-09-30T14:19:55",
+ "gerado_em": "2026-10-01T08:49:32",
  "hashes": {
   "plan": "d2490da6dbc9e167",
-  "tasks": "1aa3d0caf1bf27b5"
+  "tasks": "f3e078d0a7b8dc7e"
  },
  "comandos": [
   {
@@ -2626,7 +2626,8 @@
     "TASK-066"
    ],
    "producao": [
-    "backend/app/model_validation/runner.py"
+    "backend/app/model_validation/runner.py",
+    "backend/app/interviews/requirements.py"
    ],
    "teste": [
     "backend/tests/integration/test_validation_runner.py"
@@ -3969,13 +3970,13 @@
    "risco_max": "médio",
    "gatilhos_previstos": {
     "G2": {
+     "CT-35": [
+      "TASK-042",
+      "TASK-049"
+     ],
      "CT-33": [
       "TASK-042",
       "TASK-046",
-      "TASK-049"
-     ],
-     "CT-35": [
-      "TASK-042",
       "TASK-049"
      ],
      "CT-34": [
@@ -4010,10 +4011,14 @@
    "risco_max": "médio",
    "gatilhos_previstos": {
     "G2": {
-     "CT-36": [
+     "CT-35": [
       "TASK-043",
       "TASK-044",
       "TASK-047",
+      "TASK-048"
+     ],
+     "CT-20": [
+      "TASK-043",
       "TASK-048"
      ],
      "CT-33": [
@@ -4022,18 +4027,14 @@
       "TASK-047",
       "TASK-048"
      ],
-     "CT-19": [
-      "TASK-043",
-      "TASK-048"
-     ],
-     "CT-20": [
-      "TASK-043",
-      "TASK-048"
-     ],
-     "CT-35": [
+     "CT-36": [
       "TASK-043",
       "TASK-044",
       "TASK-047",
+      "TASK-048"
+     ],
+     "CT-19": [
+      "TASK-043",
       "TASK-048"
      ],
      "CT-6": [
