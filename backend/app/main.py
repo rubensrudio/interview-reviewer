@@ -7,6 +7,7 @@ from app.api import (
     auth_google,
     auth_local,
     interview,
+    reports,
     resumes,
     session_requirements,
     sessions,
@@ -31,6 +32,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(sessions.router)
     app.include_router(session_requirements.router)
     app.include_router(interview.router)
+    app.include_router(reports.router)
 
     @app.get("/api/health")
     def health() -> dict[str, str]:
