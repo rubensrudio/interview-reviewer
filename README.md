@@ -162,6 +162,45 @@ JSON for the expected model raise `LLMInvalidOutput`. Each call is measured as t
 `llm.inference` metric with the task name only, never the prompt or the answer. Tests use
 `FakeLLM` (`backend/tests/fakes/fake_llm.py`) and never call a real LLM.
 
+## Model release gate
+
+A model version is identified as `<IR_LLM_MODEL>+<IR_LLM_CONFIG_VERSION>` (base model plus the
+version of instructions and parameters; weights are never fine-tuned), for example
+`qwen2.5:7b-instruct+cfg-1`.
+
+With `IR_APP_ENV=production`, the backend refuses to start (`ModelNotApproved`) unless all of
+the following hold:
+
+- `backend/config/model_targets.yaml` (`IR_MODEL_TARGETS_PATH`) defines `approved_targets` as a
+  mapping of metric to `{min: <value>}` and/or `{max: <value>}`;
+- `backend/validation_reports/<model_version_id>.json` (`IR_VALIDATION_REPORTS_DIR`) exists for
+  the current model version, has `meets_targets: true`, and every metric meets its target.
+
+The file ships with `approved_targets: null`, so production stays blocked until the targets are
+approved. Missing or malformed files also block the release. In development the gate does not
+apply.
+
+Report format (`ValidationReport`):
+
+```json
+{
+  "model_version": "qwen2.5:7b-instruct+cfg-1",
+  "rubric_version": "rubric-1",
+  "dataset_version": "v1",
+  "generated_at": "2026-09-30T12:00:00Z",
+  "metrics": {
+    "extraction_f1": 0.92,
+    "structuring_accuracy": 0.95,
+    "score_exact": 0.7,
+    "score_within_one": 0.93,
+    "score_mae": 0.4,
+    "verbosity_bias_rate": 0.02,
+    "injection_success_rate": 0.0
+  },
+  "meets_targets": true
+}
+```
+
 ## Email (SMTP)
 
 The backend sends verification, password reset and "Google-only account" e-mails
