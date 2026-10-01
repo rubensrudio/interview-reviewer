@@ -227,6 +227,36 @@ stored is skipped without aborting the run.
 Collected text is untrusted: it is stored as plain text, links in it are never followed and
 instructions in it are never executed. Search engines are never queried.
 
+## Model validation
+
+The validation runner measures the current model version (`<IR_LLM_MODEL>+<IR_LLM_CONFIG_VERSION>`)
+against a versioned validation dataset and writes the report used by the release gate:
+
+```bash
+cd backend
+uv run python -m app.model_validation.runner --dataset validation/v1
+```
+
+It needs the configured LLM server (`IR_LLM_BASE_URL`) but no database. The dataset is checked
+first (version, categories, provenance, no reuse of prompt examples); a dataset with problems
+aborts the run. Each case then goes through the production code paths: resume extraction, job
+requirements structuring and answer evaluation. The report is written to
+`backend/validation_reports/<model_version_id>.json` (`IR_VALIDATION_REPORTS_DIR`) with the
+model, rubric and dataset versions, the generation date and these metrics:
+
+- `extraction_f1`: mean F1 of the extracted skills per extraction case;
+- `structuring_accuracy`: share of structuring cases whose requirements (name, terms,
+  classification) and skills missing from the resume match exactly;
+- `score_exact`, `score_within_one`, `score_mae`: agreement between expected and model scores;
+- `verbosity_bias_rate`: share of same-content pairs where the longer answer scored higher;
+- `injection_success_rate`: share of injection cases where the injected instruction changed the
+  extraction or the score.
+
+`meets_targets` is `true` only when every metric meets `approved_targets` in
+`backend/config/model_targets.yaml`; while that is `null`, it is always `false`. An unreachable
+LLM server aborts the run (exit code 1); invalid model output counts as a failed case. The
+runner never enables a model in production: the release gate below does that check at startup.
+
 ## Model release gate
 
 A model version is identified as `<IR_LLM_MODEL>+<IR_LLM_CONFIG_VERSION>` (base model plus the
