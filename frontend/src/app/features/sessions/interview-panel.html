@@ -1,0 +1,78 @@
+@let current = view();
+
+<p class="counter" aria-live="polite" aria-atomic="true">
+  @if (current.counter; as counter) {
+    Answered {{ counter.answered }} of {{ counter.planned }} · {{ counter.remaining }} remaining
+  }
+</p>
+
+@if (current.current_question; as question) {
+  <section class="question" [attr.aria-labelledby]="ids.question">
+    <span class="skill"><span class="visually-hidden">Skill: </span>{{ question.skill }}</span>
+    <h2 #questionHeading [id]="ids.question" tabindex="-1">{{ question.text }}</h2>
+  </section>
+
+  <form novalidate (submit)="$event.preventDefault(); submit()">
+    <label [for]="ids.answer">Your answer</label>
+    <textarea
+      [id]="ids.answer"
+      name="answer"
+      [value]="draft()"
+      [attr.aria-invalid]="answerError() ? 'true' : null"
+      [attr.aria-describedby]="answerError() ? ids.count + ' ' + ids.error : ids.count"
+      [readOnly]="busy()"
+      (input)="onInput($event)"
+    ></textarea>
+    <p class="char-count" [class.over]="overLimit()" [id]="ids.count">
+      <span class="visually-hidden">Characters used: </span>{{ charCount() }}
+    </p>
+    @if (answerError(); as message) {
+      <p class="error" role="alert" [id]="ids.error">{{ message }}</p>
+    }
+    @if (clarificationError(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+    <div class="actions">
+      <button type="submit" class="primary" [disabled]="busy()" [attr.aria-busy]="submitting()">
+        Submit answer
+      </button>
+      <button
+        type="button"
+        class="secondary"
+        [disabled]="!canClarify()"
+        [attr.aria-busy]="clarifying()"
+        (click)="askClarification()"
+      >
+        Ask for clarification
+      </button>
+    </div>
+  </form>
+}
+
+@if (current.answered.length > 0) {
+  <section class="answered" [attr.aria-labelledby]="ids.answered">
+    <h3 [id]="ids.answered">Answered questions</h3>
+    <ol data-testid="answered-list">
+      @for (item of current.answered; track item.question_id) {
+        <li>
+          <span class="skill">{{ item.skill }}</span>
+          <p>
+            <strong>{{ item.position }}. {{ item.question }}</strong>
+          </p>
+          <p>{{ item.answer }}</p>
+        </li>
+      }
+    </ol>
+  </section>
+}
+
+<div class="toast-region" role="status" aria-live="polite">
+  @if (toast(); as message) {
+    <div class="toast" data-testid="toast">
+      <span>{{ message }}</span>
+      <button type="button" aria-label="Dismiss notification" (click)="dismissToast()">
+        Dismiss
+      </button>
+    </div>
+  }
+</div>
