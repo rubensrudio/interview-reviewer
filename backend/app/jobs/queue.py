@@ -8,8 +8,9 @@ Time comparisons use ``clock_timestamp()`` (the database clock), not the transac
 
 import uuid
 from datetime import datetime, timedelta
+from typing import Any, cast
 
-from sqlalchemy import func, select
+from sqlalchemy import CursorResult, func, select, update
 from sqlalchemy.orm import Session
 
 from app.models.job import Job, JobStatus
@@ -77,6 +78,26 @@ def claim_next(db: Session) -> Job | None:
     db.refresh(job)
     log_event("job.claimed", job_id=str(job.id), kind=job.kind, attempts=job.attempts)
     return job
+
+
+def renew_lock(db: Session, job_id: uuid.UUID, attempts: int) -> bool:
+    """Refresh ``locked_at`` of a running job only if ``attempts`` still matches (fencing).
+
+    Returns False when the job is no longer this execution's (reaped, claimed again or
+    finished). The caller commits, in a session of its own (never the handler's).
+    """
+    statement = (
+        update(Job)
+        .where(
+            Job.id == job_id,
+            Job.status == JobStatus.RUNNING,
+            Job.attempts == attempts,
+        )
+        .values(locked_at=func.clock_timestamp())
+        .execution_options(synchronize_session=False)
+    )
+    result = cast(CursorResult[Any], db.execute(statement))
+    return result.rowcount == 1
 
 
 def mark_done(db: Session, job: Job) -> None:
