@@ -2,7 +2,15 @@ import os
 
 from fastapi import FastAPI
 
-from app.api import account, auth_google, auth_local, resumes, session_requirements, sessions
+from app.api import (
+    account,
+    auth_google,
+    auth_local,
+    interview,
+    resumes,
+    session_requirements,
+    sessions,
+)
 from app.config import Settings, get_settings
 from app.errors import register_error_handlers
 from app.llm.model_version import assert_model_release_allowed
@@ -22,6 +30,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(resumes.router)
     app.include_router(sessions.router)
     app.include_router(session_requirements.router)
+    app.include_router(interview.router)
 
     @app.get("/api/health")
     def health() -> dict[str, str]:

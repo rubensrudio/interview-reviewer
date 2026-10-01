@@ -1697,6 +1697,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-057 — Expose answer, clarification and evaluation retry routes
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `INTV-03`, `INTV-04`, `INTV-05`, `INTV-06`, `INTV-08`, `INTV-90`, `INTV-91`, `INTV-92`, `INTV-93`, `EVAL-14`, `AUTH-16`
 - **Tipo**: crud-padrão
@@ -2173,6 +2174,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-073 — Add authenticated app shell and navigation
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `AUTH-06`, `AUTH-17`
 - **Tipo**: ui-puro
@@ -2438,6 +2440,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-083 — Add resume API client
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `CV-13`, `CV-01`
 - **Tipo**: crud-padrão
@@ -2520,6 +2523,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-086 — Add interview session API client
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `INTV-01`, `PLAN-01`
 - **Tipo**: crud-padrão
