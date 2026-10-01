@@ -366,6 +366,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-013 — Implement authenticated sessions and current-user dependency
+- **Status**: ✅ APROVADA em 2026-09-30
 
 - **Requisito**: `AUTH-06`, `AUTH-17`, `AUTH-16`
 - **Tipo**: lógica-negócio
