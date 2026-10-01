@@ -341,3 +341,10 @@ LAC-01, LAC-02, LAC-08 e LAC-14 foram perguntadas individualmente. As demais for
 - **Jev (hm-qa)**: defeito do código 0.83; contrato exige guarda extra 0.41 (dúvida).
 - **Decisão (humano)**: A.
 - **Impacto**: sem mudança de código. **Requer atualização de spec/plan**: EVAL-16 deve citar que a garantia é do modelo validado (MODEL-01/03), com `injection_success_rate` como métrica de release.
+
+### LAC-41 — Conteúdo do retrato mínimo após exclusão de currículo (TASK-061, LGPD)
+- **Etapa**: /implement, onda 28, TASK-061 (CT-51 `delete_resume`)
+- **Opções**: A) só itens `skill` com evidência, `fields` reduzido a `name` (+ evidência citada); B) manter também `description`.
+- **Jev (hm-engineer)**: tirar tudo menos name 0.52 (dúvida); skill sem evidência sai 0.78.
+- **Decisão (humano)**: A — minimização máxima.
+- **Impacto**: skills `user_provided` (sem evidência) não sobrevivem no retrato mínimo. **Requer atualização de spec/plan**: glossário "retrato mínimo" e CT-51.
