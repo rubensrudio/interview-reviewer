@@ -129,10 +129,7 @@ describe('ResumeListPage', () => {
 
   it('announces the status of each item in a polite live region', async () => {
     api.list.mockReturnValue(
-      of([
-        makeResume({ id: 'a', status: 'processing' }),
-        makeResume({ id: 'b', status: 'ready' }),
-      ]),
+      of([makeResume({ id: 'a', status: 'processing' }), makeResume({ id: 'b', status: 'ready' })]),
     );
     await render();
 
