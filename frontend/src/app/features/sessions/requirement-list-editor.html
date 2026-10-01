@@ -1,0 +1,207 @@
+<section class="list" aria-labelledby="requirement-list-title">
+  <header>
+    <h2 id="requirement-list-title">Technical skills</h2>
+    <p class="hint">
+      Review the skills before confirming. Each required skill gets one question in the interview.
+    </p>
+  </header>
+
+  @if (items().length === 0) {
+    <p class="empty">No technical skills in the list yet.</p>
+  } @else {
+    <div class="toolbar">
+      <button type="button" [disabled]="!canMerge()" (click)="merge()">Merge selected</button>
+      <span class="hint">Select two or more synonyms of the same skill to merge them.</span>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <caption class="visually-hidden">
+          Technical skills of the job
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col"><span class="visually-hidden">Merge</span></th>
+            <th scope="col">Skill</th>
+            <th scope="col">Original terms</th>
+            <th scope="col">Classification</th>
+            <th scope="col">Level</th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of items(); track $index; let i = $index) {
+            <tr [class.pending]="isPending(item)">
+              <td>
+                <input
+                  type="checkbox"
+                  [attr.aria-label]="'Select ' + item.name + ' to merge'"
+                  [checked]="selected().has(i)"
+                  (change)="toggleSelected(i)"
+                />
+              </td>
+              <td>
+                <input
+                  type="text"
+                  [attr.aria-label]="'Name of ' + item.name"
+                  [value]="item.name"
+                  (change)="rename(i, $event)"
+                />
+                @if (isPending(item)) {
+                  <span class="badge">Needs clarification</span>
+                  @if (item.clarification_question) {
+                    <p class="question">{{ item.clarification_question }}</p>
+                  }
+                }
+              </td>
+              <td class="terms">{{ item.original_terms.join(', ') }}</td>
+              <td>
+                <select
+                  [attr.aria-label]="'Classification of ' + item.name"
+                  (change)="setClassification(i, $event)"
+                >
+                  @for (option of classificationOptions; track option.value) {
+                    <option
+                      [value]="option.value"
+                      [selected]="option.value === item.classification"
+                    >
+                      {{ option.label }}
+                    </option>
+                  }
+                </select>
+              </td>
+              <td>
+                <select
+                  [attr.aria-label]="'Expected level of ' + item.name"
+                  (change)="setLevel(i, $event)"
+                >
+                  <option value="" [selected]="item.level === null">Not specified</option>
+                  @for (option of levelOptions; track option.value) {
+                    <option [value]="option.value" [selected]="option.value === item.level">
+                      {{ option.label }}
+                    </option>
+                  }
+                </select>
+              </td>
+              <td>
+                <div class="row-actions">
+                  @if (canSplit(item)) {
+                    <button
+                      type="button"
+                      class="link"
+                      [attr.aria-label]="'Undo merge of ' + item.name"
+                      (click)="split(i)"
+                    >
+                      Undo merge
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    class="link remove"
+                    [attr.aria-label]="'Remove ' + item.name"
+                    (click)="remove(i)"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <form class="add" (submit)="add($event)">
+    <label>
+      New skill
+      <input
+        type="text"
+        aria-label="New skill name"
+        [value]="newName()"
+        (input)="setNewName($event)"
+      />
+    </label>
+    <label>
+      Classification
+      <select aria-label="New skill classification" (change)="setNewClassification($event)">
+        @for (option of classificationOptions; track option.value) {
+          <option [value]="option.value" [selected]="option.value === newClassification()">
+            {{ option.label }}
+          </option>
+        }
+      </select>
+    </label>
+    <label>
+      Level
+      <select aria-label="New skill expected level" (change)="setNewLevel($event)">
+        <option value="" [selected]="newLevel() === null">Not specified</option>
+        @for (option of levelOptions; track option.value) {
+          <option [value]="option.value" [selected]="option.value === newLevel()">
+            {{ option.label }}
+          </option>
+        }
+      </select>
+    </label>
+    <button type="submit" [disabled]="!canAdd()">Add skill</button>
+  </form>
+</section>
+
+@if (nonTechnical().length > 0) {
+  <section class="non-technical" data-testid="non-technical" aria-labelledby="non-technical-title">
+    <div>
+      <h3 id="non-technical-title">Other requirements</h3>
+      <span class="label">Not evaluated in this session</span>
+    </div>
+    <ul>
+      @for (requirement of nonTechnical(); track $index) {
+        <li>{{ requirement }}</li>
+      }
+    </ul>
+  </section>
+}
+
+@if (errorMessage(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+}
+
+@if (showPendingNotice()) {
+  <p class="notice" id="pending-notice">{{ pendingMessage }}</p>
+}
+
+<div class="actions">
+  <button
+    type="button"
+    class="primary"
+    [disabled]="confirmListDisabled()"
+    [attr.aria-describedby]="showPendingNotice() ? 'pending-notice' : null"
+    (click)="requestListConfirmation()"
+  >
+    Confirm list
+  </button>
+</div>
+
+@if (proposal(); as plan) {
+  <section class="proposal" data-testid="plan-proposal" aria-labelledby="plan-title">
+    <h3 id="plan-title">Interview plan</h3>
+    <p>
+      <span class="count">{{ questionLabel() }}</span
+      >, one for each required skill:
+    </p>
+    <ul>
+      @for (skill of plan.skills; track $index) {
+        <li>{{ skill }}</li>
+      }
+    </ul>
+    <div class="actions">
+      <button
+        type="button"
+        class="primary"
+        [disabled]="confirmPlanDisabled()"
+        (click)="requestPlanConfirmation()"
+      >
+        Confirm plan
+      </button>
+    </div>
+  </section>
+}
