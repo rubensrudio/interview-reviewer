@@ -14,7 +14,10 @@ sessions and reports) and its jobs at teardown.
 """
 
 import io
+import shutil
 import socket
+import subprocess  # noqa: S404 - drives the docker CLI with fixed arguments
+import time
 import uuid
 from collections.abc import Callable, Iterator
 from datetime import UTC, datetime
@@ -59,6 +62,13 @@ from app.resumes import processing
 from app.resumes.extraction import EXTRACTION_TASK
 from app.resumes.processing import RESUME_PROCESS_JOB, process_resume
 from tests.fakes.fake_llm import FakeLLM
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+PROD_COMPOSE = REPO_ROOT / "deploy" / "docker-compose.prod.yml"
+PROXY_SERVICE = "egress-proxy"
+PROXY_SETTLE_SECONDS = 8
+PROXY_STARTUP_TIMEOUT_SECONDS = 60
+CURL_IMAGE = "curlimages/curl:latest"
 
 # TEST-NET-3 (RFC 5737): never routed, so the probe cannot leave the machine even unblocked.
 EXTERNAL_PROBE = ("203.0.113.10", 443)
@@ -414,3 +424,88 @@ def test_know_01_know_02_full_flow_completes_offline_with_private_llm(
 def _report_count(db: Session, session_id: str) -> int:
     rows = db.execute(select(Report.id).where(Report.session_id == uuid.UUID(session_id)))
     return len(rows.all())
+
+
+# --- egress proxy of the production compose (KNOW-02) ---------------------------------------
+
+
+def _docker_available() -> bool:
+    docker = shutil.which("docker")
+    if docker is None:
+        return False
+    probe = subprocess.run(  # noqa: S603 - fixed arguments
+        [docker, "info"], capture_output=True, check=False, timeout=30
+    )
+    return probe.returncode == 0
+
+
+def _docker(*args: str, timeout: int = 180) -> subprocess.CompletedProcess[str]:
+    docker = shutil.which("docker")
+    assert docker is not None
+    return subprocess.run(  # noqa: S603 - fixed arguments
+        [docker, *args], capture_output=True, text=True, check=False, timeout=timeout
+    )
+
+
+@pytest.fixture
+def egress_proxy() -> Iterator[tuple[str, str]]:
+    """Start only the egress proxy of the production compose; yield (container, network)."""
+    if not _docker_available():
+        pytest.skip("docker is not available")
+    project = f"ir-egress-{uuid.uuid4().hex[:8]}"
+    compose = ["compose", "-p", project, "-f", str(PROD_COMPOSE)]
+    try:
+        started = _docker(*compose, "up", "-d", PROXY_SERVICE, timeout=600)
+        assert started.returncode == 0, started.stderr
+        container = _docker(*compose, "ps", "-a", "-q", PROXY_SERVICE).stdout.strip()
+        assert container, "egress proxy container was not created"
+        yield container, f"{project}_internal"
+    finally:
+        _docker(*compose, "down", "-v", "--remove-orphans")
+
+
+def _proxy_state(container: str) -> tuple[str, int]:
+    inspected = _docker(
+        "inspect", "--format", "{{.State.Status}} {{.RestartCount}}", container
+    ).stdout.split()
+    assert len(inspected) == 2, inspected
+    return inspected[0], int(inspected[1])
+
+
+def _wait_until_listening(network: str) -> None:
+    deadline = time.monotonic() + PROXY_STARTUP_TIMEOUT_SECONDS
+    while time.monotonic() < deadline:
+        if _connect_status(network, "example.com:443") != "000":
+            return
+        time.sleep(1)
+    raise AssertionError("egress proxy never answered on port 3128")
+
+
+def _connect_status(network: str, target: str) -> str:
+    """Status code of ``CONNECT target`` sent to the proxy from the internal network."""
+    result = _docker(
+        "run", "--rm", "--network", network, CURL_IMAGE,
+        "-s", "-o", "/dev/null", "--max-time", "15", "-p",
+        "-x", f"http://{PROXY_SERVICE}:3128", "-w", "%{http_connect}",
+        f"https://{target}/",
+    )  # fmt: skip
+    return result.stdout.strip()[-3:] or "000"
+
+
+def test_know_02_egress_proxy_stays_running_and_applies_allowlist(
+    egress_proxy: tuple[str, str],
+) -> None:
+    container, network = egress_proxy
+    _wait_until_listening(network)
+    time.sleep(PROXY_SETTLE_SECONDS)
+
+    status, restarts = _proxy_state(container)
+    logs = _docker("logs", container).stderr[-2000:]
+    assert (status, restarts) == ("running", 0), logs
+
+    # Denied: anything outside the allowlist, including LLM providers.
+    for target in ("example.com:443", "api.openai.com:443", "accounts.google.com:80"):
+        assert _connect_status(network, target) == "403", target
+    # Allowed: the proxy never denies Google sign-in (200 online, 503 without internet).
+    for target in ("accounts.google.com:443", "oauth2.googleapis.com:443"):
+        assert _connect_status(network, target) != "403", target
