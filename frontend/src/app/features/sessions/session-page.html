@@ -1,0 +1,173 @@
+@if (loading()) {
+  <h1>Interview</h1>
+  <p role="status">Loading interview…</p>
+} @else if (loadError(); as message) {
+  <h1>Interview</h1>
+  <p class="error" role="alert">{{ message }}</p>
+  <div class="actions">
+    <button type="button" class="secondary" (click)="reload()">Try again</button>
+  </div>
+} @else if (view(); as current) {
+  <h1>Interview</h1>
+  <div class="meta">
+    @if (current.resume_name) {
+      <span>Resume: {{ current.resume_name }}</span>
+    }
+    <span aria-live="polite" aria-atomic="true">
+      Status: <span class="status">{{ statusLabels[current.status] }}</span>
+    </span>
+  </div>
+
+  @if (actionError(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+
+  @switch (current.status) {
+    @case ('collecting_requirements') {
+      <ng-container *ngTemplateOutlet="chatTpl" />
+      <form novalidate aria-label="Send job requirements" (submit)="sendRequirements($event)">
+        <label for="session-requirements">Job requirements</label>
+        <textarea
+          id="session-requirements"
+          name="requirements"
+          [value]="requirementsDraft()"
+          [readOnly]="sending()"
+          [attr.aria-invalid]="requirementsError() ? 'true' : null"
+          [attr.aria-describedby]="requirementsError() ? 'session-requirements-error' : null"
+          (input)="onRequirementsInput($event)"
+        ></textarea>
+        @if (requirementsError(); as message) {
+          <p id="session-requirements-error" class="error" role="alert">{{ message }}</p>
+        }
+        <div class="actions">
+          <button type="submit" class="primary" [disabled]="sending()" [attr.aria-busy]="sending()">
+            Send
+          </button>
+        </div>
+      </form>
+    }
+    @case ('awaiting_confirmation') {
+      <ng-container *ngTemplateOutlet="chatTpl" />
+      <app-requirement-list-editor
+        [items]="requirementItems()"
+        [nonTechnical]="nonTechnical()"
+        [proposal]="current.proposal"
+        [error]="editorError()"
+        (changed)="onListChanged($event)"
+        (confirmList)="onConfirmList()"
+        (confirmPlan)="onConfirmPlan()"
+      />
+    }
+    @case ('preparing_questions') {
+      <p class="notice" role="status">Preparing your questions. This page updates automatically.</p>
+    }
+    @case ('preparation_failed') {
+      <div class="notice stack">
+        <p role="alert">{{ preparationFailedMessage }}</p>
+        <button
+          type="button"
+          class="primary"
+          [disabled]="acting()"
+          [attr.aria-busy]="acting()"
+          (click)="retryPreparation()"
+        >
+          Try again
+        </button>
+      </div>
+    }
+    @case ('in_interview') {
+      <app-interview-panel [view]="current" (viewChange)="applyView($event)" />
+      @if (clarifications().length > 0) {
+        <section aria-labelledby="session-clarifications-title">
+          <h2 id="session-clarifications-title">Clarifications</h2>
+          <ol class="chat" role="log" aria-labelledby="session-clarifications-title">
+            @for (message of clarifications(); track message.id) {
+              <li [class]="message.role">
+                <span class="author">{{ authorLabel(message) }}</span
+                >{{ message.content }}
+              </li>
+            }
+          </ol>
+        </section>
+      }
+    }
+    @case ('evaluating') {
+      <p class="notice" role="status">{{ evaluatingMessage }}</p>
+    }
+    @case ('evaluation_failed') {
+      <div class="notice stack">
+        <p role="alert">{{ evaluationFailedMessage }}</p>
+        <button
+          type="button"
+          class="primary"
+          [disabled]="acting()"
+          [attr.aria-busy]="acting()"
+          (click)="retryEvaluation()"
+        >
+          Try again
+        </button>
+      </div>
+    }
+    @case ('completed') {
+      <div class="notice stack">
+        <p>Your interview is complete.</p>
+        @if (current.report_available) {
+          <a [routerLink]="['/sessions', current.id, 'report']">View report</a>
+        }
+      </div>
+    }
+    @default {
+      <p class="notice">{{ closedMessage }}</p>
+      <ng-container *ngTemplateOutlet="chatTpl" />
+      @if (current.answered.length > 0) {
+        <section aria-labelledby="session-answered-title">
+          <h2 id="session-answered-title">Your answers</h2>
+          <ol class="answered">
+            @for (item of current.answered; track item.question_id) {
+              <li>
+                <strong>Question {{ item.position }} · {{ item.skill }}</strong>
+                <p>{{ item.question }}</p>
+                <p>{{ item.answer }}</p>
+              </li>
+            }
+          </ol>
+        </section>
+      }
+    }
+  }
+
+  @if (!isTerminal()) {
+    <div class="cancel-area">
+      <button type="button" class="danger" [disabled]="acting()" (click)="askCancel()">
+        Cancel interview
+      </button>
+    </div>
+  }
+}
+
+<ng-template #chatTpl>
+  @if (chatMessages().length > 0) {
+    <section aria-labelledby="session-chat-title">
+      <h2 id="session-chat-title">Conversation</h2>
+      <ol class="chat" role="log" aria-labelledby="session-chat-title">
+        @for (message of chatMessages(); track message.id) {
+          <li [class]="message.role">
+            <span class="author">{{ authorLabel(message) }}</span
+            >{{ message.content }}
+          </li>
+        }
+      </ol>
+    </section>
+  }
+</ng-template>
+
+@if (confirmingCancel()) {
+  <app-confirm-dialog
+    [title]="cancelTitle"
+    [message]="cancelMessage"
+    confirmLabel="Cancel interview"
+    cancelLabel="Keep interview"
+    (confirmed)="confirmCancel()"
+    (cancelled)="keepSession()"
+  />
+}

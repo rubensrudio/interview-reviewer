@@ -82,6 +82,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/sessions/new-session-page').then((m) => m.NewSessionPage),
       },
+      {
+        path: 'sessions/:id',
+        title: 'Interview',
+        loadComponent: () => import('./features/sessions/session-page').then((m) => m.SessionPage),
+      },
     ],
   },
 ];
