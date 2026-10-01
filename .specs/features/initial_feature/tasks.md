@@ -1869,6 +1869,7 @@ Toda task de backend roda comandos em `backend`; toda task de frontend em `front
 ---
 
 ### TASK-063 — Delete account and all user data
+- **Status**: ✅ APROVADA em 2026-10-01
 
 - **Requisito**: `DATA-06`, `DATA-07`, `DATA-93`
 - **Tipo**: crud-padrão
